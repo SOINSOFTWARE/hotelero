@@ -41,6 +41,10 @@ public class ViewUtils {
 
 	protected static final String MSG_SAVED = "¡Datos guardados con exito!";
 	
+	protected static final String MSG_UNEDITED = "No hay datos editados";
+	
+	protected static final String MSG_UNSELECTED = "No hay datos seleccionados";
+	
 	protected static final String MSG_UPDATE_QUESTION = "¿Está seguro que desea actualizar los datos?";
 	
 	protected static final String MSG_UPDATED = "¡Datos actualizados con exito!";

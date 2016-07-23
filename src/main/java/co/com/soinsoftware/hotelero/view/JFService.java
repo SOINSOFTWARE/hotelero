@@ -2,7 +2,18 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.Date;
+import java.util.List;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.table.TableModel;
+
+import co.com.soinsoftware.hotelero.controller.ServiceController;
+import co.com.soinsoftware.hotelero.entity.Service;
+import co.com.soinsoftware.hotelero.entity.Servicetype;
+import co.com.soinsoftware.hotelero.util.ServiceTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,17 +30,103 @@ public class JFService extends JDialog {
 
 	private static final long serialVersionUID = 372651084892210851L;
 
+	private static final String MSG_SERVICE_REQUIRED = "Complete el campo nombre del servicio";
+
+	private static final String MSG_SERVICE_TYPE_REQUIRED = "Seleccione el tipo de consumo";
+
+	private final ServiceController serviceController;
+
+	private List<Servicetype> serviceTypeList;
+
 	public JFService() {
+		this.serviceController = new ServiceController();
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
 		this.setLocation((int) (screenSize.getWidth() / 2 - 350),
 				(int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
+		this.setTextFieldLimits();
+		this.refresh();
 	}
 
 	public void refresh() {
+		this.jtfServiceName.setText("");
+		this.jtfServiceValue.setText("0");
+		this.setServiceTypeModel();
+		this.refreshTableData();
+	}
 
+	private void setTextFieldLimits() {
+		this.jtfServiceName.setDocument(new JTextFieldLimit(45));
+	}
+
+	private void setServiceTypeModel() {
+		this.serviceTypeList = this.serviceController.selectServiceTypes();
+		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		model.addElement("Seleccione uno...");
+		for (final Servicetype serviceType : serviceTypeList) {
+			model.addElement(serviceType.getName());
+		}
+		this.jcbServiceCategory.setModel(model);
+	}
+
+	private void refreshTableData() {
+		final List<Service> serviceList = this.serviceController
+				.selectServices();
+		final TableModel model = new ServiceTableModel(serviceList);
+		this.jtbServiceList.setModel(model);
+		this.jtbServiceList.setFillsViewportHeight(true);
+	}
+
+	private boolean validateDataForSave() {
+		boolean valid = true;
+		final String name = this.jtfServiceName.getText();
+		if (this.jcbServiceCategory.getSelectedIndex() == 0) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_SERVICE_TYPE_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		} else if (name.trim().equals("")) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_SERVICE_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		}
+		return valid;
+	}
+
+	private long getServiceValue() {
+		final String valStr = this.jtfServiceValue.getText();
+		return Long.parseLong(valStr.replace(".", "").replace(",", ""));
+	}
+
+	private List<Service> getServiceListFromTable() {
+		final TableModel model = this.jtbServiceList.getModel();
+		return ((ServiceTableModel) model).getServiceList();
+	}
+
+	private boolean hasServiceToBeUpdated(final List<Service> serviceList) {
+		boolean hasElements = false;
+		for (final Service service : serviceList) {
+			if (service.getNewName() != null
+					&& (!service.getNewName().equals("") && !service
+							.getNewName().equals(service.getName()))
+					|| (service.getNewValue() != service.getValue())) {
+				hasElements = true;
+				break;
+			}
+		}
+		return hasElements;
+	}
+
+	private boolean hasServiceToBeDeleted(final List<Service> serviceList) {
+		boolean hasElements = false;
+		for (final Service service : serviceList) {
+			if (service.isDelete()) {
+				hasElements = true;
+				break;
+			}
+		}
+		return hasElements;
 	}
 
 	/**
@@ -112,7 +209,6 @@ public class JFService extends JDialog {
 		jlbServiceValue.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
 		jlbServiceValue.setText("Valor:");
 
-		jtfServiceValue.setEditable(false);
 		jtfServiceValue.setBackground(new java.awt.Color(255, 255, 255));
 		jtfServiceValue
 				.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
@@ -501,15 +597,76 @@ public class JFService extends JDialog {
 	}// GEN-LAST:event_jbtCloseActionPerformed
 
 	private void jbtSaveActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtSaveActionPerformed
-		// TODO add your handling code here:
+		if (this.validateDataForSave()) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_SAVE_QUESTION, ViewUtils.TITLE_SAVED);
+			if (confirmation == JOptionPane.OK_OPTION) {
+				final int index = this.jcbServiceCategory.getSelectedIndex() - 1;
+				final Servicetype serviceType = this.serviceTypeList.get(index);
+				final String name = this.jtfServiceName.getText();
+				final long value = this.getServiceValue();
+				this.serviceController.saveService(serviceType, name, value);
+				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+				this.refresh();
+			}
+		}
 	}// GEN-LAST:event_jbtSaveActionPerformed
 
 	private void jbtUpdateActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtUpdateActionPerformed
-		// TODO add your handling code here:
+		final List<Service> serviceList = this.getServiceListFromTable();
+		if (serviceList != null && this.hasServiceToBeUpdated(serviceList)) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_UPDATE_QUESTION, ViewUtils.TITLE_SAVED);
+			if (confirmation == JOptionPane.OK_OPTION) {
+				for (final Service service : serviceList) {
+					boolean edited = false;
+					if (service.getNewName() != null
+							&& !service.getNewName().equals("")
+							&& !service.getNewName().equals(service.getName())) {
+						edited = true;
+						service.setName(service.getNewName());
+					}
+					if (service.getNewValue() != service.getValue()) {
+						edited = true;
+						service.setValue(service.getNewValue());
+					}
+					if (edited) {
+						service.setUpdated(new Date());
+						this.serviceController.saveService(service);
+					}
+				}
+				ViewUtils.showMessage(this, ViewUtils.MSG_UPDATED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+				this.refresh();
+			}
+		} else {
+			ViewUtils.showMessage(this, ViewUtils.MSG_UNEDITED,
+					ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+		}
 	}// GEN-LAST:event_jbtUpdateActionPerformed
 
 	private void jbtDeleteActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtDeleteActionPerformed
-		// TODO add your handling code here:
+		final List<Service> serviceList = this.getServiceListFromTable();
+		if (serviceList != null && this.hasServiceToBeDeleted(serviceList)) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DELETE_QUESTION, ViewUtils.TITLE_SAVED);
+			if (confirmation == JOptionPane.OK_OPTION) {
+				for (final Service service : serviceList) {
+					if (service.isDelete()) {
+						service.setEnabled(false);
+						service.setUpdated(new Date());
+						this.serviceController.saveService(service);
+					}
+				}
+				ViewUtils.showMessage(this, ViewUtils.MSG_DELETED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+				this.refresh();
+			}
+		} else {
+			ViewUtils.showMessage(this, ViewUtils.MSG_UNSELECTED,
+					ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+		}
 	}// GEN-LAST:event_jbtDeleteActionPerformed
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables

@@ -535,8 +535,10 @@ public class JFServiceType extends JDialog {
 						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 				this.refresh();
 			}
+		} else {
+			ViewUtils.showMessage(this, ViewUtils.MSG_UNEDITED,
+					ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 		}
-
 	}// GEN-LAST:event_jbtUpdateActionPerformed
 
 	private void jbtDeleteActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtDeleteActionPerformed
@@ -558,6 +560,9 @@ public class JFServiceType extends JDialog {
 						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 				this.refresh();
 			}
+		} else {
+			ViewUtils.showMessage(this, ViewUtils.MSG_UNSELECTED,
+					ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 		}
 	}// GEN-LAST:event_jbtDeleteActionPerformed
 
