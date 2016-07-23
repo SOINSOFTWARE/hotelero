@@ -29,16 +29,16 @@
               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               <Component id="lbImage" min="-2" pref="388" max="-2" attributes="0"/>
           </Group>
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jpAction" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="jpNewService" min="-2" max="-2" attributes="0"/>
+                      <Component id="jpNewCompany" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jpServiceTypeList" min="-2" max="-2" attributes="0"/>
+                      <Component id="jpCompanyList" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
+                  <Component id="jpAction" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -50,10 +50,10 @@
               <Component id="jpTitle" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jpServiceTypeList" min="-2" max="-2" attributes="0"/>
-                  <Component id="jpNewService" min="-2" max="-2" attributes="0"/>
+                  <Component id="jpCompanyList" min="-2" max="-2" attributes="0"/>
+                  <Component id="jpNewCompany" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jpAction" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
               <Component id="lbImage" min="-2" pref="35" max="-2" attributes="0"/>
@@ -95,7 +95,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Verdana" size="14" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Tipos de consumo"/>
+            <Property name="text" type="java.lang.String" value="Empresas"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -107,11 +107,11 @@
         </Property>
       </Properties>
     </Component>
-    <Container class="javax.swing.JPanel" name="jpNewService">
+    <Container class="javax.swing.JPanel" name="jpNewCompany">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Nuevo tipo de consumo">
+            <TitledBorder title="Nueva empresa">
               <Font PropertyName="font" name="Verdana" size="12" style="1"/>
             </TitledBorder>
           </Border>
@@ -124,14 +124,20 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jlbName" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jtfServiceType" alignment="0" min="-2" pref="180" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jlbCompanyName" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jlbCompanyNit" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="141" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="101" max="32767" attributes="0"/>
+                          <Component id="jbtSave" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="jtfCompanyNit" alignment="0" pref="190" max="32767" attributes="0"/>
+                      <Component id="jtfCompanyName" alignment="0" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="jbtSave" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -140,9 +146,13 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jlbName" min="-2" max="-2" attributes="0"/>
+                  <Component id="jlbCompanyName" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jtfServiceType" min="-2" max="-2" attributes="0"/>
+                  <Component id="jtfCompanyName" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="jlbCompanyNit" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jtfCompanyNit" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jbtSave" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
@@ -151,15 +161,30 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jlbName">
+        <Component class="javax.swing.JLabel" name="jlbCompanyName">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Verdana" size="10" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Tipo de consumo:"/>
+            <Property name="text" type="java.lang.String" value="Nombre:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jtfServiceType">
+        <Component class="javax.swing.JTextField" name="jtfCompanyName">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Verdana" size="10" style="0"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jlbCompanyNit">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Verdana" size="10" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="NIT:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jtfCompanyNit">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Verdana" size="10" style="0"/>
@@ -188,11 +213,11 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jpServiceTypeList">
+    <Container class="javax.swing.JPanel" name="jpCompanyList">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Listado de tipos de consumo">
+            <TitledBorder title="Listado de empresas">
               <Font PropertyName="font" name="Verdana" size="12" style="1"/>
             </TitledBorder>
           </Border>
@@ -204,7 +229,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jspServiceTypeList" min="-2" pref="320" max="-2" attributes="0"/>
+                  <Component id="jspCompanyList" min="-2" pref="320" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="jpActionButtons" min="-2" max="-2" attributes="0"/>
               </Group>
@@ -212,8 +237,13 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jpActionButtons" alignment="0" max="32767" attributes="0"/>
-              <Component id="jspServiceTypeList" alignment="0" pref="0" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="jpActionButtons" alignment="0" max="32767" attributes="0"/>
+                      <Component id="jspCompanyList" alignment="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -247,7 +277,7 @@
                       <Component id="jbtUpdate" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jbtDelete" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="81" max="32767" attributes="0"/>
+                      <EmptySpace pref="120" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -295,14 +325,14 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JScrollPane" name="jspServiceTypeList">
+        <Container class="javax.swing.JScrollPane" name="jspCompanyList">
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="jtbServiceTypeList">
+            <Component class="javax.swing.JTable" name="jtbCompanyList">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="3" rowCount="0">
