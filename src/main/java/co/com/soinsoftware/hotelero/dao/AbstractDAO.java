@@ -13,6 +13,7 @@ import org.hibernate.Session;
 public abstract class AbstractDAO {
 	
 	protected static final String COLUMN_ENABLED = "enabled";
+	protected static final String COLUMN_ID = "id";
 
 	protected static final String TABLE_COMPANY = "Company";
 	protected static final String TABLE_SERVICE = "Service";

@@ -2,7 +2,16 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.Date;
+import java.util.List;
+
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.table.TableModel;
+
+import co.com.soinsoftware.hotelero.controller.CompanyController;
+import co.com.soinsoftware.hotelero.entity.Company;
+import co.com.soinsoftware.hotelero.util.CompanyTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,17 +28,89 @@ public class JFCompany extends JDialog {
 
 	private static final long serialVersionUID = 372651084892210851L;
 
+	private static final String MSG_NAME_REQUIRED = "Complete el campo nombre de la empresa";
+
+	private static final String MSG_NIT_REQUIRED = "Complete el campo NIT de la empresa";
+
+	private final CompanyController companyController;
+
 	public JFCompany() {
+		this.companyController = new CompanyController();
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
 		this.setLocation((int) (screenSize.getWidth() / 2 - 350),
 				(int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
+		this.setTextFieldLimits();
+		this.refresh();
 	}
 
 	public void refresh() {
+		this.jtfCompanyName.setText("");
+		this.jtfCompanyNit.setText("");
+		this.refreshTableData();
+	}
 
+	private void setTextFieldLimits() {
+		this.jtfCompanyName.setDocument(new JTextFieldLimit(60));
+		this.jtfCompanyNit.setDocument(new JTextFieldLimit(45));
+	}
+
+	private void refreshTableData() {
+		final List<Company> companyList = this.companyController
+				.selectCompanies();
+		final TableModel model = new CompanyTableModel(companyList);
+		this.jtbCompanyList.setModel(model);
+		this.jtbCompanyList.setFillsViewportHeight(true);
+	}
+
+	private boolean validateDataForSave() {
+		boolean valid = true;
+		final String name = this.jtfCompanyName.getText();
+		final String nit = this.jtfCompanyNit.getText();
+		if (name.trim().equals("")) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_NAME_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		} else if (nit.trim().equals("")) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_NIT_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		}
+		return valid;
+	}
+
+	private List<Company> getCompanyListFromTable() {
+		final TableModel model = this.jtbCompanyList.getModel();
+		return ((CompanyTableModel) model).getCompanyList();
+	}
+
+	private boolean hasCompanyToBeUpdated(final List<Company> companyList) {
+		boolean hasElements = false;
+		for (final Company company : companyList) {
+			if ((company.getNewName() != null
+					&& !company.getNewName().equals("") && !company
+					.getNewName().equals(company.getName()))
+					|| (company.getNewNit() != null
+							&& !company.getNewNit().equals("") && !company
+							.getNewNit().equals(company.getNit()))) {
+				hasElements = true;
+				break;
+			}
+		}
+		return hasElements;
+	}
+
+	private boolean hasCompanyToBeDeleted(final List<Company> companyList) {
+		boolean hasElements = false;
+		for (final Company company : companyList) {
+			if (company.isDelete()) {
+				hasElements = true;
+				break;
+			}
+		}
+		return hasElements;
 	}
 
 	/**
@@ -473,15 +554,76 @@ public class JFCompany extends JDialog {
 	}// GEN-LAST:event_jbtCloseActionPerformed
 
 	private void jbtSaveActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtSaveActionPerformed
-		// TODO add your handling code here:
+		if (this.validateDataForSave()) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_SAVE_QUESTION, ViewUtils.TITLE_SAVED);
+			if (confirmation == JOptionPane.OK_OPTION) {
+				final String name = this.jtfCompanyName.getText();
+				final String nit = this.jtfCompanyNit.getText();
+				this.companyController.saveCompany(name, nit);
+				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+				this.refresh();
+			}
+		}
 	}// GEN-LAST:event_jbtSaveActionPerformed
 
 	private void jbtUpdateActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtUpdateActionPerformed
-		// TODO add your handling code here:
+		final List<Company> companyList = this.getCompanyListFromTable();
+		if (companyList != null && this.hasCompanyToBeUpdated(companyList)) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_UPDATE_QUESTION, ViewUtils.TITLE_SAVED);
+			if (confirmation == JOptionPane.OK_OPTION) {
+				for (final Company company : companyList) {
+					boolean edited = false;
+					if (company.getNewName() != null
+							&& !company.getNewName().equals("")
+							&& !company.getNewName().equals(company.getName())) {
+						company.setName(company.getNewName());
+						edited = true;
+					}
+					if (company.getNewNit() != null
+							&& !company.getNewNit().equals("")
+							&& !company.getNewNit().equals(company.getNit())) {
+						company.setNit(company.getNewNit());
+						edited = true;
+					}
+					if (edited) {
+						company.setUpdated(new Date());
+						this.companyController.saveCompany(company);
+					}
+				}
+				ViewUtils.showMessage(this, ViewUtils.MSG_UPDATED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+				this.refresh();
+			}
+		} else {
+			ViewUtils.showMessage(this, ViewUtils.MSG_UNEDITED,
+					ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+		}
 	}// GEN-LAST:event_jbtUpdateActionPerformed
 
 	private void jbtDeleteActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtDeleteActionPerformed
-		// TODO add your handling code here:
+		final List<Company> companyList = this.getCompanyListFromTable();
+		if (companyList != null && this.hasCompanyToBeDeleted(companyList)) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DELETE_QUESTION, ViewUtils.TITLE_SAVED);
+			if (confirmation == JOptionPane.OK_OPTION) {
+				for (final Company company : companyList) {
+					if (company.isDelete()) {
+						company.setEnabled(false);
+						company.setUpdated(new Date());
+						this.companyController.saveCompany(company);
+					}
+				}
+				ViewUtils.showMessage(this, ViewUtils.MSG_DELETED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+				this.refresh();
+			}
+		} else {
+			ViewUtils.showMessage(this, ViewUtils.MSG_UNSELECTED,
+					ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+		}
 	}// GEN-LAST:event_jbtDeleteActionPerformed
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables

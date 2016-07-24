@@ -20,7 +20,7 @@ public class CompanyDAO extends AbstractDAO {
 		Set<Company> companySet = null;
 		try {
 			final Query query = this.createQuery(this
-					.getSelectStatementEnabled());
+					.getSelectStatementNoFirst());
 			companySet = (query.list().isEmpty()) ? null
 					: new HashSet<Company>(query.list());
 		} catch (HibernateException ex) {
@@ -39,6 +39,15 @@ public class CompanyDAO extends AbstractDAO {
 		final StringBuilder query = new StringBuilder();
 		query.append(SQL_FROM);
 		query.append(TABLE_COMPANY);
+		return query.toString();
+	}
+
+	protected String getSelectStatementNoFirst() {
+		final StringBuilder query = new StringBuilder(
+				this.getSelectStatementEnabled());
+		query.append(SQL_AND);
+		query.append(COLUMN_ID);
+		query.append(" <> 1 ");
 		return query.toString();
 	}
 }
