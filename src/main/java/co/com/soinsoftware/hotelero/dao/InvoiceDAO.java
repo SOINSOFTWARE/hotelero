@@ -72,6 +72,21 @@ public class InvoiceDAO extends AbstractDAO {
 		return invoiceSet;
 	}
 
+	@SuppressWarnings("unchecked")
+	public Set<Invoice> selectByStatus(final Roomstatus roomStatus) {
+		Set<Invoice> invoiceSet = null;
+		try {
+			final Query query = this.createQuery(this
+					.getSelectStatementByStatus());
+			query.setParameter(COLUMN_ROOM_STATUS, roomStatus);
+			invoiceSet = (query.list().isEmpty()) ? null
+					: new HashSet<Invoice>(query.list());
+		} catch (HibernateException ex) {
+			System.out.println(ex);
+		}
+		return invoiceSet;
+	}
+
 	public void save(final Invoice invoice) {
 		boolean isNew = (invoice.getId() == null) ? true : false;
 		this.save(invoice, isNew);
@@ -134,6 +149,16 @@ public class InvoiceDAO extends AbstractDAO {
 		query.append(SQL_AND);
 		query.append(COLUMN_ROOM_STATUS);
 		query.append(SQL_DISTINCT_WITH_PARAM);
+		query.append(COLUMN_ROOM_STATUS);
+		return query.toString();
+	}
+
+	private String getSelectStatementByStatus() {
+		final StringBuilder query = new StringBuilder(
+				this.getSelectStatementEnabled());
+		query.append(SQL_AND);
+		query.append(COLUMN_ROOM_STATUS);
+		query.append(SQL_EQUALS_WITH_PARAM);
 		query.append(COLUMN_ROOM_STATUS);
 		return query.toString();
 	}

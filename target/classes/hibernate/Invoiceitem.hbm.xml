@@ -13,6 +13,12 @@
     <many-to-one class="co.com.soinsoftware.hotelero.entity.Service" fetch="select" name="service">
       <column name="idservice" not-null="true"/>
     </many-to-one>
+	<property name="quantity" type="int">
+      <column name="quantity" not-null="true"/>
+    </property>
+	<property name="unitvalue" type="long">
+      <column name="unitvalue" not-null="true"/>
+    </property>
     <property name="value" type="long">
       <column name="value" not-null="true"/>
     </property>

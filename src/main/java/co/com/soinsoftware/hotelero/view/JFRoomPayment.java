@@ -39,6 +39,7 @@ public class JFRoomPayment extends JDialog {
 	 */
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
 	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
@@ -102,6 +103,11 @@ public class JFRoomPayment extends JDialog {
 		jlbRoom.setText("Habitación:");
 
 		jcbRoom.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+		jcbRoom.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jcbRoomActionPerformed(evt);
+			}
+		});
 
 		jlbIdentification.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
 		jlbIdentification.setText("Cedula:");
@@ -529,6 +535,10 @@ public class JFRoomPayment extends JDialog {
 
 		pack();
 	}// </editor-fold>//GEN-END:initComponents
+
+	private void jcbRoomActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbRoomActionPerformed
+		// TODO add your handling code here:
+	}// GEN-LAST:event_jcbRoomActionPerformed
 
 	private void jbtCloseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtCloseActionPerformed
 		this.setVisible(false);

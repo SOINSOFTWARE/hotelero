@@ -39,6 +39,10 @@ public class InvoiceBLL {
 		return this.dao.selectNotEnabled(roomStatus, initialDate, finalDate);
 	}
 
+	public Set<Invoice> selectByStatus(final Roomstatus roomStatus) {
+		return this.dao.selectByStatus(roomStatus);
+	}
+
 	public void save(final Invoice invoice) {
 		this.dao.save(invoice);
 	}

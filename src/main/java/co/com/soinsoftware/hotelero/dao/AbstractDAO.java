@@ -18,6 +18,7 @@ public abstract class AbstractDAO {
 
 	protected static final String TABLE_COMPANY = "Company";
 	protected static final String TABLE_INVOICE = "Invoice";
+	protected static final String TABLE_INVOICE_ITEM = "Invoiceitem";
 	protected static final String TABLE_INVOICE_STATUS = "Invoicestatus";
 	protected static final String TABLE_ROOM = "Room";
 	protected static final String TABLE_ROOM_STATUS = "Roomstatus";

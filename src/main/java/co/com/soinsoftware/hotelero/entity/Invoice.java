@@ -48,6 +48,7 @@ public class Invoice implements Serializable, Comparable<Invoice> {
 
 	public Invoice() {
 		super();
+		this.delete = false;
 	}
 
 	public Invoice(final Invoicestatus invoicestatus, final Room room,
@@ -63,6 +64,7 @@ public class Invoice implements Serializable, Comparable<Invoice> {
 		this.creation = creation;
 		this.updated = updated;
 		this.enabled = enabled;
+		this.delete = false;
 	}
 
 	public Invoice(final Company company, final Invoicestatus invoicestatus,
@@ -85,6 +87,7 @@ public class Invoice implements Serializable, Comparable<Invoice> {
 		this.updated = updated;
 		this.enabled = enabled;
 		this.invoiceitems = invoiceitems;
+		this.delete = false;
 	}
 
 	public Integer getId() {

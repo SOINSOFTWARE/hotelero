@@ -2,7 +2,25 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.table.TableModel;
+
+import co.com.soinsoftware.hotelero.controller.InvoiceController;
+import co.com.soinsoftware.hotelero.controller.ServiceController;
+import co.com.soinsoftware.hotelero.entity.Invoice;
+import co.com.soinsoftware.hotelero.entity.Invoiceitem;
+import co.com.soinsoftware.hotelero.entity.Room;
+import co.com.soinsoftware.hotelero.entity.Service;
+import co.com.soinsoftware.hotelero.entity.Servicetype;
+import co.com.soinsoftware.hotelero.entity.User;
+import co.com.soinsoftware.hotelero.util.InvoiceItemTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,17 +37,199 @@ public class JFRoomService extends JDialog {
 
 	private static final long serialVersionUID = -1408671591230972102L;
 
+	private static final String MSG_DATE_REQUIRED = "Complete el campo fecha del servicio";
+
+	private static final String MSG_ROOM_REQUIRED = "Seleccione una habitación";
+
+	private static final String MSG_QUANTITY_EQUALS_TO_ZERO = "El campo cantidad debe ser mayor a 0";
+
+	private static final String MSG_SERVICE_REQUIRED = "Seleccione un servicio";
+
+	private static final String MSG_SERVICE_CATEGORY_REQUIRED = "Seleccione un tipo de servicio";
+
+	private static final String MSG_VALUE_EQUALS_TO_ZERO_REQUIRED = "El campo precio debe ser mayor a 0";
+
+	private final InvoiceController invoiceController;
+
+	private final ServiceController serviceController;
+
+	private List<Invoice> invoiceList;
+
+	private List<Servicetype> serviceTypeList;
+
+	private List<Service> serviceList;
+
 	public JFRoomService() {
+		this.invoiceController = new InvoiceController();
+		this.serviceController = new ServiceController();
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
 		this.setLocation((int) (screenSize.getWidth() / 2 - 350),
 				(int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
+		this.refresh();
 	}
 
 	public void refresh() {
+		this.setRoomModel();
+		this.setEnabledNewServiceFields(false);
+		this.refreshService();
+	}
 
+	private void refreshService() {
+		this.jdcInitialDate.setDate(null);
+		this.setServiceTypeModel();
+		this.setServiceModel(null);
+		this.jtfServiceQuantity.setText("");
+		this.jtfServiceValue.setText("");
+		this.refreshTableData();
+	}
+
+	private void refreshTableData() {
+		final Invoice invoice = this.getInvoiceSelected();
+		final List<Invoiceitem> invoiceItemList = (invoice != null) ? this.invoiceController
+				.selectInvoiceItem(invoice) : new ArrayList<>();
+		final TableModel model = new InvoiceItemTableModel(invoiceItemList);
+		this.jtbService.setModel(model);
+		this.jtbService.setFillsViewportHeight(true);
+	}
+
+	private void setRoomModel() {
+		this.invoiceList = this.invoiceController.selectNotEnabled();
+		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		model.addElement("Seleccione uno...");
+		for (final Invoice invoice : this.invoiceList) {
+			final Room room = invoice.getRoom();
+			model.addElement(room.getName());
+		}
+		this.jcbRoom.setModel(model);
+	}
+
+	private void setServiceTypeModel() {
+		this.serviceTypeList = this.serviceController.selectServiceTypes();
+		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		model.addElement("Seleccione uno...");
+		for (final Servicetype serviceType : this.serviceTypeList) {
+			model.addElement(serviceType.getName());
+		}
+		this.jcbServiceCategory.setModel(model);
+	}
+
+	private void setServiceModel(final Servicetype serviceType) {
+		this.serviceList = (serviceType != null) ? new ArrayList<>(
+				serviceType.getServices()) : new ArrayList<>();
+		Collections.sort(this.serviceList);
+		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		model.addElement("Seleccione uno...");
+		for (final Service service : this.serviceList) {
+			model.addElement(service.getName());
+		}
+		this.jcbService.setModel(model);
+	}
+
+	private Invoice getInvoiceSelected() {
+		Invoice invoice = null;
+		if (this.jcbRoom.getSelectedIndex() > 0) {
+			final int index = this.jcbRoom.getSelectedIndex() - 1;
+			invoice = this.invoiceList.get(index);
+		}
+		return invoice;
+	}
+
+	private Servicetype getServiceTypeSelected() {
+		Servicetype serviceType = null;
+		if (this.jcbServiceCategory.getSelectedIndex() > 0) {
+			final int index = this.jcbServiceCategory.getSelectedIndex() - 1;
+			serviceType = this.serviceTypeList.get(index);
+		}
+		return serviceType;
+	}
+
+	private Service getServiceSelected() {
+		Service service = null;
+		if (this.jcbService.getSelectedIndex() > 0) {
+			final int index = this.jcbService.getSelectedIndex() - 1;
+			service = this.serviceList.get(index);
+		}
+		return service;
+	}
+
+	private void setEnabledNewServiceFields(final boolean enabled) {
+		this.jdcInitialDate.setEnabled(enabled);
+		this.jcbServiceCategory.setEnabled(enabled);
+		this.jcbService.setEnabled(enabled);
+		this.jtfServiceQuantity.setEnabled(enabled);
+		this.jtfServiceValue.setEnabled(enabled);
+	}
+
+	private long getServiceValue() {
+		String valStr = this.jtfServiceValue.getText();
+		if (valStr.equals("")) {
+			valStr = "0";
+		}
+		return Long.parseLong(valStr.replace(".", "").replace(",", ""));
+	}
+
+	private int getServiceQuantity() {
+		String quantityStr = this.jtfServiceQuantity.getText();
+		if (quantityStr.equals("")) {
+			quantityStr = "0";
+		}
+		return Integer.parseInt(quantityStr.replace(".", "").replace(",", ""));
+	}
+
+	private boolean validateDataForSave() {
+		boolean valid = true;
+		final Invoice invoice = this.getInvoiceSelected();
+		final Date invoiceItemDate = this.jdcInitialDate.getDate();
+		final Servicetype serviceType = this.getServiceTypeSelected();
+		final Service service = this.getServiceSelected();
+		final int quantity = this.getServiceQuantity();
+		final long value = this.getServiceValue();
+		if (invoice == null) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_ROOM_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		} else if (invoiceItemDate == null) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_DATE_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		} else if (serviceType == null) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_SERVICE_CATEGORY_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		} else if (service == null) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_SERVICE_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		} else if (quantity == 0) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_QUANTITY_EQUALS_TO_ZERO,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		} else if (value == 0) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_VALUE_EQUALS_TO_ZERO_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		}
+		return valid;
+	}
+
+	private List<Invoiceitem> getInvoiceItemListFromTable() {
+		final TableModel model = this.jtbService.getModel();
+		return ((InvoiceItemTableModel) model).getInvoiceItemList();
+	}
+
+	private boolean hasServiceToBeDeleted(
+			final List<Invoiceitem> invoiceItemList) {
+		boolean hasElements = false;
+		for (final Invoiceitem invoiceItem : invoiceItemList) {
+			if (invoiceItem.isDelete()) {
+				hasElements = true;
+				break;
+			}
+		}
+		return hasElements;
 	}
 
 	/**
@@ -37,6 +237,9 @@ public class JFRoomService extends JDialog {
 	 * WARNING: Do NOT modify this code. The content of this method is always
 	 * regenerated by the Form Editor.
 	 */
+	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
 	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
@@ -62,6 +265,8 @@ public class JFRoomService extends JDialog {
 		jtfServiceValue = new javax.swing.JFormattedTextField();
 		jcbService = new javax.swing.JComboBox<String>();
 		jlbService = new javax.swing.JLabel();
+		jlbServiceQuantity = new javax.swing.JLabel();
+		jtfServiceQuantity = new javax.swing.JFormattedTextField();
 		jbtDeleteService = new javax.swing.JButton();
 		jpAction = new javax.swing.JPanel();
 		jbtClose = new javax.swing.JButton();
@@ -103,9 +308,11 @@ public class JFRoomService extends JDialog {
 		jlbRoom.setText("Habitación:");
 
 		jcbRoom.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-		jcbRoom.setModel(new javax.swing.DefaultComboBoxModel<String>(
-				new String[] { "---Seleccionar---", "101", "102", "103", "..",
-						"...", "...", "....", "...", " " }));
+		jcbRoom.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jcbRoomActionPerformed(evt);
+			}
+		});
 
 		jlbIdentification.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
 		jlbIdentification.setText("Cedula:");
@@ -158,9 +365,11 @@ public class JFRoomService extends JDialog {
 
 		jcbServiceCategory.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
 		jcbServiceCategory
-				.setModel(new javax.swing.DefaultComboBoxModel<String>(
-						new String[] { "---Seleccionar---", "Bar", "Alimentos",
-								"Otros" }));
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent evt) {
+						jcbServiceCategoryActionPerformed(evt);
+					}
+				});
 
 		jlbServiceValue.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
 		jlbServiceValue.setText("Precio:");
@@ -174,13 +383,23 @@ public class JFRoomService extends JDialog {
 		jtfServiceValue.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
 
 		jcbService.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-		jcbService
-				.setModel(new javax.swing.DefaultComboBoxModel<String>(
-						new String[] { "---Seleccionar---", "Bar", "Alimentos",
-								"Otros" }));
+		jcbService.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jcbServiceActionPerformed(evt);
+			}
+		});
 
 		jlbService.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
 		jlbService.setText("Servicio:");
+
+		jlbServiceQuantity.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+		jlbServiceQuantity.setText("Cantidad:");
+
+		jtfServiceQuantity
+				.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
+						new javax.swing.text.NumberFormatter(
+								new java.text.DecimalFormat("#,##0"))));
+		jtfServiceQuantity.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
 
 		javax.swing.GroupLayout jpCreateServiceLayout = new javax.swing.GroupLayout(
 				jpCreateService);
@@ -197,12 +416,55 @@ public class JFRoomService extends JDialog {
 												jpCreateServiceLayout
 														.createParallelGroup(
 																javax.swing.GroupLayout.Alignment.LEADING)
+														.addComponent(
+																jdcInitialDate,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																130,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																jlbServicelDate))
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+										.addGroup(
+												jpCreateServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addComponent(
+																jcbServiceCategory,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																130,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																jlbServiceCategory)
+														.addComponent(
+																jlbService)
+														.addComponent(
+																jcbService,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																130,
+																javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addGap(18, 18, 18)
+										.addGroup(
+												jpCreateServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
 														.addGroup(
-																javax.swing.GroupLayout.Alignment.TRAILING,
 																jpCreateServiceLayout
 																		.createSequentialGroup()
-																		.addGap(0,
-																				0,
+																		.addGroup(
+																				jpCreateServiceLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.LEADING)
+																						.addComponent(
+																								jlbServiceValue)
+																						.addComponent(
+																								jtfServiceValue,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								120,
+																								javax.swing.GroupLayout.PREFERRED_SIZE))
+																		.addPreferredGap(
+																				javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+																				94,
 																				Short.MAX_VALUE)
 																		.addComponent(
 																				jbtAddService,
@@ -217,53 +479,14 @@ public class JFRoomService extends JDialog {
 																						.createParallelGroup(
 																								javax.swing.GroupLayout.Alignment.LEADING)
 																						.addComponent(
-																								jdcInitialDate,
+																								jlbServiceQuantity)
+																						.addComponent(
+																								jtfServiceQuantity,
 																								javax.swing.GroupLayout.PREFERRED_SIZE,
-																								130,
-																								javax.swing.GroupLayout.PREFERRED_SIZE)
-																						.addComponent(
-																								jlbServicelDate))
-																		.addPreferredGap(
-																				javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																		.addGroup(
-																				jpCreateServiceLayout
-																						.createParallelGroup(
-																								javax.swing.GroupLayout.Alignment.LEADING)
-																						.addComponent(
-																								jcbServiceCategory,
-																								javax.swing.GroupLayout.PREFERRED_SIZE,
-																								130,
-																								javax.swing.GroupLayout.PREFERRED_SIZE)
-																						.addComponent(
-																								jlbServiceCategory))
-																		.addPreferredGap(
-																				javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																		.addGroup(
-																				jpCreateServiceLayout
-																						.createParallelGroup(
-																								javax.swing.GroupLayout.Alignment.LEADING)
-																						.addComponent(
-																								jlbService)
-																						.addComponent(
-																								jcbService,
-																								javax.swing.GroupLayout.PREFERRED_SIZE,
-																								130,
+																								120,
 																								javax.swing.GroupLayout.PREFERRED_SIZE))
-																		.addPreferredGap(
-																				javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																		.addGroup(
-																				jpCreateServiceLayout
-																						.createParallelGroup(
-																								javax.swing.GroupLayout.Alignment.LEADING)
-																						.addComponent(
-																								jtfServiceValue,
-																								javax.swing.GroupLayout.PREFERRED_SIZE,
-																								140,
-																								javax.swing.GroupLayout.PREFERRED_SIZE)
-																						.addComponent(
-																								jlbServiceValue))
 																		.addGap(0,
-																				17,
+																				0,
 																				Short.MAX_VALUE)))
 										.addContainerGap()));
 		jpCreateServiceLayout
@@ -283,9 +506,7 @@ public class JFRoomService extends JDialog {
 														.addComponent(
 																jlbServiceCategory)
 														.addComponent(
-																jlbServiceValue)
-														.addComponent(
-																jlbService))
+																jlbServiceQuantity))
 										.addPreferredGap(
 												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 										.addGroup(
@@ -307,24 +528,57 @@ public class JFRoomService extends JDialog {
 																				javax.swing.GroupLayout.DEFAULT_SIZE,
 																				javax.swing.GroupLayout.PREFERRED_SIZE)
 																		.addComponent(
-																				jtfServiceValue,
-																				javax.swing.GroupLayout.PREFERRED_SIZE,
-																				javax.swing.GroupLayout.DEFAULT_SIZE,
-																				javax.swing.GroupLayout.PREFERRED_SIZE)
-																		.addComponent(
-																				jcbService,
+																				jtfServiceQuantity,
 																				javax.swing.GroupLayout.PREFERRED_SIZE,
 																				javax.swing.GroupLayout.DEFAULT_SIZE,
 																				javax.swing.GroupLayout.PREFERRED_SIZE)))
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-												24, Short.MAX_VALUE)
-										.addComponent(
-												jbtAddService,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addContainerGap()));
+										.addGroup(
+												jpCreateServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addGroup(
+																jpCreateServiceLayout
+																		.createSequentialGroup()
+																		.addPreferredGap(
+																				javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+																				24,
+																				Short.MAX_VALUE)
+																		.addGroup(
+																				jpCreateServiceLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.BASELINE)
+																						.addComponent(
+																								jbtAddService,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								javax.swing.GroupLayout.DEFAULT_SIZE,
+																								javax.swing.GroupLayout.PREFERRED_SIZE)
+																						.addComponent(
+																								jcbService,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								javax.swing.GroupLayout.DEFAULT_SIZE,
+																								javax.swing.GroupLayout.PREFERRED_SIZE)
+																						.addComponent(
+																								jtfServiceValue,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								javax.swing.GroupLayout.DEFAULT_SIZE,
+																								javax.swing.GroupLayout.PREFERRED_SIZE))
+																		.addContainerGap())
+														.addGroup(
+																jpCreateServiceLayout
+																		.createSequentialGroup()
+																		.addPreferredGap(
+																				javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+																		.addGroup(
+																				jpCreateServiceLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.LEADING)
+																						.addComponent(
+																								jlbServiceValue)
+																						.addComponent(
+																								jlbService))
+																		.addContainerGap(
+																				javax.swing.GroupLayout.DEFAULT_SIZE,
+																				Short.MAX_VALUE)))));
 
 		jbtDeleteService.setBackground(new java.awt.Color(16, 135, 221));
 		jbtDeleteService.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -595,16 +849,108 @@ public class JFRoomService extends JDialog {
 		pack();
 	}// </editor-fold>//GEN-END:initComponents
 
+	private void jcbRoomActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbRoomActionPerformed
+		final Invoice invoice = this.getInvoiceSelected();
+		this.refreshService();
+		if (invoice != null) {
+			this.setEnabledNewServiceFields(true);
+			final User user = invoice.getUser();
+			this.jtfIdentification.setText(String.valueOf(user
+					.getIdentification()));
+			this.jtfName.setText(user.getName());
+			this.jdcInitialDate.setMinSelectableDate(invoice.getInitialdate());
+			this.jdcInitialDate.setMaxSelectableDate(invoice.getFinaldate());
+		} else {
+			this.setEnabledNewServiceFields(false);
+			this.jtfIdentification.setText("");
+			this.jtfName.setText("");
+		}
+	}// GEN-LAST:event_jcbRoomActionPerformed
+
+	private void jcbServiceCategoryActionPerformed(
+			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbServiceCategoryActionPerformed
+		final Servicetype serviceType = this.getServiceTypeSelected();
+		this.setServiceModel(serviceType);
+		this.jtfServiceValue.setText("");
+		this.jtfServiceQuantity.setText("");
+	}// GEN-LAST:event_jcbServiceCategoryActionPerformed
+
+	private void jcbServiceActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbServiceActionPerformed
+		final Service service = this.getServiceSelected();
+		if (service != null) {
+			this.jtfServiceValue.setText(String.valueOf(service.getValue()));
+			if (service.getValue() == 0) {
+				this.jtfServiceValue.setEditable(true);
+			} else {
+				this.jtfServiceValue.setEditable(false);
+			}
+		}
+	}// GEN-LAST:event_jcbServiceActionPerformed
+
 	private void jbtCloseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtCloseActionPerformed
 		this.setVisible(false);
 	}// GEN-LAST:event_jbtCloseActionPerformed
 
 	private void jbtAddServiceActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtAddServiceActionPerformed
-		// TODO add your handling code here:
+		if (this.validateDataForSave()) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_SAVE_QUESTION, ViewUtils.TITLE_SAVED);
+			if (confirmation == JOptionPane.OK_OPTION) {
+				final Invoice invoice = this.getInvoiceSelected();
+				final Date invoiceItemDate = this.jdcInitialDate.getDate();
+				final Service service = this.getServiceSelected();
+				final int quantity = this.getServiceQuantity();
+				final long unitValue = this.getServiceValue();
+				final long value = quantity * unitValue;
+				this.invoiceController.saveInvoiceItem(invoice, service,
+						quantity, unitValue, value, invoiceItemDate);
+				final long invoiceValue = value + invoice.getValue();
+				invoice.setValue(invoiceValue);
+				invoice.setUpdated(new Date());
+				this.invoiceController.saveInvoice(invoice);
+				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+				this.refreshService();
+			}
+		}
 	}// GEN-LAST:event_jbtAddServiceActionPerformed
 
 	private void jbtDeleteServiceActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtDeleteServiceActionPerformed
-		// TODO add your handling code here:
+		final Invoice invoice = this.getInvoiceSelected();
+		if (invoice == null) {
+			ViewUtils.showMessage(this, MSG_ROOM_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		} else {
+			final List<Invoiceitem> invoiceItemList = this
+					.getInvoiceItemListFromTable();
+			if (invoiceItemList != null
+					&& this.hasServiceToBeDeleted(invoiceItemList)) {
+				final int confirmation = ViewUtils.showConfirmDialog(this,
+						ViewUtils.MSG_DELETE_QUESTION, ViewUtils.TITLE_SAVED);
+				if (confirmation == JOptionPane.OK_OPTION) {
+					long value = 0;
+					for (final Invoiceitem invoiceItem : invoiceItemList) {
+						if (invoiceItem.isDelete()) {
+							invoiceItem.setEnabled(false);
+							invoiceItem.setUpdated(new Date());
+							this.invoiceController.saveInvoiceItem(invoiceItem);
+							value += invoiceItem.getValue();
+						}
+					}
+					final long invoiceValue = invoice.getValue() - value;
+					invoice.setValue(invoiceValue);
+					invoice.setUpdated(new Date());
+					this.invoiceController.saveInvoice(invoice);
+					ViewUtils.showMessage(this, ViewUtils.MSG_DELETED,
+							ViewUtils.TITLE_SAVED,
+							JOptionPane.INFORMATION_MESSAGE);
+					this.refreshService();
+				}
+			} else {
+				ViewUtils.showMessage(this, ViewUtils.MSG_UNSELECTED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
 	}// GEN-LAST:event_jbtDeleteServiceActionPerformed
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables
@@ -620,6 +966,7 @@ public class JFRoomService extends JDialog {
 	private javax.swing.JLabel jlbRoom;
 	private javax.swing.JLabel jlbService;
 	private javax.swing.JLabel jlbServiceCategory;
+	private javax.swing.JLabel jlbServiceQuantity;
 	private javax.swing.JLabel jlbServiceValue;
 	private javax.swing.JLabel jlbServicelDate;
 	private javax.swing.JLabel jlbTitle;
@@ -631,6 +978,7 @@ public class JFRoomService extends JDialog {
 	private javax.swing.JTable jtbService;
 	private javax.swing.JFormattedTextField jtfIdentification;
 	private javax.swing.JTextField jtfName;
+	private javax.swing.JFormattedTextField jtfServiceQuantity;
 	private javax.swing.JFormattedTextField jtfServiceValue;
 	private javax.swing.JLabel lbImage;
 	// End of variables declaration//GEN-END:variables

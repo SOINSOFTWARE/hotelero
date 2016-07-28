@@ -7,19 +7,23 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import co.com.soinsoftware.hotelero.bll.InvoiceBLL;
+import co.com.soinsoftware.hotelero.bll.InvoiceItemBLL;
 import co.com.soinsoftware.hotelero.bll.InvoiceStatusBLL;
 import co.com.soinsoftware.hotelero.bll.RoomBLL;
 import co.com.soinsoftware.hotelero.bll.RoomStatusBLL;
 import co.com.soinsoftware.hotelero.entity.Company;
 import co.com.soinsoftware.hotelero.entity.Invoice;
+import co.com.soinsoftware.hotelero.entity.Invoiceitem;
 import co.com.soinsoftware.hotelero.entity.Invoicestatus;
 import co.com.soinsoftware.hotelero.entity.Room;
 import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.Service;
 import co.com.soinsoftware.hotelero.entity.User;
 
 /**
@@ -31,6 +35,8 @@ public class InvoiceController {
 
 	private final InvoiceBLL invoiceBLL;
 
+	private final InvoiceItemBLL invoiceItemBLL;
+
 	private final InvoiceStatusBLL invoiceStatusBLL;
 
 	private final RoomBLL roomBLL;
@@ -40,6 +46,7 @@ public class InvoiceController {
 	public InvoiceController() {
 		super();
 		this.invoiceBLL = InvoiceBLL.getInstance();
+		this.invoiceItemBLL = InvoiceItemBLL.getInstance();
 		this.invoiceStatusBLL = InvoiceStatusBLL.getInstance();
 		this.roomBLL = RoomBLL.getInstance();
 		this.roomStatusBLL = RoomStatusBLL.getInstance();
@@ -72,6 +79,39 @@ public class InvoiceController {
 				.selectRoomStatusEnabled();
 		return this.invoiceBLL.selectNotEnabled(roomStatus, initialDate,
 				finalDate);
+	}
+
+	public List<Invoice> selectNotEnabled() {
+		List<Invoice> invoiceList = new ArrayList<>();
+		final Roomstatus roomStatus = this.roomStatusBLL
+				.selectRoomStatusDisabled();
+		final Set<Invoice> invoiceSet = this.invoiceBLL
+				.selectByStatus(roomStatus);
+		if (invoiceSet != null) {
+			invoiceList = new ArrayList<>(invoiceSet);
+			Collections.sort(invoiceList, new Comparator<Invoice>() {
+
+				@Override
+				public int compare(final Invoice firstInvoice,
+						final Invoice secondInvoice) {
+					final Room firstRoom = firstInvoice.getRoom();
+					final Room secondRoom = secondInvoice.getRoom();
+					return firstRoom.getName().compareTo(secondRoom.getName());
+				}
+			});
+		}
+		return invoiceList;
+	}
+
+	public List<Invoiceitem> selectInvoiceItem(final Invoice invoice) {
+		List<Invoiceitem> invoiceItemList = new ArrayList<>();
+		final Set<Invoiceitem> invoiceItemSet = this.invoiceItemBLL
+				.selectByInvoice(invoice);
+		if (invoiceItemSet != null) {
+			invoiceItemList = new ArrayList<>(invoiceItemSet);
+			Collections.sort(invoiceItemList);
+		}
+		return invoiceItemList;
 	}
 
 	public Roomstatus selectRoomStatusEnabled() {
@@ -122,6 +162,21 @@ public class InvoiceController {
 
 	public void saveInvoice(final Invoice invoice) {
 		this.invoiceBLL.save(invoice);
+	}
+
+	public Invoiceitem saveInvoiceItem(final Invoice invoice,
+			final Service service, final int quantity, final long unitvalue,
+			final long value, final Date invoiceItemDate) {
+		final Date currentDate = new Date();
+		final Invoiceitem invoiceItem = new Invoiceitem(invoice, service,
+				quantity, unitvalue, value, invoiceItemDate, currentDate,
+				currentDate, true);
+		this.saveInvoiceItem(invoiceItem);
+		return invoiceItem;
+	}
+
+	public void saveInvoiceItem(final Invoiceitem invoiceItem) {
+		this.invoiceItemBLL.save(invoiceItem);
 	}
 
 	@SuppressWarnings("deprecation")
