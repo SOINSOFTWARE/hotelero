@@ -34,8 +34,11 @@ public class JFCompany extends JDialog {
 
 	private final CompanyController companyController;
 
-	public JFCompany() {
+	private final JFRoom jfRoom;
+
+	public JFCompany(final JFRoom jfRoom) {
 		this.companyController = new CompanyController();
+		this.jfRoom = jfRoom;
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
@@ -564,6 +567,7 @@ public class JFCompany extends JDialog {
 				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED,
 						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 				this.refresh();
+				this.jfRoom.setCompanyModel();
 			}
 		}
 	}// GEN-LAST:event_jbtSaveActionPerformed
@@ -596,6 +600,7 @@ public class JFCompany extends JDialog {
 				ViewUtils.showMessage(this, ViewUtils.MSG_UPDATED,
 						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 				this.refresh();
+				this.jfRoom.setCompanyModel();
 			}
 		} else {
 			ViewUtils.showMessage(this, ViewUtils.MSG_UNEDITED,
@@ -619,6 +624,7 @@ public class JFCompany extends JDialog {
 				ViewUtils.showMessage(this, ViewUtils.MSG_DELETED,
 						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 				this.refresh();
+				this.jfRoom.setCompanyModel();
 			}
 		} else {
 			ViewUtils.showMessage(this, ViewUtils.MSG_UNSELECTED,

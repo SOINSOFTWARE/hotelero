@@ -27,6 +27,10 @@ public class CompanyBLL {
 		return this.dao.select();
 	}
 
+	public Company select(final String name) {
+		return this.dao.select(name);
+	}
+
 	public void save(final Company company) {
 		this.dao.save(company);
 	}

@@ -10,7 +10,7 @@ import java.util.Set;
  * @since 18/07/2016
  * @version 1.0
  */
-public class Invoice implements Serializable {
+public class Invoice implements Serializable, Comparable<Invoice> {
 
 	private static final long serialVersionUID = 3003481043888000893L;
 
@@ -43,6 +43,8 @@ public class Invoice implements Serializable {
 	private boolean enabled;
 
 	private Set<Invoiceitem> invoiceitems = new HashSet<>(0);
+
+	private volatile boolean delete;
 
 	public Invoice() {
 		super();
@@ -203,5 +205,89 @@ public class Invoice implements Serializable {
 
 	public void setInvoiceitems(final Set<Invoiceitem> invoiceitems) {
 		this.invoiceitems = invoiceitems;
+	}
+
+	public boolean isDelete() {
+		return delete;
+	}
+
+	public void setDelete(final boolean delete) {
+		this.delete = delete;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((creation == null) ? 0 : creation.hashCode());
+		result = prime * result + (enabled ? 1231 : 1237);
+		result = prime * result
+				+ ((finaldate == null) ? 0 : finaldate.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((initialdate == null) ? 0 : initialdate.hashCode());
+		result = prime * result
+				+ ((sitefrom == null) ? 0 : sitefrom.hashCode());
+		result = prime * result + ((siteto == null) ? 0 : siteto.hashCode());
+		result = prime * result + ((updated == null) ? 0 : updated.hashCode());
+		result = prime * result + (int) (value ^ (value >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Invoice other = (Invoice) obj;
+		if (creation == null) {
+			if (other.creation != null)
+				return false;
+		} else if (!creation.equals(other.creation))
+			return false;
+		if (enabled != other.enabled)
+			return false;
+		if (finaldate == null) {
+			if (other.finaldate != null)
+				return false;
+		} else if (!finaldate.equals(other.finaldate))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (initialdate == null) {
+			if (other.initialdate != null)
+				return false;
+		} else if (!initialdate.equals(other.initialdate))
+			return false;
+		if (sitefrom == null) {
+			if (other.sitefrom != null)
+				return false;
+		} else if (!sitefrom.equals(other.sitefrom))
+			return false;
+		if (siteto == null) {
+			if (other.siteto != null)
+				return false;
+		} else if (!siteto.equals(other.siteto))
+			return false;
+		if (updated == null) {
+			if (other.updated != null)
+				return false;
+		} else if (!updated.equals(other.updated))
+			return false;
+		if (value != other.value)
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(final Invoice other) {
+		return this.initialdate.compareTo(other.initialdate);
 	}
 }
