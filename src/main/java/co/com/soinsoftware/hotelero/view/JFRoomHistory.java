@@ -2,8 +2,20 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
+import javax.swing.table.TableModel;
+
+import co.com.soinsoftware.hotelero.controller.CompanyController;
+import co.com.soinsoftware.hotelero.controller.InvoiceController;
+import co.com.soinsoftware.hotelero.entity.Company;
+import co.com.soinsoftware.hotelero.entity.Invoice;
+import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.util.InvoiceTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,17 +32,123 @@ public class JFRoomHistory extends JDialog {
 
 	private static final long serialVersionUID = 3967944685330855230L;
 
+	private final CompanyController companyController;
+
+	private final InvoiceController invoiceController;
+
+	private List<Company> companyList;
+
+	private List<Invoicestatus> invoiceStatusList;
+
 	public JFRoomHistory() {
+		this.companyController = new CompanyController();
+		this.invoiceController = new InvoiceController();
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
 		this.setLocation((int) (screenSize.getWidth() / 2 - 350),
 				(int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
+		this.setMonthModel();
+		this.setInvoiceStatusModel();
+		this.setCompanyModel();
+		this.refresh();
 	}
 
 	public void refresh() {
+		this.setJlsMonthToCurrentMonth();
+		this.jcbAccountState.setSelectedIndex(0);
+		this.jcbCompany.setSelectedIndex(0);
+		this.jcbCompany.setEnabled(false);
+		this.refreshTableData();
+	}
 
+	private void setJlsMonthToCurrentMonth() {
+		final Calendar calendar = Calendar.getInstance();
+		final int month = calendar.get(Calendar.MONTH);
+		this.jlsMonth.setSelectedIndex(month);
+	}
+
+	private void setMonthModel() {
+		final String[] months = { "Enero", "Febrero", "Marzo", "Abril", "Mayo",
+				"Junio", "Julio", "Agosto", "Septiembre", "Octubre",
+				"Noviembre", "Diciembre" };
+		this.jlsMonth.setListData(months);
+	}
+
+	private void setInvoiceStatusModel() {
+		final Invoicestatus statusBillToCompany = this.invoiceController
+				.selectInvoiceStatusBillToCompany();
+		final Invoicestatus statusPaid = this.invoiceController
+				.selectInvoiceStatusPaid();
+		this.invoiceStatusList = new ArrayList<>();
+		this.invoiceStatusList.add(statusPaid);
+		this.invoiceStatusList.add(statusBillToCompany);
+		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		model.addElement("Todos");
+		for (final Invoicestatus invoiceStatus : this.invoiceStatusList) {
+			model.addElement(invoiceStatus.getName());
+		}
+		this.jcbAccountState.setModel(model);
+	}
+
+	private void setCompanyModel() {
+		this.companyList = this.companyController.selectCompanies();
+		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		model.addElement("Todas");
+		for (final Company company : this.companyList) {
+			model.addElement(company.getName());
+		}
+		this.jcbCompany.setModel(model);
+	}
+
+	private Invoicestatus getInvoiceStatusSelected() {
+		Invoicestatus invoiceStatus = null;
+		if (this.jcbAccountState.getSelectedIndex() > 0) {
+			final int index = this.jcbAccountState.getSelectedIndex() - 1;
+			invoiceStatus = this.invoiceStatusList.get(index);
+		}
+		return invoiceStatus;
+	}
+
+	private Company getCompanySelected() {
+		Company company = null;
+		if (this.jcbCompany.getSelectedIndex() > 0) {
+			final int index = this.jcbCompany.getSelectedIndex() - 1;
+			company = this.companyList.get(index);
+		}
+		return company;
+	}
+
+	private int getYear() {
+		final String yearStr = this.jtfYear.getText().replace(".", "")
+				.replace(",", "");
+		return Integer.parseInt(yearStr);
+	}
+
+	private void refreshTableData(final List<Invoice> invoiceList) {
+		final TableModel model = new InvoiceTableModel(invoiceList);
+		this.jtbRoomHistory.setModel(model);
+		this.jtbRoomHistory.setFillsViewportHeight(true);
+	}
+
+	private void refreshTableData() {
+		final int year = this.getYear();
+		final int month = this.jlsMonth.getSelectedIndex() + 1;
+		final Invoicestatus invoiceStatus = this.getInvoiceStatusSelected();
+		final Company company = this.getCompanySelected();
+		final List<Invoice> invoiceList = this.invoiceController.selectByDate(
+				year, month, invoiceStatus, company);
+		this.refreshTableData(invoiceList);
+		this.calculateTotal(invoiceList);
+	}
+
+	private void calculateTotal(final List<Invoice> invoiceList) {
+		long total = 0;
+		for (final Invoice invoice : invoiceList) {
+			total += invoice.getValue();
+		}
+		this.jlbTotal.setText("Total: " + String.valueOf(total));
 	}
 
 	/**
@@ -38,6 +156,7 @@ public class JFRoomHistory extends JDialog {
 	 * WARNING: Do NOT modify this code. The content of this method is always
 	 * regenerated by the Form Editor.
 	 */
+	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
 	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
@@ -51,11 +170,11 @@ public class JFRoomHistory extends JDialog {
 		jlbMonth = new javax.swing.JLabel();
 		jspMonth = new javax.swing.JScrollPane();
 		jlsMonth = new javax.swing.JList<String>();
-		jlbIdentification = new javax.swing.JLabel();
-		jtfIdentification = new javax.swing.JFormattedTextField();
-		jlbName = new javax.swing.JLabel();
-		jtfName = new javax.swing.JTextField();
+		jlbInvoiceStatus = new javax.swing.JLabel();
+		jlbCompany = new javax.swing.JLabel();
 		jbtSearch = new javax.swing.JButton();
+		jcbAccountState = new javax.swing.JComboBox<String>();
+		jcbCompany = new javax.swing.JComboBox<String>();
 		jpRoomHistory = new javax.swing.JPanel();
 		jspRoomHistory = new javax.swing.JScrollPane();
 		jtbRoomHistory = new javax.swing.JTable();
@@ -110,23 +229,16 @@ public class JFRoomHistory extends JDialog {
 		jlbMonth.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
 		jlbMonth.setText("Mes:");
 
+		jspMonth.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+
+		jlsMonth.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
 		jspMonth.setViewportView(jlsMonth);
 
-		jlbIdentification.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-		jlbIdentification.setText("Cedula:");
+		jlbInvoiceStatus.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+		jlbInvoiceStatus.setText("Estado:");
 
-		jtfIdentification
-				.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
-						new javax.swing.text.NumberFormatter(
-								new java.text.DecimalFormat("#,##0"))));
-		jtfIdentification.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-
-		jlbName.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-		jlbName.setText("Nombre:");
-
-		jtfName.setEditable(false);
-		jtfName.setBackground(new java.awt.Color(255, 255, 255));
-		jtfName.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+		jlbCompany.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+		jlbCompany.setText("Empresa:");
 
 		jbtSearch.setBackground(new java.awt.Color(16, 135, 221));
 		jbtSearch.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -138,6 +250,16 @@ public class JFRoomHistory extends JDialog {
 				jbtSearchActionPerformed(evt);
 			}
 		});
+
+		jcbAccountState.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+		jcbAccountState.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jcbAccountStateActionPerformed(evt);
+			}
+		});
+
+		jcbCompany.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+		jcbCompany.setEnabled(false);
 
 		javax.swing.GroupLayout jpSearchLayout = new javax.swing.GroupLayout(
 				jpSearch);
@@ -153,45 +275,61 @@ public class JFRoomHistory extends JDialog {
 										.addGroup(
 												jpSearchLayout
 														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.TRAILING)
+																javax.swing.GroupLayout.Alignment.LEADING)
 														.addComponent(
-																jbtSearch,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
+																jcbCompany,
+																0,
 																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
+																Short.MAX_VALUE)
 														.addGroup(
 																jpSearchLayout
-																		.createParallelGroup(
-																				javax.swing.GroupLayout.Alignment.LEADING,
-																				false)
-																		.addComponent(
-																				jlbYear)
-																		.addComponent(
-																				jtfYear,
-																				javax.swing.GroupLayout.PREFERRED_SIZE,
-																				80,
-																				javax.swing.GroupLayout.PREFERRED_SIZE)
-																		.addComponent(
-																				jlbMonth)
-																		.addComponent(
-																				jspMonth,
-																				javax.swing.GroupLayout.PREFERRED_SIZE,
-																				160,
-																				javax.swing.GroupLayout.PREFERRED_SIZE)
-																		.addComponent(
-																				jlbIdentification)
-																		.addComponent(
-																				jlbName)
-																		.addComponent(
-																				jtfName,
-																				javax.swing.GroupLayout.DEFAULT_SIZE,
-																				200,
-																				Short.MAX_VALUE)
-																		.addComponent(
-																				jtfIdentification)))
-										.addContainerGap(
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												Short.MAX_VALUE)));
+																		.createSequentialGroup()
+																		.addGroup(
+																				jpSearchLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.TRAILING)
+																						.addComponent(
+																								jbtSearch,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								javax.swing.GroupLayout.DEFAULT_SIZE,
+																								javax.swing.GroupLayout.PREFERRED_SIZE)
+																						.addGroup(
+																								jpSearchLayout
+																										.createSequentialGroup()
+																										.addGroup(
+																												jpSearchLayout
+																														.createParallelGroup(
+																																javax.swing.GroupLayout.Alignment.LEADING)
+																														.addComponent(
+																																jlbYear)
+																														.addComponent(
+																																jtfYear,
+																																javax.swing.GroupLayout.PREFERRED_SIZE,
+																																80,
+																																javax.swing.GroupLayout.PREFERRED_SIZE)
+																														.addComponent(
+																																jlbMonth)
+																														.addComponent(
+																																jspMonth,
+																																javax.swing.GroupLayout.PREFERRED_SIZE,
+																																160,
+																																javax.swing.GroupLayout.PREFERRED_SIZE)
+																														.addComponent(
+																																jlbInvoiceStatus)
+																														.addComponent(
+																																jlbCompany))
+																										.addGap(40,
+																												40,
+																												40)))
+																		.addGap(0,
+																				0,
+																				Short.MAX_VALUE))
+														.addComponent(
+																jcbAccountState,
+																0,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																Short.MAX_VALUE))
+										.addContainerGap()));
 		jpSearchLayout
 				.setVerticalGroup(jpSearchLayout
 						.createParallelGroup(
@@ -220,20 +358,20 @@ public class JFRoomHistory extends JDialog {
 												javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addPreferredGap(
 												javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-										.addComponent(jlbIdentification)
-										.addGap(9, 9, 9)
-										.addComponent(
-												jtfIdentification,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-										.addComponent(jlbName)
+										.addComponent(jlbInvoiceStatus)
 										.addPreferredGap(
 												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 										.addComponent(
-												jtfName,
+												jcbAccountState,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addGap(14, 14, 14)
+										.addComponent(jlbCompany)
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(
+												jcbCompany,
 												javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -431,20 +569,32 @@ public class JFRoomHistory extends JDialog {
 		pack();
 	}// </editor-fold>//GEN-END:initComponents
 
+	private void jcbAccountStateActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbAccountStateActionPerformed
+		final Invoicestatus invoiceStatus = this.getInvoiceStatusSelected();
+		if (invoiceStatus != null
+				&& invoiceStatus.getName().equals("Facturado a empresa")) {
+			this.jcbCompany.setEnabled(true);
+		} else {
+			this.jcbCompany.setEnabled(false);
+		}
+	}// GEN-LAST:event_jcbAccountStateActionPerformed
+
 	private void jbtCloseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtCloseActionPerformed
 		this.setVisible(false);
 	}// GEN-LAST:event_jbtCloseActionPerformed
 
 	private void jbtSearchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtSearchActionPerformed
-		// TODO add your handling code here:
+		this.refreshTableData();
 	}// GEN-LAST:event_jbtSearchActionPerformed
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JButton jbtClose;
 	private javax.swing.JButton jbtSearch;
-	private javax.swing.JLabel jlbIdentification;
+	private javax.swing.JComboBox<String> jcbAccountState;
+	private javax.swing.JComboBox<String> jcbCompany;
+	private javax.swing.JLabel jlbCompany;
+	private javax.swing.JLabel jlbInvoiceStatus;
 	private javax.swing.JLabel jlbMonth;
-	private javax.swing.JLabel jlbName;
 	private javax.swing.JLabel jlbTitle;
 	private javax.swing.JLabel jlbTotal;
 	private javax.swing.JLabel jlbYear;
@@ -456,8 +606,6 @@ public class JFRoomHistory extends JDialog {
 	private javax.swing.JScrollPane jspMonth;
 	private javax.swing.JScrollPane jspRoomHistory;
 	private javax.swing.JTable jtbRoomHistory;
-	private javax.swing.JFormattedTextField jtfIdentification;
-	private javax.swing.JTextField jtfName;
 	private javax.swing.JFormattedTextField jtfYear;
 	private javax.swing.JLabel lbImage;
 	// End of variables declaration//GEN-END:variables

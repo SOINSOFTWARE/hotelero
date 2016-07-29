@@ -57,8 +57,8 @@ public class InvoiceController {
 		final Roomstatus roomStatus = this.roomStatusBLL
 				.selectRoomStatusBooked();
 		final Date initialDate = this.getInitialDateForBooked();
-		final Set<Invoice> invoiceSet = this.invoiceBLL.selectBooked(
-				roomStatus, initialDate);
+		final Set<Invoice> invoiceSet = this.invoiceBLL.select(roomStatus,
+				initialDate);
 		if (invoiceSet != null) {
 			invoiceList = new ArrayList<>(invoiceSet);
 			Collections.sort(invoiceList);
@@ -77,16 +77,14 @@ public class InvoiceController {
 		finalDate.setSeconds(0);
 		final Roomstatus roomStatus = this.roomStatusBLL
 				.selectRoomStatusEnabled();
-		return this.invoiceBLL.selectNotEnabled(roomStatus, initialDate,
-				finalDate);
+		return this.invoiceBLL.select(roomStatus, initialDate, finalDate);
 	}
 
 	public List<Invoice> selectNotEnabled() {
 		List<Invoice> invoiceList = new ArrayList<>();
 		final Roomstatus roomStatus = this.roomStatusBLL
 				.selectRoomStatusDisabled();
-		final Set<Invoice> invoiceSet = this.invoiceBLL
-				.selectByStatus(roomStatus);
+		final Set<Invoice> invoiceSet = this.invoiceBLL.select(roomStatus);
 		if (invoiceSet != null) {
 			invoiceList = new ArrayList<>(invoiceSet);
 			Collections.sort(invoiceList, new Comparator<Invoice>() {
@@ -99,6 +97,19 @@ public class InvoiceController {
 					return firstRoom.getName().compareTo(secondRoom.getName());
 				}
 			});
+		}
+		return invoiceList;
+	}
+
+	public List<Invoice> selectByDate(final int year, final int month,
+			final Invoicestatus invoiceStatus, final Company company) {
+		List<Invoice> invoiceList = new ArrayList<>();
+		final Roomstatus roomStatusEnabled = this.selectRoomStatusEnabled();
+		final Set<Invoice> invoiceSet = this.invoiceBLL.select(year, month,
+				roomStatusEnabled, invoiceStatus, company);
+		if (invoiceSet != null) {
+			invoiceList = new ArrayList<>(invoiceSet);
+			Collections.sort(invoiceList);
 		}
 		return invoiceList;
 	}
