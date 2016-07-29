@@ -2,7 +2,31 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.table.TableModel;
+
+import org.apache.commons.lang3.time.DateUtils;
+
+import co.com.soinsoftware.hotelero.controller.InvoiceController;
+import co.com.soinsoftware.hotelero.entity.Invoice;
+import co.com.soinsoftware.hotelero.entity.Invoiceitem;
+import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.Room;
+import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.User;
+import co.com.soinsoftware.hotelero.util.InvoiceItemNotEditableTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,17 +43,167 @@ public class JFRoomPayment extends JDialog {
 
 	private static final long serialVersionUID = -6177006948912730912L;
 
-	public JFRoomPayment() {
+	private static final String MSG_INVOICE_STATUS_REQUIRED = "Seleccione un estado de cuenta diferente a \"Sin pago\"";
+
+	private static final String MSG_ROOM_REQUIRED = "Seleccione una habitación";
+
+	private final Roomstatus roomStatusEnabled;
+
+	private final InvoiceController invoiceController;
+
+	private final Invoicestatus statusBillToCompany;
+
+	private final JFRoom jfRoom;
+
+	private List<Invoice> invoiceList;
+
+	private List<Invoicestatus> invoiceStatusList;
+
+	public JFRoomPayment(final JFRoom jfRoom) {
+		this.jfRoom = jfRoom;
+		this.invoiceController = new InvoiceController();
+		this.roomStatusEnabled = this.invoiceController
+				.selectRoomStatusEnabled();
+		this.statusBillToCompany = this.invoiceController
+				.selectInvoiceStatusBillToCompany();
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
 		this.setLocation((int) (screenSize.getWidth() / 2 - 350),
 				(int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
+		this.setInvoiceStatusModel();
+		this.jcbAccountState.setEnabled(false);
+		this.refresh();
 	}
 
 	public void refresh() {
+		this.setRoomModel();
+		this.refreshInvoiceData();
+	}
 
+	private void refreshInvoiceData() {
+		this.jcbAccountState.setSelectedIndex(0);
+		this.jtfIdentification.setText("");
+		this.jtfName.setText("");
+		this.jdcInitialDate.setDate(null);
+		this.jdcFinalDate.setDate(null);
+		this.jtfTotal.setText("");
+		this.refreshTableData();
+	}
+
+	private void refreshTableData() {
+		final Invoice invoice = this.getInvoiceSelected();
+		final List<Invoiceitem> invoiceItemList = (invoice != null) ? this.invoiceController
+				.selectInvoiceItem(invoice) : new ArrayList<>();
+		final TableModel model = new InvoiceItemNotEditableTableModel(
+				invoiceItemList);
+		this.jtbService.setModel(model);
+		this.jtbService.setFillsViewportHeight(true);
+	}
+
+	private void setRoomModel() {
+		this.invoiceList = this.invoiceController.selectNotEnabled();
+		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		model.addElement("Seleccione uno...");
+		for (final Invoice invoice : this.invoiceList) {
+			final Room room = invoice.getRoom();
+			model.addElement(room.getName());
+		}
+		this.jcbRoom.setModel(model);
+	}
+
+	private void setInvoiceStatusModel() {
+		final Invoicestatus statusNoPaid = this.invoiceController
+				.selectInvoiceStatusNoPaid();
+		final Invoicestatus statusPaid = this.invoiceController
+				.selectInvoiceStatusPaid();
+		this.invoiceStatusList = new ArrayList<>();
+		this.invoiceStatusList.add(statusNoPaid);
+		this.invoiceStatusList.add(statusPaid);
+		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		for (final Invoicestatus invoiceStatus : this.invoiceStatusList) {
+			model.addElement(invoiceStatus.getName());
+		}
+		this.jcbAccountState.setModel(model);
+	}
+
+	private Invoice getInvoiceSelected() {
+		Invoice invoice = null;
+		if (this.jcbRoom.getSelectedIndex() > 0) {
+			final int index = this.jcbRoom.getSelectedIndex() - 1;
+			invoice = this.invoiceList.get(index);
+		}
+		return invoice;
+	}
+
+	private void validateBillToCompany(final Invoice invoice) {
+		if (invoice.getCompany() != null) {
+			if (!this.invoiceStatusList.contains(this.statusBillToCompany)) {
+				this.invoiceStatusList.add(statusBillToCompany);
+			}
+		} else {
+			if (this.invoiceStatusList.contains(this.statusBillToCompany)) {
+				this.invoiceStatusList.remove(statusBillToCompany);
+			}
+		}
+		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+		for (final Invoicestatus invoiceStatus : this.invoiceStatusList) {
+			model.addElement(invoiceStatus.getName());
+		}
+		this.jcbAccountState.setModel(model);
+	}
+
+	private void calculateTotalValue(final Invoice invoice) {
+		final Room room = invoice.getRoom();
+		final long numDays = this.calculateDaysToBeBilled(invoice
+				.getInitialdate());
+		final long total = invoice.getValue() + room.getValue() * numDays;
+		this.jtfTotal.setText(String.valueOf(total));
+	}
+
+	private long calculateDaysToBeBilled(final Date initialDate) {
+		final Date finalDate = this.getFinalDate(initialDate, 13);
+		final long diff = finalDate.getTime() - initialDate.getTime();
+		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+	}
+
+	private Date getFinalDate(final Date initialDate, final int hour) {
+		final LocalDate today = LocalDate.now();
+		LocalDateTime finalDateTime = null;
+		if (DateUtils.isSameDay(initialDate, new Date())) {
+			finalDateTime = today.plusDays(1).atTime(LocalTime.of(hour, 0));
+		} else {
+			finalDateTime = today.atTime(LocalTime.of(hour, 0));
+		}
+		final ZonedDateTime zdt = finalDateTime.atZone(ZoneId.systemDefault());
+		return Date.from(zdt.toInstant());
+	}
+
+	private Invoicestatus getInvoiceStatusSelected() {
+		final int index = this.jcbAccountState.getSelectedIndex();
+		return this.invoiceStatusList.get(index);
+	}
+
+	private boolean validateDataForSave() {
+		boolean valid = true;
+		final Invoice invoice = this.getInvoiceSelected();
+		final Invoicestatus status = this.getInvoiceStatusSelected();
+		if (invoice == null) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_ROOM_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		} else if (status.getName().equals("Sin pago")) {
+			valid = false;
+			ViewUtils.showMessage(this, MSG_INVOICE_STATUS_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+		}
+		return valid;
+	}
+
+	private long getTotalValue() {
+		final String valStr = this.jtfTotal.getText();
+		return Long.parseLong(valStr.replace(".", "").replace(",", ""));
 	}
 
 	/**
@@ -537,7 +711,24 @@ public class JFRoomPayment extends JDialog {
 	}// </editor-fold>//GEN-END:initComponents
 
 	private void jcbRoomActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbRoomActionPerformed
-		// TODO add your handling code here:
+		final Invoice invoice = this.getInvoiceSelected();
+		this.refreshInvoiceData();
+		if (invoice != null) {
+			this.jcbAccountState.setEnabled(true);
+			final User user = invoice.getUser();
+			this.jtfIdentification.setText(String.valueOf(user
+					.getIdentification()));
+			this.jtfName.setText(user.getName());
+			final Date initialDate = invoice.getInitialdate();
+			this.jdcInitialDate.setDate(initialDate);
+			this.jdcFinalDate.setDate(this.getFinalDate(initialDate, 12));
+			this.calculateTotalValue(invoice);
+			this.validateBillToCompany(invoice);
+			this.jtfTotal.requestFocus();
+			this.jcbAccountState.requestFocus();
+		} else {
+			this.jcbAccountState.setEnabled(false);
+		}
 	}// GEN-LAST:event_jcbRoomActionPerformed
 
 	private void jbtCloseActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtCloseActionPerformed
@@ -545,7 +736,27 @@ public class JFRoomPayment extends JDialog {
 	}// GEN-LAST:event_jbtCloseActionPerformed
 
 	private void jbtSaveActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtSaveActionPerformed
-		// TODO add your handling code here:
+		if (this.validateDataForSave()) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_SAVE_QUESTION, ViewUtils.TITLE_SAVED);
+			if (confirmation == JOptionPane.OK_OPTION) {
+				final Invoice invoice = this.getInvoiceSelected();
+				final Invoicestatus invoiceStatus = this
+						.getInvoiceStatusSelected();
+				final Date finalDate = this.jdcFinalDate.getDate();
+				final long total = this.getTotalValue();
+				invoice.setUpdated(new Date());
+				invoice.setRoomstatus(roomStatusEnabled);
+				invoice.setInvoicestatus(invoiceStatus);
+				invoice.setFinaldate(finalDate);
+				invoice.setValue(total);
+				this.invoiceController.saveInvoice(invoice);
+				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+				this.jfRoom.refreshRoomData();
+				this.refresh();
+			}
+		}
 	}// GEN-LAST:event_jbtSaveActionPerformed
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables

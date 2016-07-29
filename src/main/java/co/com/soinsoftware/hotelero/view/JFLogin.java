@@ -79,7 +79,7 @@ public class JFLogin extends JFrame {
 	private void createAppFrames() {
 		final JFRoom roomFrame = new JFRoom();
 		final JFRoomService roomServiceFrame = new JFRoomService();
-		final JFRoomPayment roomPaymentFrame = new JFRoomPayment();
+		final JFRoomPayment roomPaymentFrame = new JFRoomPayment(roomFrame);
 		final JFRoomHistory roomHistoryFrame = new JFRoomHistory();
 		final JFServiceType serviceTypeFrame = new JFServiceType();
 		final JFCompany companyFrame = new JFCompany(roomFrame);

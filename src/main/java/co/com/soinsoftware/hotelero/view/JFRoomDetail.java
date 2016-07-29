@@ -20,6 +20,7 @@ import co.com.soinsoftware.hotelero.controller.InvoiceController;
 import co.com.soinsoftware.hotelero.entity.Company;
 import co.com.soinsoftware.hotelero.entity.Invoice;
 import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.Room;
 import co.com.soinsoftware.hotelero.entity.Roomstatus;
 import co.com.soinsoftware.hotelero.entity.User;
 
@@ -58,7 +59,7 @@ public class JFRoomDetail extends JDialog {
 		this.setCompanyModel(companyList);
 		this.fillUserData(invoice.getUser());
 		this.fillInvoiceData(invoice);
-		this.showButtonsByRoomStatus(invoice.getRoomstatus());
+		this.showButtonsByRoomStatus(invoice.getRoom(), invoice.getRoomstatus());
 		final String roomName = "Habitación " + invoice.getRoom().getName();
 		this.setTitle(roomName);
 		this.jlbTitle.setText(roomName);
@@ -88,10 +89,12 @@ public class JFRoomDetail extends JDialog {
 		}
 	}
 
-	private void showButtonsByRoomStatus(final Roomstatus roomStatus) {
+	private void showButtonsByRoomStatus(final Room room,
+			final Roomstatus roomStatus) {
 		if (roomStatus.equals(this.roomStatusBooked)) {
 			final Date currentDate = new Date();
-			if (DateUtils.isSameDay(currentDate, this.jdcInitialDate.getDate())) {
+			if (DateUtils.isSameDay(currentDate, this.jdcInitialDate.getDate())
+					&& this.validateRoomIsAvailable(room)) {
 				this.jbtCheckIn.setVisible(true);
 			} else {
 				this.jbtCheckIn.setVisible(false);
@@ -101,6 +104,21 @@ public class JFRoomDetail extends JDialog {
 			this.jbtCheckIn.setVisible(false);
 			this.jbtDelete.setVisible(false);
 		}
+	}
+
+	private boolean validateRoomIsAvailable(final Room room) {
+		boolean available = true;
+		final List<Invoice> notEnabledSet = this.invoiceController
+				.selectNotEnabled();
+		if (notEnabledSet != null) {
+			for (final Invoice invoice : notEnabledSet) {
+				if (invoice.getRoom().equals(room)) {
+					available = false;
+					break;
+				}
+			}
+		}
+		return available;
 	}
 
 	private void setCompanyModel(final List<Company> companyList) {

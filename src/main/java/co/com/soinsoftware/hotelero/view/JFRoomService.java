@@ -884,6 +884,8 @@ public class JFRoomService extends JDialog {
 			} else {
 				this.jtfServiceValue.setEditable(false);
 			}
+			this.jtfServiceValue.requestFocus();
+			this.jtfServiceQuantity.requestFocus();
 		}
 	}// GEN-LAST:event_jcbServiceActionPerformed
 

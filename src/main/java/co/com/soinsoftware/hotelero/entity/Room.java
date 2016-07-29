@@ -18,6 +18,8 @@ public class Room implements Serializable {
 
 	private String name;
 
+	private long value;
+
 	private Date creation;
 
 	private Date updated;
@@ -30,17 +32,20 @@ public class Room implements Serializable {
 		super();
 	}
 
-	public Room(final String name, final Date creation, final Date updated,
-			final boolean enabled) {
+	public Room(final String name, final long value, final Date creation,
+			final Date updated, final boolean enabled) {
 		this.name = name;
+		this.value = value;
 		this.creation = creation;
 		this.updated = updated;
 		this.enabled = enabled;
 	}
 
-	public Room(final String name, final Date creation, final Date updated,
-			final boolean enabled, final Set<Invoice> invoices) {
+	public Room(final String name, final long value, final Date creation,
+			final Date updated, final boolean enabled,
+			final Set<Invoice> invoices) {
 		this.name = name;
+		this.value = value;
 		this.creation = creation;
 		this.updated = updated;
 		this.enabled = enabled;
@@ -61,6 +66,14 @@ public class Room implements Serializable {
 
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	public long getValue() {
+		return value;
+	}
+
+	public void setValue(long value) {
+		this.value = value;
 	}
 
 	public Date getCreation() {

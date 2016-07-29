@@ -10,6 +10,9 @@
     <property name="name" type="string">
       <column length="45" name="name" not-null="true"/>
     </property>
+	<property name="value" type="long">
+      <column name="value" not-null="true"/>
+    </property>
     <property name="creation" type="timestamp">
       <column length="19" name="creation" not-null="true"/>
     </property>

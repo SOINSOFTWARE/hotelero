@@ -5,6 +5,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import co.com.soinsoftware.hotelero.controller.UserController;
 import co.com.soinsoftware.hotelero.entity.Company;
 import co.com.soinsoftware.hotelero.entity.Invoice;
 import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.Room;
 import co.com.soinsoftware.hotelero.entity.Roomstatus;
 import co.com.soinsoftware.hotelero.entity.User;
 import co.com.soinsoftware.hotelero.util.InvoiceBookedTableModel;
@@ -391,7 +393,29 @@ public class JFRoom extends JFrame {
 		final Date finalDate = this.jdcFinalDate.getDate();
 		this.notEnabledSet = this.invoiceController.selectNotEnabled(
 				initialDate, finalDate);
+		if (DateUtils.isSameDay(initialDate, new Date())) {
+			this.addNotEnabledForCurrentDay();
+		}
 		this.setBackgroudForNotEnabledRooms();
+	}
+
+	private void addNotEnabledForCurrentDay() {
+		final List<Invoice> invoiceList = this.invoiceController
+				.selectNotEnabled();
+		for (final Invoice invoice : invoiceList) {
+			final Room room = invoice.getRoom();
+			final Iterator<Invoice> notEnabledIterator = this.notEnabledSet
+					.iterator();
+			while (notEnabledIterator.hasNext()) {
+				final Invoice notEnabledInvoice = notEnabledIterator.next();
+				final Room notEnabledRoom = notEnabledInvoice.getRoom();
+				if (room.equals(notEnabledRoom)
+						&& !invoice.equals(notEnabledInvoice)) {
+					notEnabledIterator.remove();
+				}
+			}
+		}
+		this.notEnabledSet.addAll(invoiceList);
 	}
 
 	private Company getSelectedCompany() {
