@@ -73,6 +73,8 @@ public class JFRoomService extends JDialog {
 
 	public void refresh() {
 		this.setRoomModel();
+		this.jtfIdentification.setText("");
+		this.jtfName.setText("");
 		this.setEnabledNewServiceFields(false);
 		this.refreshService();
 	}
@@ -123,7 +125,9 @@ public class JFRoomService extends JDialog {
 		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		model.addElement("Seleccione uno...");
 		for (final Service service : this.serviceList) {
-			model.addElement(service.getName());
+			if (service.isEnabled()) {
+				model.addElement(service.getName());
+			}
 		}
 		this.jcbService.setModel(model);
 	}

@@ -57,7 +57,7 @@ public class CompanyTableModel extends AbstractTableModel {
 		final Company company = this.companyList.get(row);
 		if (col == 0) {
 			company.setNewName((String) value);
-		} else if (col == 0) {
+		} else if (col == 1) {
 			company.setNewNit((String) value);
 		} else {
 			company.setDelete((Boolean) value);

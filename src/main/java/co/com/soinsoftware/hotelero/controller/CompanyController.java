@@ -28,7 +28,9 @@ public class CompanyController {
 		final Set<Company> companySet = this.companyBLL.select();
 		if (companySet != null) {
 			companyList = new ArrayList<>(companySet);
-			Collections.sort(companyList);
+			if (companyList.size() > 0) {
+				Collections.sort(companyList);
+			}
 		}
 		return companyList;
 	}

@@ -205,6 +205,8 @@ public class Company implements Serializable, Comparable<Company> {
 
 	@Override
 	public int compareTo(final Company other) {
-		return this.name.compareTo(other.name);
+		final String firstName = (this.name != null) ? this.name : "";
+		final String secondName = (other.name != null) ? other.name : "";
+		return firstName.compareTo(secondName);
 	}
 }
