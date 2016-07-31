@@ -84,9 +84,10 @@ public class JFLogin extends JFrame {
 		final JFServiceType serviceTypeFrame = new JFServiceType();
 		final JFCompany companyFrame = new JFCompany(roomFrame);
 		final JFService serviceFrame = new JFService();
+		final JFRoomEdition roomPriceFrame = new JFRoomEdition();
 		final MenuController menuController = new MenuController(
 				roomServiceFrame, roomPaymentFrame, roomHistoryFrame,
-				serviceTypeFrame, serviceFrame, companyFrame);
+				serviceTypeFrame, serviceFrame, companyFrame, roomPriceFrame);
 		roomFrame.addController(menuController);
 		roomFrame.setVisible(true);
 	}

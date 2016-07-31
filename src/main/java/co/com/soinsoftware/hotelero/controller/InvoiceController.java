@@ -153,6 +153,18 @@ public class InvoiceController {
 		return this.invoiceStatusBLL.selectInvoiceStatusDeleted();
 	}
 
+	public List<Room> selectRooms() {
+		List<Room> roomList = new ArrayList<>();
+		final Set<Room> roomSet = this.roomBLL.select();
+		if (roomSet != null) {
+			roomList = new ArrayList<>(roomSet);
+			if (roomList.size() > 0) {
+				Collections.sort(roomList);
+			}
+		}
+		return roomList;
+	}
+
 	public Invoice saveInvoiceBooking(final User user, final String roomName,
 			final Date initialDate, final Date finalDate,
 			final String siteFrom, final String siteTo, final Company company) {
@@ -188,6 +200,10 @@ public class InvoiceController {
 
 	public void saveInvoiceItem(final Invoiceitem invoiceItem) {
 		this.invoiceItemBLL.save(invoiceItem);
+	}
+
+	public void saveRoom(final Room room) {
+		this.roomBLL.save(room);
 	}
 
 	@SuppressWarnings("deprecation")
