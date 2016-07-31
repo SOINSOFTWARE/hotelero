@@ -37,7 +37,6 @@ public class JFRoomEdition extends JDialog {
 		this.setLocation((int) (screenSize.getWidth() / 2 - 350),
 				(int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
-		this.refresh();
 	}
 
 	public void refresh() {

@@ -291,6 +291,10 @@ public class Invoice implements Serializable, Comparable<Invoice> {
 
 	@Override
 	public int compareTo(final Invoice other) {
-		return this.initialdate.compareTo(other.initialdate);
+		final Date firstDate = (this.initialdate != null) ? this.initialdate
+				: new Date();
+		final Date secondDate = (other.initialdate != null) ? other.initialdate
+				: new Date();
+		return firstDate.compareTo(secondDate);
 	}
 }

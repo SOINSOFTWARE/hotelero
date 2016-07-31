@@ -52,7 +52,6 @@ public class JFRoomHistory extends JDialog {
 		this.setMonthModel();
 		this.setInvoiceStatusModel();
 		this.setCompanyModel();
-		this.refresh();
 	}
 
 	public void refresh() {

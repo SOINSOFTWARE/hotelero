@@ -47,18 +47,8 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 		this.controller = controller;
 	}
 
-	public void refresh() {
-		this.controller.getRoomServiceFrame().refresh();
-		this.controller.getRoomPaymentFrame().refresh();
-		this.controller.getRoomHistoryFrame().refresh();
-		this.controller.getServiceFrame().refresh();
-		this.controller.getCompanyFrame().refresh();
-		this.controller.getRoomPriceFrame().refresh();
-	}
-
 	@Override
 	public void actionPerformed(final ActionEvent evt) {
-		this.refresh();
 		final String actionCommand = evt.getActionCommand();
 		switch (actionCommand) {
 		case MENU_ROOM_SERVICES:
@@ -140,6 +130,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getRoomServiceFrame().refresh();
 			this.controller.getRoomServiceFrame().setVisible(true);
 		}
 	}
@@ -152,6 +143,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getRoomPaymentFrame().refresh();
 			this.controller.getRoomPaymentFrame().setVisible(true);
 		}
 	}
@@ -164,6 +156,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getRoomHistoryFrame().refresh();
 			this.controller.getRoomHistoryFrame().setVisible(true);
 		}
 	}
@@ -176,6 +169,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getServiceFrame().refresh();
 			this.controller.getServiceFrame().setVisible(true);
 		}
 	}
@@ -188,6 +182,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getServiceTypeFrame().refresh();
 			this.controller.getServiceTypeFrame().setVisible(true);
 		}
 	}
@@ -200,6 +195,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceFrame().setVisible(false);
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getCompanyFrame().refresh();
 			this.controller.getCompanyFrame().setVisible(true);
 		}
 	}
@@ -212,6 +208,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceFrame().setVisible(false);
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
+			this.controller.getRoomPriceFrame().refresh();
 			this.controller.getRoomPriceFrame().setVisible(true);
 		}
 	}

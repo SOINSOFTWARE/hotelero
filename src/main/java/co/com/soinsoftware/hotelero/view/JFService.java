@@ -47,7 +47,6 @@ public class JFService extends JDialog {
 				(int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
 		this.setTextFieldLimits();
-		this.refresh();
 	}
 
 	public void refresh() {

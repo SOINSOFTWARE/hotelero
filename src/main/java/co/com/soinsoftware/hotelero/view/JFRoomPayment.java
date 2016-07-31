@@ -74,7 +74,6 @@ public class JFRoomPayment extends JDialog {
 		this.setModal(true);
 		this.setInvoiceStatusModel();
 		this.jcbAccountState.setEnabled(false);
-		this.refresh();
 	}
 
 	public void refresh() {

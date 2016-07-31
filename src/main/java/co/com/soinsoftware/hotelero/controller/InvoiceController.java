@@ -109,7 +109,9 @@ public class InvoiceController {
 				roomStatusEnabled, invoiceStatus, company);
 		if (invoiceSet != null) {
 			invoiceList = new ArrayList<>(invoiceSet);
-			Collections.sort(invoiceList);
+			if (invoiceList.size() > 0) {
+				Collections.sort(invoiceList);
+			}
 		}
 		return invoiceList;
 	}
