@@ -12,6 +12,8 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 import co.com.soinsoftware.hotelero.controller.InvoiceController;
 import co.com.soinsoftware.hotelero.controller.ServiceController;
 import co.com.soinsoftware.hotelero.entity.Invoice;
@@ -862,7 +864,13 @@ public class JFRoomService extends JDialog {
 					.getIdentification()));
 			this.jtfName.setText(user.getName());
 			this.jdcInitialDate.setMinSelectableDate(invoice.getInitialdate());
-			this.jdcInitialDate.setMaxSelectableDate(invoice.getFinaldate());
+			final Date finalDate = invoice.getFinaldate();
+			final Date currentDate = new Date();
+			if (!DateUtils.isSameDay(currentDate, finalDate) && currentDate.after(finalDate)) {
+				this.jdcInitialDate.setMaxSelectableDate(currentDate);
+			} else {
+				this.jdcInitialDate.setMaxSelectableDate(invoice.getFinaldate());
+			}
 		} else {
 			this.setEnabledNewServiceFields(false);
 			this.jtfIdentification.setText("");

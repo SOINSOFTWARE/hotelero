@@ -25,9 +25,9 @@ public class Servicetype implements Serializable, Comparable<Servicetype> {
 	private boolean enabled;
 
 	private Set<Service> services = new HashSet<>(0);
-	
+
 	private volatile String newName;
-	
+
 	private volatile boolean delete;
 
 	public Servicetype() {
@@ -175,6 +175,8 @@ public class Servicetype implements Serializable, Comparable<Servicetype> {
 
 	@Override
 	public int compareTo(final Servicetype other) {
-		return this.name.compareToIgnoreCase(other.name);
+		final String firstName = (this.name != null) ? this.name : "";
+		final String secondName = (other.name != null) ? other.name : "";
+		return firstName.compareToIgnoreCase(secondName);
 	}
 }

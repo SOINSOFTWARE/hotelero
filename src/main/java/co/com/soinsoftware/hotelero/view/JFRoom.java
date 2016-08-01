@@ -5,6 +5,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -404,18 +405,25 @@ public class JFRoom extends JFrame {
 				.selectNotEnabled();
 		for (final Invoice invoice : invoiceList) {
 			final Room room = invoice.getRoom();
-			final Iterator<Invoice> notEnabledIterator = this.notEnabledSet
-					.iterator();
-			while (notEnabledIterator.hasNext()) {
-				final Invoice notEnabledInvoice = notEnabledIterator.next();
-				final Room notEnabledRoom = notEnabledInvoice.getRoom();
-				if (room.equals(notEnabledRoom)
-						&& !invoice.equals(notEnabledInvoice)) {
-					notEnabledIterator.remove();
+			if (this.notEnabledSet != null && this.notEnabledSet.size() > 0) {
+				final Iterator<Invoice> notEnabledIterator = this.notEnabledSet
+						.iterator();
+				while (notEnabledIterator.hasNext()) {
+					final Invoice notEnabledInvoice = notEnabledIterator.next();
+					final Room notEnabledRoom = notEnabledInvoice.getRoom();
+					if (room.equals(notEnabledRoom)
+							&& !invoice.equals(notEnabledInvoice)) {
+						notEnabledIterator.remove();
+					}
 				}
 			}
 		}
-		this.notEnabledSet.addAll(invoiceList);
+		if (this.notEnabledSet == null) {
+			this.notEnabledSet = new HashSet<>();
+		}
+		if (invoiceList != null && invoiceList.size() > 0) {
+			this.notEnabledSet.addAll(invoiceList);
+		}
 	}
 
 	private Company getSelectedCompany() {

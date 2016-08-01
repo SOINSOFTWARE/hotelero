@@ -31,7 +31,7 @@ public class Service implements Serializable, Comparable<Service> {
 	private Set<Invoiceitem> invoiceitems = new HashSet<>(0);
 
 	private volatile String newName;
-	
+
 	private volatile long newValue;
 
 	private volatile boolean delete;
@@ -213,6 +213,8 @@ public class Service implements Serializable, Comparable<Service> {
 
 	@Override
 	public int compareTo(final Service other) {
-		return this.name.compareToIgnoreCase(other.name);
+		final String firstName = (this.name != null) ? this.name : "";
+		final String secondName = (other.name != null) ? other.name : "";
+		return firstName.compareToIgnoreCase(secondName);
 	}
 }
