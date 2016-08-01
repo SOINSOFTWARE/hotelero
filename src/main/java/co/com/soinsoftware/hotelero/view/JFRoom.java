@@ -363,7 +363,7 @@ public class JFRoom extends JFrame {
 		final Date currentDate = new Date();
 		final Date initialDate = this.jdcInitialDate.getDate();
 		if (DateUtils.isSameDay(currentDate, initialDate)) {
-			isValid = (isCheckIn) ? true : false;
+			isValid = true;
 		} else {
 			isValid = (isCheckIn) ? false : true;
 		}
