@@ -36,6 +36,7 @@ public class JFLogo extends JFrame {
 	 */
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
 	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
@@ -43,7 +44,8 @@ public class JFLogo extends JFrame {
 		jlbDeveloped = new javax.swing.JLabel();
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-		setIconImage(Toolkit.getDefaultToolkit().getImage("images/invoice.ico"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/images/melvic.png")));
 
 		lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource(
 				"/images/soin.png"))); // NOI18N

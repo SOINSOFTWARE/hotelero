@@ -246,6 +246,7 @@ public class JFRoomService extends JDialog {
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
 	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
@@ -278,6 +279,8 @@ public class JFRoomService extends JDialog {
 		lbImage = new javax.swing.JLabel();
 
 		setTitle("Hotelero");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/images/melvic.png")));
 		setName("jfRoomService"); // NOI18N
 		setResizable(false);
 
@@ -866,10 +869,12 @@ public class JFRoomService extends JDialog {
 			this.jdcInitialDate.setMinSelectableDate(invoice.getInitialdate());
 			final Date finalDate = invoice.getFinaldate();
 			final Date currentDate = new Date();
-			if (!DateUtils.isSameDay(currentDate, finalDate) && currentDate.after(finalDate)) {
+			if (!DateUtils.isSameDay(currentDate, finalDate)
+					&& currentDate.after(finalDate)) {
 				this.jdcInitialDate.setMaxSelectableDate(currentDate);
 			} else {
-				this.jdcInitialDate.setMaxSelectableDate(invoice.getFinaldate());
+				this.jdcInitialDate
+						.setMaxSelectableDate(invoice.getFinaldate());
 			}
 		} else {
 			this.setEnabledNewServiceFields(false);

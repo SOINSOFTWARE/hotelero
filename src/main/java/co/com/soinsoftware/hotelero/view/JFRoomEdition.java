@@ -74,6 +74,7 @@ public class JFRoomEdition extends JDialog {
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
 	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
@@ -86,6 +87,10 @@ public class JFRoomEdition extends JDialog {
 		jbtClose = new javax.swing.JButton();
 		jspRoomList = new javax.swing.JScrollPane();
 		jtbRoomList = new javax.swing.JTable();
+
+		setTitle("Hotelero");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/images/melvic.png")));
 
 		jpTitle.setBackground(new java.awt.Color(255, 255, 255));
 

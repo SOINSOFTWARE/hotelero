@@ -213,6 +213,7 @@ public class JFRoomPayment extends JDialog {
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
 	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
@@ -242,6 +243,8 @@ public class JFRoomPayment extends JDialog {
 		lbImage = new javax.swing.JLabel();
 
 		setTitle("Hotelero");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/images/melvic.png")));
 		setResizable(false);
 
 		jpTitle.setBackground(new java.awt.Color(255, 255, 255));

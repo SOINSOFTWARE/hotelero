@@ -157,6 +157,7 @@ public class JFRoomHistory extends JDialog {
 	 */
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
 	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
@@ -182,6 +183,8 @@ public class JFRoomHistory extends JDialog {
 		jbtClose = new javax.swing.JButton();
 
 		setTitle("Hotelero");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/images/melvic.png")));
 		setResizable(false);
 
 		lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource(

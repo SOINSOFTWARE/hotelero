@@ -1,6 +1,7 @@
 package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
@@ -474,6 +475,7 @@ public class JFRoom extends JFrame {
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
 	// <editor-fold defaultstate="collapsed"
+	// <editor-fold defaultstate="collapsed"
 	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
@@ -533,6 +535,8 @@ public class JFRoom extends JFrame {
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		setTitle("Hotelero");
 		setExtendedState(6);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/images/melvic.png")));
 		setMinimumSize(new java.awt.Dimension(1320, 690));
 
 		jpClient.setBorder(javax.swing.BorderFactory.createTitledBorder(null,
