@@ -22,7 +22,7 @@ import co.com.soinsoftware.hotelero.entity.Servicetype;
 public class ServiceController {
 
 	private final ServiceTypeBLL serviceTypeBLL;
-	
+
 	private final ServiceBLL serviceBLL;
 
 	public ServiceController() {
@@ -51,10 +51,20 @@ public class ServiceController {
 	public void saveServiceType(final Servicetype serviceType) {
 		this.serviceTypeBLL.save(serviceType);
 	}
-	
+
 	public List<Service> selectServices() {
 		List<Service> serviceList = new ArrayList<>();
 		final Set<Service> serviceSet = this.serviceBLL.select();
+		if (serviceSet != null) {
+			serviceList = new ArrayList<>(serviceSet);
+			Collections.sort(serviceList);
+		}
+		return serviceList;
+	}
+
+	public List<Service> selectServices(final Servicetype serviceType) {
+		List<Service> serviceList = new ArrayList<>();
+		final Set<Service> serviceSet = this.serviceBLL.select(serviceType);
 		if (serviceSet != null) {
 			serviceList = new ArrayList<>(serviceSet);
 			Collections.sort(serviceList);

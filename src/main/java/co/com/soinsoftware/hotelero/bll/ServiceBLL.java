@@ -4,6 +4,7 @@ import java.util.Set;
 
 import co.com.soinsoftware.hotelero.dao.ServiceDAO;
 import co.com.soinsoftware.hotelero.entity.Service;
+import co.com.soinsoftware.hotelero.entity.Servicetype;
 
 /**
  * @author Carlos Rodriguez
@@ -27,8 +28,12 @@ public class ServiceBLL {
 		return this.dao.select();
 	}
 
-	public void save(final Service serviceType) {
-		this.dao.save(serviceType);
+	public Set<Service> select(final Servicetype serviceType) {
+		return this.dao.select(serviceType);
+	}
+
+	public void save(final Service service) {
+		this.dao.save(service);
 	}
 
 	private ServiceBLL() {

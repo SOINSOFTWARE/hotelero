@@ -3,7 +3,6 @@ package co.com.soinsoftware.hotelero.view;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -120,9 +119,7 @@ public class JFRoomService extends JDialog {
 	}
 
 	private void setServiceModel(final Servicetype serviceType) {
-		this.serviceList = (serviceType != null) ? new ArrayList<>(
-				serviceType.getServices()) : new ArrayList<>();
-		Collections.sort(this.serviceList);
+		this.serviceList = this.serviceController.selectServices(serviceType);
 		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		model.addElement("Seleccione uno...");
 		for (final Service service : this.serviceList) {

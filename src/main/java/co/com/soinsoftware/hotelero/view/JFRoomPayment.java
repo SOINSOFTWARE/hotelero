@@ -162,7 +162,7 @@ public class JFRoomPayment extends JDialog {
 	}
 
 	private long calculateDaysToBeBilled(final Date initialDate) {
-		final Date finalDate = this.getFinalDate(initialDate, 13);
+		final Date finalDate = this.getFinalDate(initialDate, 14);
 		final long diff = finalDate.getTime() - initialDate.getTime();
 		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 	}

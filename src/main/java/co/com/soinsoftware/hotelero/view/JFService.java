@@ -207,7 +207,6 @@ public class JFService extends JDialog {
 		jlbServiceValue.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
 		jlbServiceValue.setText("Valor:");
 
-		jtfServiceValue.setEditable(false);
 		jtfServiceValue.setBackground(new java.awt.Color(255, 255, 255));
 		jtfServiceValue
 				.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
