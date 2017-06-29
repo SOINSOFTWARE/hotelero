@@ -5,11 +5,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import lombok.Data;
+
 /**
  * @author Carlos Rodriguez
  * @since 18/07/2016
  * @version 1.0
  */
+@Data
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 8513570707677287722L;
@@ -67,102 +70,6 @@ public class User implements Serializable {
 		this.creation = creation;
 		this.updated = updated;
 		this.enabled = enabled;
-		this.invoices = invoices;
-	}
-
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(final Integer id) {
-		this.id = id;
-	}
-
-	public Company getCompany() {
-		return this.company;
-	}
-
-	public void setCompany(final Company company) {
-		this.company = company;
-	}
-
-	public long getIdentification() {
-		return this.identification;
-	}
-
-	public void setIdentification(final long identification) {
-		this.identification = identification;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	public String getLogin() {
-		return this.login;
-	}
-
-	public void setLogin(final String login) {
-		this.login = login;
-	}
-
-	public String getPassword() {
-		return this.password;
-	}
-
-	public void setPassword(final String password) {
-		this.password = password;
-	}
-
-	public long getPhone() {
-		return this.phone;
-	}
-
-	public void setPhone(final long phone) {
-		this.phone = phone;
-	}
-
-	public String getCareer() {
-		return this.career;
-	}
-
-	public void setCareer(final String career) {
-		this.career = career;
-	}
-
-	public Date getCreation() {
-		return this.creation;
-	}
-
-	public void setCreation(final Date creation) {
-		this.creation = creation;
-	}
-
-	public Date getUpdated() {
-		return this.updated;
-	}
-
-	public void setUpdated(final Date updated) {
-		this.updated = updated;
-	}
-
-	public boolean isEnabled() {
-		return this.enabled;
-	}
-
-	public void setEnabled(final boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public Set<Invoice> getInvoices() {
-		return this.invoices;
-	}
-
-	public void setInvoices(final Set<Invoice> invoices) {
 		this.invoices = invoices;
 	}
 }
