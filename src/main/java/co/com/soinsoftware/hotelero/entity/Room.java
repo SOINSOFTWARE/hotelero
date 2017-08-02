@@ -3,7 +3,8 @@ package co.com.soinsoftware.hotelero.entity;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NaturalId;
@@ -30,21 +31,26 @@ public class Room extends CommonData implements Comparable<Room> {
 	private static final long serialVersionUID = 5677610775147934489L;
 
 	@NaturalId
+	private String code;
+
+	@NaturalId
 	private String name;
 
-	private long value;
+	@ManyToOne
+	@JoinColumn(name = "idfloor")
+	private Floor floor;
 
-	@Transient
-	private long newValue;
+	@ManyToOne
+	@JoinColumn(name = "idroomtype")
+	private RoomType roomType;
 
 	public Room() {
 		super();
 	}
 
-	public Room(final String name, final long value, final Date creation, final Date updated, final boolean enabled) {
+	public Room(final String name, final Date creation, final Date updated, final boolean enabled) {
 		super(creation, updated, enabled);
 		this.name = name;
-		this.value = value;
 	}
 
 	@Override

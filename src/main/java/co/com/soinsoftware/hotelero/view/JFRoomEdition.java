@@ -66,10 +66,10 @@ public class JFRoomEdition extends JDialog {
 	private boolean hasRoomToBeUpdated(final List<Room> roomList) {
 		boolean hasElements = false;
 		for (final Room room : roomList) {
-			if (room.getNewValue() != room.getValue()) {
+			/**if (room.getNewValue() != room.getValue()) {
 				hasElements = true;
 				break;
-			}
+			}**/
 		}
 		return hasElements;
 	}
@@ -320,11 +320,11 @@ public class JFRoomEdition extends JDialog {
 					ViewUtils.MSG_UPDATE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
 				for (final Room room : roomList) {
-					if (room.getNewValue() != room.getValue()) {
+					/**if (room.getNewValue() != room.getValue()) {
 						room.setUpdated(new Date());
 						room.setValue(room.getNewValue());
 						this.invoiceController.saveRoom(room);
-					}
+					}**/
 				}
 				ViewUtils.showMessage(this, ViewUtils.MSG_UPDATED,
 						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);

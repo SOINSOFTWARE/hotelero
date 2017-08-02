@@ -165,8 +165,8 @@ public class JFRoomPayment extends JDialog {
 		final Room room = invoice.getRoom();
 		final long numDays = this.calculateDaysToBeBilled(invoice
 				.getInitialDate());
-		final long total = invoice.getValue() + room.getValue() * numDays;
-		this.jtfTotal.setText(String.valueOf(total));
+		//final long total = invoice.getValue() + room.getValue() * numDays;
+		//this.jtfTotal.setText(String.valueOf(total));
 	}
 
 	private long calculateDaysToBeBilled(final Date initialDate) {

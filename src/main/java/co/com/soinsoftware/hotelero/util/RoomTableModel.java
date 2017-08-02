@@ -55,7 +55,6 @@ public class RoomTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(final Object value, final int row, final int col) {
 		final Room room = this.roomList.get(row);
-		room.setNewValue((Long) value);
 		data[row][col] = value;
 		fireTableCellUpdated(row, col);
 	}
@@ -76,9 +75,7 @@ public class RoomTableModel extends AbstractTableModel {
 		if (this.roomList != null) {
 			int index = 0;
 			for (final Room room : this.roomList) {
-				room.setNewValue(room.getValue());
 				data[index][0] = room.getName();
-				data[index][1] = room.getValue();
 				index++;
 			}
 		}
