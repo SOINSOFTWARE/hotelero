@@ -1,11 +1,29 @@
 package co.com.soinsoftware.hotelero.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author Carlos Rodriguez
@@ -13,92 +31,101 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
-public class Invoice implements Serializable, Comparable<Invoice> {
+@EqualsAndHashCode(callSuper = true)
+@Entity(name = "invoice")
+@Indexed
+@OptimisticLocking(type = OptimisticLockType.DIRTY)
+@DynamicUpdate
+@SelectBeforeUpdate
+public class Invoice extends CommonData implements Comparable<Invoice> {
 
 	private static final long serialVersionUID = 3003481043888000893L;
 
-	private Integer id;
-
+	@ManyToOne
+	@JoinColumn(name = "idcompany")
 	private Company company;
 
-	private Invoicestatus invoicestatus;
+	@ManyToOne
+	@JoinColumn(name = "idinvoicestatus")
+	private InvoiceStatus invoiceStatus;
 
+	@ManyToOne
+	@JoinColumn(name = "idroom")
 	private Room room;
 
-	private Roomstatus roomstatus;
+	@ManyToOne
+	@JoinColumn(name = "idroomstatus")
+	private RoomStatus roomStatus;
 
+	@ManyToOne
+	@JoinColumn(name = "iduser")
 	private User user;
 
-	private Date initialdate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "initialdate")
+	private Date initialDate;
 
-	private Date finaldate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "finaldate")
+	private Date finalDate;
 
 	private long value;
 
-	private String sitefrom;
+	@Column(name = "sitefrom")
+	private String siteFrom;
 
-	private String siteto;
+	@Column(name = "siteto")
+	private String siteTo;
 
-	private Date creation;
+	@OneToMany(fetch = FetchType.LAZY)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@IndexedEmbedded(prefix = "invoiceitem.idinvoice")
+	private Set<Invoiceitem> invoiceItems;
 
-	private Date updated;
-
-	private boolean enabled;
-
-	private Set<Invoiceitem> invoiceitems = new HashSet<>(0);
-
-	private volatile boolean delete;
+	@Transient
+	private boolean delete;
 
 	public Invoice() {
 		super();
-		this.delete = false;
+		invoiceItems = new HashSet<>(0);
 	}
 
-	public Invoice(final Invoicestatus invoicestatus, final Room room,
-			final Roomstatus roomstatus, final User user,
-			final Date initialdate, final long value, final Date creation,
-			final Date updated, final boolean enabled) {
-		this.invoicestatus = invoicestatus;
+	public Invoice(final InvoiceStatus invoiceStatus, final Room room, final RoomStatus roomStatus, final User user,
+			final Date initialDate, final long value, final Date creation, final Date updated, final boolean enabled) {
+		super(creation, updated, enabled);
+		this.invoiceStatus = invoiceStatus;
 		this.room = room;
-		this.roomstatus = roomstatus;
+		this.roomStatus = roomStatus;
 		this.user = user;
-		this.initialdate = initialdate;
+		this.initialDate = initialDate;
 		this.value = value;
-		this.creation = creation;
-		this.updated = updated;
-		this.enabled = enabled;
+		this.invoiceItems = new HashSet<>(0);
 		this.delete = false;
 	}
 
-	public Invoice(final Company company, final Invoicestatus invoicestatus,
-			final Room room, final Roomstatus roomstatus, final User user,
-			final Date initialdate, final Date finaldate, final long value,
-			final String sitefrom, final String siteto, final Date creation,
-			final Date updated, final boolean enabled,
-			final Set<Invoiceitem> invoiceitems) {
+	public Invoice(final Company company, final InvoiceStatus invoiceStatus, final Room room,
+			final RoomStatus roomStatus, final User user, final Date initialDate, final Date finalDate,
+			final long value, final String siteFrom, final String siteTo, final Date creation, final Date updated,
+			final boolean enabled, final Set<Invoiceitem> invoiceItems) {
+		super(creation, updated, enabled);
 		this.company = company;
-		this.invoicestatus = invoicestatus;
+		this.invoiceStatus = invoiceStatus;
 		this.room = room;
-		this.roomstatus = roomstatus;
+		this.roomStatus = roomStatus;
 		this.user = user;
-		this.initialdate = initialdate;
-		this.finaldate = finaldate;
+		this.initialDate = initialDate;
+		this.finalDate = finalDate;
 		this.value = value;
-		this.sitefrom = sitefrom;
-		this.siteto = siteto;
-		this.creation = creation;
-		this.updated = updated;
-		this.enabled = enabled;
-		this.invoiceitems = invoiceitems;
+		this.siteFrom = siteFrom;
+		this.siteTo = siteTo;
+		this.invoiceItems = invoiceItems;
 		this.delete = false;
 	}
 
 	@Override
 	public int compareTo(final Invoice other) {
-		final Date firstDate = (this.initialdate != null) ? this.initialdate
-				: new Date();
-		final Date secondDate = (other.initialdate != null) ? other.initialdate
-				: new Date();
+		final Date firstDate = (this.initialDate != null) ? this.initialDate : new Date();
+		final Date secondDate = (other.initialDate != null) ? other.initialDate : new Date();
 		return firstDate.compareTo(secondDate);
 	}
 }

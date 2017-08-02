@@ -1,7 +1,11 @@
 package co.com.soinsoftware.hotelero.dao;
 
+import java.io.IOException;
+
+import javax.persistence.Query;
+
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.Session;
 
 import co.com.soinsoftware.hotelero.entity.User;
 
@@ -10,20 +14,24 @@ import co.com.soinsoftware.hotelero.entity.User;
  * @since 18/07/2016
  * @version 1.0
  */
-public class UserDAO extends AbstractDAO {
+public class UserDAO extends AbstractDAO<User> {
 
-	private static final String COLUMN_IDENTIFICATION = "identification";
 	private static final String COLUMN_LOGIN = "login";
 	private static final String COLUMN_PASS = "password";
+	private static final String PARAM_LOGIN = "login";
+	private static final String PARAM_PASS = "password";
+
+	public UserDAO() throws IOException {
+		super();
+	}
 
 	public User select(final String login, final String password) {
 		User user = null;
 		try {
-			final Query query = this
-					.createQuery(this.getSelectStatementLogin());
-			query.setParameter(COLUMN_LOGIN, login);
-			query.setParameter(COLUMN_PASS, password);
-			user = (query.list().isEmpty()) ? null : (User) query.list().get(0);
+			final Query query = manager.createQuery(this.getSelectStatementLogin());
+			query.setParameter(PARAM_LOGIN, login);
+			query.setParameter(PARAM_PASS, password);
+			user = (User) query.getSingleResult();
 		} catch (HibernateException ex) {
 			System.out.println(ex);
 		}
@@ -31,21 +39,8 @@ public class UserDAO extends AbstractDAO {
 	}
 
 	public User select(final long identification) {
-		User user = null;
-		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementIdentification());
-			query.setParameter(COLUMN_IDENTIFICATION, identification);
-			user = (query.list().isEmpty()) ? null : (User) query.list().get(0);
-		} catch (HibernateException ex) {
-			System.out.println(ex);
-		}
-		return user;
-	}
-
-	public void save(final User user) {
-		boolean isNew = (user.getId() == null) ? true : false;
-		this.save(user, isNew);
+		final Session session = (Session) manager.getDelegate();
+		return session.bySimpleNaturalId(User.class).load(identification);
 	}
 
 	@Override
@@ -61,20 +56,11 @@ public class UserDAO extends AbstractDAO {
 		query.append(SQL_WHERE);
 		query.append(COLUMN_LOGIN);
 		query.append(SQL_EQUALS_WITH_PARAM);
-		query.append(COLUMN_LOGIN);
+		query.append(PARAM_LOGIN);
 		query.append(SQL_AND);
 		query.append(COLUMN_PASS);
 		query.append(SQL_EQUALS_WITH_PARAM);
-		query.append(COLUMN_PASS);
-		return query.toString();
-	}
-
-	private String getSelectStatementIdentification() {
-		final StringBuilder query = new StringBuilder(this.getSelectStatement());
-		query.append(SQL_WHERE);
-		query.append(COLUMN_IDENTIFICATION);
-		query.append(SQL_EQUALS_WITH_PARAM);
-		query.append(COLUMN_IDENTIFICATION);
+		query.append(PARAM_PASS);
 		return query.toString();
 	}
 }

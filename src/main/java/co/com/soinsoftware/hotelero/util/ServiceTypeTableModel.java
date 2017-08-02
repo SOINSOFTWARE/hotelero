@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import co.com.soinsoftware.hotelero.entity.Servicetype;
+import co.com.soinsoftware.hotelero.entity.ServiceType;
 
 /**
  * @author Carlos Rodriguez
@@ -18,11 +18,11 @@ public class ServiceTypeTableModel extends AbstractTableModel {
 	private static final String[] COLUMN_NAMES = { "Tipo de consumo",
 			"Eliminar" };
 
-	private final List<Servicetype> serviceTypeList;
+	private final List<ServiceType> serviceTypeList;
 
 	private Object[][] data;
 
-	public ServiceTypeTableModel(final List<Servicetype> serviceTypeList) {
+	public ServiceTypeTableModel(final List<ServiceType> serviceTypeList) {
 		super();
 		this.serviceTypeList = serviceTypeList;
 		this.buildData();
@@ -55,7 +55,7 @@ public class ServiceTypeTableModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(final Object value, final int row, final int col) {
-		final Servicetype serviceType = this.serviceTypeList.get(row);
+		final ServiceType serviceType = this.serviceTypeList.get(row);
 		if (col == 0) {
 			serviceType.setNewName((String) value);
 		} else {
@@ -71,7 +71,7 @@ public class ServiceTypeTableModel extends AbstractTableModel {
 		return getValueAt(0, col).getClass();
 	}
 
-	public List<Servicetype> getServiceTypeList() {
+	public List<ServiceType> getServiceTypeList() {
 		return this.serviceTypeList;
 	}
 
@@ -80,7 +80,7 @@ public class ServiceTypeTableModel extends AbstractTableModel {
 		data = new Object[rowSize][2];
 		if (this.serviceTypeList != null) {
 			int index = 0;
-			for (final Servicetype serviceType : this.serviceTypeList) {
+			for (final ServiceType serviceType : this.serviceTypeList) {
 				data[index][0] = serviceType.getName();
 				data[index][1] = new Boolean(false);
 				index++;

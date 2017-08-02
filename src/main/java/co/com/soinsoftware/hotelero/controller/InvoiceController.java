@@ -1,5 +1,6 @@
 package co.com.soinsoftware.hotelero.controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -20,9 +21,9 @@ import co.com.soinsoftware.hotelero.bll.RoomStatusBLL;
 import co.com.soinsoftware.hotelero.entity.Company;
 import co.com.soinsoftware.hotelero.entity.Invoice;
 import co.com.soinsoftware.hotelero.entity.Invoiceitem;
-import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.InvoiceStatus;
 import co.com.soinsoftware.hotelero.entity.Room;
-import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.RoomStatus;
 import co.com.soinsoftware.hotelero.entity.Service;
 import co.com.soinsoftware.hotelero.entity.User;
 
@@ -43,7 +44,7 @@ public class InvoiceController {
 
 	private final RoomStatusBLL roomStatusBLL;
 
-	public InvoiceController() {
+	public InvoiceController() throws IOException {
 		super();
 		this.invoiceBLL = InvoiceBLL.getInstance();
 		this.invoiceItemBLL = InvoiceItemBLL.getInstance();
@@ -54,7 +55,7 @@ public class InvoiceController {
 
 	public List<Invoice> selectBooked() {
 		List<Invoice> invoiceList = new ArrayList<>();
-		final Roomstatus roomStatus = this.roomStatusBLL
+		final RoomStatus roomStatus = this.roomStatusBLL
 				.selectRoomStatusBooked();
 		final Date initialDate = this.getInitialDateForBooked();
 		final Set<Invoice> invoiceSet = this.invoiceBLL.select(roomStatus,
@@ -75,14 +76,14 @@ public class InvoiceController {
 		finalDate.setHours(12);
 		finalDate.setMinutes(0);
 		finalDate.setSeconds(0);
-		final Roomstatus roomStatus = this.roomStatusBLL
+		final RoomStatus roomStatus = this.roomStatusBLL
 				.selectRoomStatusEnabled();
 		return this.invoiceBLL.select(roomStatus, initialDate, finalDate);
 	}
 
 	public List<Invoice> selectNotEnabled() {
 		List<Invoice> invoiceList = new ArrayList<>();
-		final Roomstatus roomStatus = this.roomStatusBLL
+		final RoomStatus roomStatus = this.roomStatusBLL
 				.selectRoomStatusDisabled();
 		final Set<Invoice> invoiceSet = this.invoiceBLL.select(roomStatus);
 		if (invoiceSet != null) {
@@ -102,9 +103,9 @@ public class InvoiceController {
 	}
 
 	public List<Invoice> selectByDate(final int year, final int month,
-			final Invoicestatus invoiceStatus, final Company company) {
+			final InvoiceStatus invoiceStatus, final Company company) {
 		List<Invoice> invoiceList = new ArrayList<>();
-		final Roomstatus roomStatusEnabled = this.selectRoomStatusEnabled();
+		final RoomStatus roomStatusEnabled = this.selectRoomStatusEnabled();
 		final Set<Invoice> invoiceSet = this.invoiceBLL.select(year, month,
 				roomStatusEnabled, invoiceStatus, company);
 		if (invoiceSet != null) {
@@ -127,31 +128,31 @@ public class InvoiceController {
 		return invoiceItemList;
 	}
 
-	public Roomstatus selectRoomStatusEnabled() {
+	public RoomStatus selectRoomStatusEnabled() {
 		return this.roomStatusBLL.selectRoomStatusEnabled();
 	}
 
-	public Roomstatus selectRoomStatusDisabled() {
+	public RoomStatus selectRoomStatusDisabled() {
 		return this.roomStatusBLL.selectRoomStatusDisabled();
 	}
 
-	public Roomstatus selectRoomStatusBooked() {
+	public RoomStatus selectRoomStatusBooked() {
 		return this.roomStatusBLL.selectRoomStatusBooked();
 	}
 
-	public Invoicestatus selectInvoiceStatusNoPaid() {
+	public InvoiceStatus selectInvoiceStatusNoPaid() {
 		return this.invoiceStatusBLL.selectInvoiceStatusNoPaid();
 	}
 
-	public Invoicestatus selectInvoiceStatusPaid() {
+	public InvoiceStatus selectInvoiceStatusPaid() {
 		return this.invoiceStatusBLL.selectInvoiceStatusPaid();
 	}
 
-	public Invoicestatus selectInvoiceStatusBillToCompany() {
+	public InvoiceStatus selectInvoiceStatusBillToCompany() {
 		return this.invoiceStatusBLL.selectInvoiceStatusBillToCompany();
 	}
 
-	public Invoicestatus selectInvoiceStatusDeleted() {
+	public InvoiceStatus selectInvoiceStatusDeleted() {
 		return this.invoiceStatusBLL.selectInvoiceStatusDeleted();
 	}
 
@@ -170,7 +171,7 @@ public class InvoiceController {
 	public Invoice saveInvoiceBooking(final User user, final String roomName,
 			final Date initialDate, final Date finalDate,
 			final String siteFrom, final String siteTo, final Company company) {
-		final Roomstatus roomStatus = this.roomStatusBLL
+		final RoomStatus roomStatus = this.roomStatusBLL
 				.selectRoomStatusBooked();
 		return this.saveInvoice(user, roomName, roomStatus, initialDate,
 				finalDate, siteFrom, siteTo, company);
@@ -179,7 +180,7 @@ public class InvoiceController {
 	public Invoice saveInvoiceCheckIn(final User user, final String roomName,
 			final Date initialDate, final Date finalDate,
 			final String siteFrom, final String siteTo, final Company company) {
-		final Roomstatus roomStatus = this.roomStatusBLL
+		final RoomStatus roomStatus = this.roomStatusBLL
 				.selectRoomStatusDisabled();
 		return this.saveInvoice(user, roomName, roomStatus, initialDate,
 				finalDate, siteFrom, siteTo, company);
@@ -210,7 +211,7 @@ public class InvoiceController {
 
 	@SuppressWarnings("deprecation")
 	private Invoice saveInvoice(final User user, final String roomName,
-			final Roomstatus roomStatus, final Date initialDate,
+			final RoomStatus roomStatus, final Date initialDate,
 			final Date finalDate, final String siteFrom, final String siteTo,
 			final Company company) {
 		initialDate.setHours(13);
@@ -220,7 +221,7 @@ public class InvoiceController {
 		finalDate.setMinutes(0);
 		finalDate.setSeconds(0);
 		final Room room = this.roomBLL.select(roomName);
-		final Invoicestatus invoiceStatus = this.invoiceStatusBLL
+		final InvoiceStatus invoiceStatus = this.invoiceStatusBLL
 				.selectInvoiceStatusNoPaid();
 		final Date currentDate = new Date();
 		final Invoice invoice = new Invoice(company, invoiceStatus, room,

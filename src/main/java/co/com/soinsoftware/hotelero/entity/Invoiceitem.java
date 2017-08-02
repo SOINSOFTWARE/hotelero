@@ -1,9 +1,21 @@
 package co.com.soinsoftware.hotelero.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
+import org.hibernate.annotations.SelectBeforeUpdate;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author Carlos Rodriguez
@@ -11,14 +23,21 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
-public class Invoiceitem implements Serializable, Comparable<Invoiceitem> {
+@EqualsAndHashCode(callSuper = true)
+@Entity(name = "invoiceitem")
+@OptimisticLocking(type = OptimisticLockType.DIRTY)
+@DynamicUpdate
+@SelectBeforeUpdate
+public class Invoiceitem extends CommonData implements Comparable<Invoiceitem> {
 
 	private static final long serialVersionUID = -489119310949259201L;
 
-	private Integer id;
-
+	@ManyToOne
+	@JoinColumn(name = "idinvoice")
 	private Invoice invoice;
 
+	@ManyToOne
+	@JoinColumn(name = "idservice")
 	private Service service;
 
 	private int quantity;
@@ -27,43 +46,33 @@ public class Invoiceitem implements Serializable, Comparable<Invoiceitem> {
 
 	private long value;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date invoiceitemdate;
 
-	private Date creation;
-
-	private Date updated;
-
-	private boolean enabled;
-
-	private volatile boolean delete;
+	@Transient
+	private boolean delete;
 
 	public Invoiceitem() {
 		super();
-		this.delete = false;
 	}
 
-	public Invoiceitem(final Invoice invoice, final Service service,
-			final int quantity, final long unitvalue, final long value,
-			final Date invoiceitemdate, final Date creation,
-			final Date updated, final boolean enabled) {
+	public Invoiceitem(final Invoice invoice, final Service service, final int quantity, final long unitvalue,
+			final long value, final Date invoiceitemdate, final Date creation, final Date updated,
+			final boolean enabled) {
+		super(creation, updated, enabled);
 		this.invoice = invoice;
 		this.service = service;
 		this.quantity = quantity;
 		this.unitvalue = unitvalue;
 		this.value = value;
 		this.invoiceitemdate = invoiceitemdate;
-		this.creation = creation;
-		this.updated = updated;
-		this.enabled = enabled;
 		this.delete = false;
 	}
 
 	@Override
 	public int compareTo(final Invoiceitem other) {
-		final Date firstDate = (this.invoiceitemdate != null) ? this.invoiceitemdate
-				: new Date();
-		final Date secondDate = (other.invoiceitemdate != null) ? other.invoiceitemdate
-				: new Date();
+		final Date firstDate = (this.invoiceitemdate != null) ? this.invoiceitemdate : new Date();
+		final Date secondDate = (other.invoiceitemdate != null) ? other.invoiceitemdate : new Date();
 		return firstDate.compareTo(secondDate);
 	}
 }

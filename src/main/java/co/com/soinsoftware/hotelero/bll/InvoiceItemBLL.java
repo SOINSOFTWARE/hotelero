@@ -1,5 +1,6 @@
 package co.com.soinsoftware.hotelero.bll;
 
+import java.io.IOException;
 import java.util.Set;
 
 import co.com.soinsoftware.hotelero.dao.InvoiceItemDAO;
@@ -17,7 +18,7 @@ public class InvoiceItemBLL {
 
 	private final InvoiceItemDAO dao;
 
-	public static InvoiceItemBLL getInstance() {
+	public static InvoiceItemBLL getInstance() throws IOException {
 		if (instance == null) {
 			instance = new InvoiceItemBLL();
 		}
@@ -36,7 +37,7 @@ public class InvoiceItemBLL {
 		this.dao.save(invoiceItem);
 	}
 
-	private InvoiceItemBLL() {
+	private InvoiceItemBLL() throws IOException {
 		super();
 		this.dao = new InvoiceItemDAO();
 	}

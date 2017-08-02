@@ -1,23 +1,26 @@
 package co.com.soinsoftware.hotelero.dao;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Query;
+
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 
 import co.com.soinsoftware.hotelero.entity.Company;
 import co.com.soinsoftware.hotelero.entity.Invoice;
-import co.com.soinsoftware.hotelero.entity.Invoicestatus;
-import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.InvoiceStatus;
+import co.com.soinsoftware.hotelero.entity.RoomStatus;
 
 /**
  * @author Carlos Rodriguez
  * @since 27/07/2016
  * @version 1.0
  */
-public class InvoiceDAO extends AbstractDAO {
+public class InvoiceDAO extends AbstractDAO<Invoice> {
 
 	private static final String COLUMN_COMPANY = "company";
 
@@ -27,20 +30,40 @@ public class InvoiceDAO extends AbstractDAO {
 
 	private static final String COLUMN_INVOICE_STATUS = "invoicestatus";
 
-	private static final String COLUMN_ROOM_STATUS = "roomstatus";
+	private static final String COLUMN_ROOM_STATUS = "roomStatus";
+
+	private static final String PARAM_COMPANY = "company";
+
+	private static final String PARAM_FINAL_DATE = "finalDate";
+
+	private static final String PARAM_INITIAL_DATE = "initialDate";
+
+	private static final String PARAM_INVOICE_STATUS = "invoiceStatus";
+
+	private static final String PARAM_ROOM_STATUS = "roomStatus";
 
 	private static final String PARAM_MONTH = "month";
 
 	private static final String PARAM_YEAR = "year";
 
+	public InvoiceDAO() throws IOException {
+		super();
+	}
+
 	@SuppressWarnings("unchecked")
 	public Set<Invoice> select() {
+		final List<Invoice> invoiceList = manager.createQuery(this.getSelectStatementEnabled()).getResultList();
+		return (invoiceList != null) ? new HashSet<>(invoiceList) : new HashSet<>();
+	}
+
+	@SuppressWarnings("unchecked")
+	public Set<Invoice> selectBooked(final RoomStatus roomStatusBooked, final Date initialDate) {
 		Set<Invoice> invoiceSet = null;
 		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementEnabled());
-			invoiceSet = (query.list().isEmpty()) ? null
-					: new HashSet<Invoice>(query.list());
+			final Query query = manager.createQuery(this.getSelectStatementBooked());
+			query.setParameter(PARAM_INITIAL_DATE, initialDate);
+			query.setParameter(PARAM_ROOM_STATUS, roomStatusBooked);
+			invoiceSet = new HashSet<>(query.getResultList());
 		} catch (HibernateException ex) {
 			System.out.println(ex);
 		}
@@ -48,16 +71,15 @@ public class InvoiceDAO extends AbstractDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Invoice> selectBooked(final Roomstatus roomStatusBooked,
-			final Date initialDate) {
+	public Set<Invoice> selectNotEnabled(final RoomStatus roomStatusEnabled, final Date initialDate,
+			final Date finalDate) {
 		Set<Invoice> invoiceSet = null;
 		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementBooked());
-			query.setParameter(COLUMN_INITIAL_DATE, initialDate);
-			query.setParameter(COLUMN_ROOM_STATUS, roomStatusBooked);
-			invoiceSet = (query.list().isEmpty()) ? null
-					: new HashSet<Invoice>(query.list());
+			final Query query = manager.createQuery(this.getSelectStatementNotAvailable());
+			query.setParameter(PARAM_INITIAL_DATE, initialDate);
+			query.setParameter(PARAM_FINAL_DATE, finalDate);
+			query.setParameter(PARAM_ROOM_STATUS, roomStatusEnabled);
+			invoiceSet = new HashSet<>(query.getResultList());
 		} catch (HibernateException ex) {
 			System.out.println(ex);
 		}
@@ -65,17 +87,12 @@ public class InvoiceDAO extends AbstractDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Invoice> selectNotEnabled(final Roomstatus roomStatusEnabled,
-			final Date initialDate, final Date finalDate) {
+	public Set<Invoice> selectByStatus(final RoomStatus roomStatus) {
 		Set<Invoice> invoiceSet = null;
 		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementNotEnabled());
-			query.setParameter(COLUMN_INITIAL_DATE, initialDate);
-			query.setParameter(COLUMN_FINAL_DATE, finalDate);
-			query.setParameter(COLUMN_ROOM_STATUS, roomStatusEnabled);
-			invoiceSet = (query.list().isEmpty()) ? null
-					: new HashSet<Invoice>(query.list());
+			final Query query = manager.createQuery(this.getSelectStatementByStatus());
+			query.setParameter(PARAM_ROOM_STATUS, roomStatus);
+			invoiceSet = new HashSet<>(query.getResultList());
 		} catch (HibernateException ex) {
 			System.out.println(ex);
 		}
@@ -83,32 +100,14 @@ public class InvoiceDAO extends AbstractDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Invoice> selectByStatus(final Roomstatus roomStatus) {
-		Set<Invoice> invoiceSet = null;
-		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementByStatus());
-			query.setParameter(COLUMN_ROOM_STATUS, roomStatus);
-			invoiceSet = (query.list().isEmpty()) ? null
-					: new HashSet<Invoice>(query.list());
-		} catch (HibernateException ex) {
-			System.out.println(ex);
-		}
-		return invoiceSet;
-	}
-
-	@SuppressWarnings("unchecked")
-	public Set<Invoice> select(final int year, final int month,
-			final Roomstatus roomStatusEnabled) {
+	public Set<Invoice> select(final int year, final int month, final RoomStatus roomStatusEnabled) {
 		Set<Invoice> invoiceSet = new HashSet<>();
 		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementByDate());
+			final Query query = manager.createQuery(this.getSelectStatementByDate());
 			query.setParameter(PARAM_YEAR, year);
 			query.setParameter(PARAM_MONTH, month);
-			query.setParameter(COLUMN_ROOM_STATUS, roomStatusEnabled);
-			invoiceSet = (query.list().isEmpty()) ? null
-					: new HashSet<Invoice>(query.list());
+			query.setParameter(PARAM_ROOM_STATUS, roomStatusEnabled);
+			invoiceSet = new HashSet<>(query.getResultList());
 		} catch (HibernateException ex) {
 			System.out.println(ex);
 		}
@@ -116,19 +115,16 @@ public class InvoiceDAO extends AbstractDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Invoice> select(final int year, final int month,
-			final Roomstatus roomStatusEnabled,
-			final Invoicestatus invoiceStatus) {
+	public Set<Invoice> select(final int year, final int month, final RoomStatus roomStatusEnabled,
+			final InvoiceStatus invoiceStatus) {
 		Set<Invoice> invoiceSet = new HashSet<>();
 		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementByDateInvoiceStatus());
+			final Query query = manager.createQuery(this.getSelectStatementByDateInvoiceStatus());
 			query.setParameter(PARAM_YEAR, year);
 			query.setParameter(PARAM_MONTH, month);
-			query.setParameter(COLUMN_ROOM_STATUS, roomStatusEnabled);
-			query.setParameter(COLUMN_INVOICE_STATUS, invoiceStatus);
-			invoiceSet = (query.list().isEmpty()) ? null
-					: new HashSet<Invoice>(query.list());
+			query.setParameter(PARAM_ROOM_STATUS, roomStatusEnabled);
+			query.setParameter(PARAM_INVOICE_STATUS, invoiceStatus);
+			invoiceSet = new HashSet<>(query.getResultList());
 		} catch (HibernateException ex) {
 			System.out.println(ex);
 		}
@@ -136,29 +132,21 @@ public class InvoiceDAO extends AbstractDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Invoice> select(final int year, final int month,
-			final Roomstatus roomStatusEnabled,
-			final Invoicestatus invoiceStatus, final Company company) {
+	public Set<Invoice> select(final int year, final int month, final RoomStatus roomStatusEnabled,
+			final InvoiceStatus invoiceStatus, final Company company) {
 		Set<Invoice> invoiceSet = new HashSet<>();
 		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementByDateInvoiceStatusCompany());
+			final Query query = manager.createQuery(this.getSelectStatementByDateInvoiceStatusCompany());
 			query.setParameter(PARAM_YEAR, year);
 			query.setParameter(PARAM_MONTH, month);
-			query.setParameter(COLUMN_ROOM_STATUS, roomStatusEnabled);
-			query.setParameter(COLUMN_INVOICE_STATUS, invoiceStatus);
-			query.setParameter(COLUMN_COMPANY, company);
-			invoiceSet = (query.list().isEmpty()) ? null
-					: new HashSet<Invoice>(query.list());
+			query.setParameter(PARAM_ROOM_STATUS, roomStatusEnabled);
+			query.setParameter(PARAM_INVOICE_STATUS, invoiceStatus);
+			query.setParameter(PARAM_COMPANY, company);
+			invoiceSet = new HashSet<>(query.getResultList());
 		} catch (HibernateException ex) {
 			System.out.println(ex);
 		}
 		return invoiceSet;
-	}
-
-	public void save(final Invoice invoice) {
-		boolean isNew = (invoice.getId() == null) ? true : false;
-		this.save(invoice, isNew);
 	}
 
 	@Override
@@ -170,46 +158,44 @@ public class InvoiceDAO extends AbstractDAO {
 	}
 
 	private String getSelectStatementBooked() {
-		final StringBuilder query = new StringBuilder(
-				this.getSelectStatementEnabled());
+		final StringBuilder query = new StringBuilder(this.getSelectStatementEnabled());
 		query.append(SQL_AND);
 		query.append(COLUMN_INITIAL_DATE);
 		query.append(SQL_GREATER_THAN_WITH_PARAM);
-		query.append(COLUMN_INITIAL_DATE);
+		query.append(PARAM_INITIAL_DATE);
 		query.append(SQL_AND);
 		query.append(COLUMN_ROOM_STATUS);
 		query.append(SQL_EQUALS_WITH_PARAM);
-		query.append(COLUMN_ROOM_STATUS);
+		query.append(PARAM_ROOM_STATUS);
 		return query.toString();
 	}
 
-	private String getSelectStatementNotEnabled() {
-		final StringBuilder query = new StringBuilder(
-				this.getSelectStatementEnabled());
+	private String getSelectStatementNotAvailable() {
+		final StringBuilder query = new StringBuilder(this.getSelectStatementEnabled());
 		query.append(SQL_AND);
 		query.append("((");
 		query.append(COLUMN_INITIAL_DATE);
 		query.append(SQL_BETWEEN);
 		query.append(SQL_PARAMETER);
-		query.append(COLUMN_INITIAL_DATE);
+		query.append(PARAM_INITIAL_DATE);
 		query.append(SQL_AND);
 		query.append(SQL_PARAMETER);
-		query.append(COLUMN_FINAL_DATE);
+		query.append(PARAM_FINAL_DATE);
 		query.append(")");
 		query.append(SQL_OR);
 		query.append("(");
 		query.append(COLUMN_FINAL_DATE);
 		query.append(SQL_BETWEEN);
 		query.append(SQL_PARAMETER);
-		query.append(COLUMN_INITIAL_DATE);
+		query.append(PARAM_INITIAL_DATE);
 		query.append(SQL_AND);
 		query.append(SQL_PARAMETER);
-		query.append(COLUMN_FINAL_DATE);
+		query.append(PARAM_FINAL_DATE);
 		query.append(")");
 		query.append(SQL_OR);
 		query.append("(");
 		query.append(SQL_PARAMETER);
-		query.append(COLUMN_INITIAL_DATE);
+		query.append(PARAM_INITIAL_DATE);
 		query.append(SQL_BETWEEN);
 		query.append(COLUMN_INITIAL_DATE);
 		query.append(SQL_AND);
@@ -218,23 +204,21 @@ public class InvoiceDAO extends AbstractDAO {
 		query.append(SQL_AND);
 		query.append(COLUMN_ROOM_STATUS);
 		query.append(SQL_DISTINCT_WITH_PARAM);
-		query.append(COLUMN_ROOM_STATUS);
+		query.append(PARAM_ROOM_STATUS);
 		return query.toString();
 	}
 
 	private String getSelectStatementByStatus() {
-		final StringBuilder query = new StringBuilder(
-				this.getSelectStatementEnabled());
+		final StringBuilder query = new StringBuilder(this.getSelectStatementEnabled());
 		query.append(SQL_AND);
 		query.append(COLUMN_ROOM_STATUS);
 		query.append(SQL_EQUALS_WITH_PARAM);
-		query.append(COLUMN_ROOM_STATUS);
+		query.append(PARAM_ROOM_STATUS);
 		return query.toString();
 	}
 
 	private String getSelectStatementByDate() {
-		final StringBuilder query = new StringBuilder(
-				this.getSelectStatementByStatus());
+		final StringBuilder query = new StringBuilder(this.getSelectStatementByStatus());
 		query.append(SQL_AND);
 		query.append(SQL_YEAR_FUNC);
 		query.append("(");
@@ -253,22 +237,20 @@ public class InvoiceDAO extends AbstractDAO {
 	}
 
 	private String getSelectStatementByDateInvoiceStatus() {
-		final StringBuilder query = new StringBuilder(
-				this.getSelectStatementByDate());
+		final StringBuilder query = new StringBuilder(this.getSelectStatementByDate());
 		query.append(SQL_AND);
 		query.append(COLUMN_INVOICE_STATUS);
 		query.append(SQL_EQUALS_WITH_PARAM);
-		query.append(COLUMN_INVOICE_STATUS);
+		query.append(PARAM_INVOICE_STATUS);
 		return query.toString();
 	}
 
 	private String getSelectStatementByDateInvoiceStatusCompany() {
-		final StringBuilder query = new StringBuilder(
-				this.getSelectStatementByDateInvoiceStatus());
+		final StringBuilder query = new StringBuilder(this.getSelectStatementByDateInvoiceStatus());
 		query.append(SQL_AND);
 		query.append(COLUMN_COMPANY);
 		query.append(SQL_EQUALS_WITH_PARAM);
-		query.append(COLUMN_COMPANY);
+		query.append(PARAM_COMPANY);
 		return query.toString();
 	}
 }

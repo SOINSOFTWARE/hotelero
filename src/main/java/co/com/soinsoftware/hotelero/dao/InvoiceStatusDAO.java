@@ -1,50 +1,35 @@
 package co.com.soinsoftware.hotelero.dao;
 
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.Session;
 
-import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.InvoiceStatus;
 
 /**
  * @author Carlos Rodriguez
  * @since 27/07/2016
  * @version 1.0
  */
-public class InvoiceStatusDAO extends AbstractDAO {
+public class InvoiceStatusDAO extends AbstractDAO<InvoiceStatus> {
+
+	public InvoiceStatusDAO() throws IOException {
+		super();
+	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Invoicestatus> select() {
-		Set<Invoicestatus> invoiceStatusSet = null;
-		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementEnabled());
-			invoiceStatusSet = (query.list().isEmpty()) ? null
-					: new HashSet<Invoicestatus>(query.list());
-		} catch (HibernateException ex) {
-			System.out.println(ex);
-		}
-		return invoiceStatusSet;
+	public Set<InvoiceStatus> select() {
+		final List<InvoiceStatus> invoiceStatusList = manager.createQuery(this.getSelectStatementEnabled())
+				.getResultList();
+		return (invoiceStatusList != null) ? new HashSet<>(invoiceStatusList) : new HashSet<>();
 	}
 
-	public Invoicestatus select(final String name) {
-		Invoicestatus invoiceStatus = null;
-		try {
-			final Query query = this.createQuery(this.getSelectStatementName());
-			query.setParameter(COLUMN_NAME, name);
-			invoiceStatus = (query.list().isEmpty()) ? null : (Invoicestatus) query
-					.list().get(0);
-		} catch (HibernateException ex) {
-			System.out.println(ex);
-		}
-		return invoiceStatus;
-	}
-
-	public void save(final Invoicestatus invoiceStatus) {
-		boolean isNew = (invoiceStatus.getId() == null) ? true : false;
-		this.save(invoiceStatus, isNew);
+	public InvoiceStatus select(final String name) {
+		final Session session = (Session) manager.getDelegate();
+		return session.bySimpleNaturalId(InvoiceStatus.class).load(name);
 	}
 
 	@Override

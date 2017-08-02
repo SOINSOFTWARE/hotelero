@@ -2,6 +2,7 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
 import co.com.soinsoftware.hotelero.controller.ServiceController;
-import co.com.soinsoftware.hotelero.entity.Servicetype;
+import co.com.soinsoftware.hotelero.entity.ServiceType;
 import co.com.soinsoftware.hotelero.util.ServiceTypeTableModel;
 
 /*
@@ -30,10 +31,17 @@ public class JFServiceType extends JDialog {
 
 	private static final String MSG_SERVICE_TYPE_REQUIRED = "Complete el campo tipo de consumo";
 
-	private final ServiceController serviceController;
+	private ServiceController serviceController;
 
 	public JFServiceType() {
-		this.serviceController = new ServiceController();
+		try {
+			this.serviceController = new ServiceController();
+		} catch (final IOException e) {
+			e.printStackTrace();
+			ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+			System.exit(0);
+		}
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
@@ -53,7 +61,7 @@ public class JFServiceType extends JDialog {
 	}
 
 	private void refreshTableData() {
-		final List<Servicetype> serviceTypeList = this.serviceController
+		final List<ServiceType> serviceTypeList = this.serviceController
 				.selectServiceTypes();
 		final TableModel model = new ServiceTypeTableModel(serviceTypeList);
 		this.jtbServiceTypeList.setModel(model);
@@ -71,15 +79,15 @@ public class JFServiceType extends JDialog {
 		return valid;
 	}
 
-	private List<Servicetype> getServiceTypeListFromTable() {
+	private List<ServiceType> getServiceTypeListFromTable() {
 		final TableModel model = this.jtbServiceTypeList.getModel();
 		return ((ServiceTypeTableModel) model).getServiceTypeList();
 	}
 
 	private boolean hasServiceTypeToBeUpdated(
-			final List<Servicetype> serviceTypeList) {
+			final List<ServiceType> serviceTypeList) {
 		boolean hasElements = false;
-		for (final Servicetype serviceType : serviceTypeList) {
+		for (final ServiceType serviceType : serviceTypeList) {
 			if (serviceType.getNewName() != null
 					&& !serviceType.getNewName().equals("")
 					&& !serviceType.getNewName().equals(serviceType.getName())) {
@@ -91,9 +99,9 @@ public class JFServiceType extends JDialog {
 	}
 
 	private boolean hasServiceTypeToBeDeleted(
-			final List<Servicetype> serviceTypeList) {
+			final List<ServiceType> serviceTypeList) {
 		boolean hasElements = false;
-		for (final Servicetype serviceType : serviceTypeList) {
+		for (final ServiceType serviceType : serviceTypeList) {
 			if (serviceType.isDelete()) {
 				hasElements = true;
 				break;
@@ -516,14 +524,14 @@ public class JFServiceType extends JDialog {
 	}// GEN-LAST:event_jbtSaveActionPerformed
 
 	private void jbtUpdateActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtUpdateActionPerformed
-		final List<Servicetype> serviceTypeList = this
+		final List<ServiceType> serviceTypeList = this
 				.getServiceTypeListFromTable();
 		if (serviceTypeList != null
 				&& this.hasServiceTypeToBeUpdated(serviceTypeList)) {
 			final int confirmation = ViewUtils.showConfirmDialog(this,
 					ViewUtils.MSG_UPDATE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
-				for (final Servicetype serviceType : serviceTypeList) {
+				for (final ServiceType serviceType : serviceTypeList) {
 					if (serviceType.getNewName() != null
 							&& !serviceType.getNewName().equals("")
 							&& !serviceType.getNewName().equals(
@@ -544,14 +552,14 @@ public class JFServiceType extends JDialog {
 	}// GEN-LAST:event_jbtUpdateActionPerformed
 
 	private void jbtDeleteActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtDeleteActionPerformed
-		final List<Servicetype> serviceTypeList = this
+		final List<ServiceType> serviceTypeList = this
 				.getServiceTypeListFromTable();
 		if (serviceTypeList != null
 				&& this.hasServiceTypeToBeDeleted(serviceTypeList)) {
 			final int confirmation = ViewUtils.showConfirmDialog(this,
 					ViewUtils.MSG_DELETE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
-				for (final Servicetype serviceType : serviceTypeList) {
+				for (final ServiceType serviceType : serviceTypeList) {
 					if (serviceType.isDelete()) {
 						serviceType.setEnabled(false);
 						serviceType.setUpdated(new Date());

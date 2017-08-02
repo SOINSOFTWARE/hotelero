@@ -1,11 +1,19 @@
 package co.com.soinsoftware.hotelero.entity;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author Carlos Rodriguez
@@ -13,14 +21,16 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
-public class User implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@Entity(name = "user")
+@OptimisticLocking(type = OptimisticLockType.DIRTY)
+@DynamicUpdate
+@SelectBeforeUpdate
+public class User extends CommonData {
 
 	private static final long serialVersionUID = 8513570707677287722L;
 
-	private Integer id;
-
-	private Company company;
-
+	@NaturalId
 	private long identification;
 
 	private String name;
@@ -33,43 +43,34 @@ public class User implements Serializable {
 
 	private String career;
 
-	private Date creation;
-
-	private Date updated;
-
-	private boolean enabled;
-
-	private Set<Invoice> invoices = new HashSet<>(0);
+	@ManyToOne
+	@JoinColumn(name = "idcompany")
+	private Company company;
 
 	public User() {
 		super();
 	}
 
-	public User(final long identification, final String name, final long phone,
-			final Date creation, final Date updated, final boolean enabled) {
+	public User(final long identification, final String name, final long phone, final Date creation, final Date updated,
+			final boolean enabled) {
+		super(creation, updated, enabled);
 		this.identification = identification;
 		this.name = name;
 		this.phone = phone;
-		this.creation = creation;
-		this.updated = updated;
-		this.enabled = enabled;
 	}
 
-	public User(final Company company, final long identification,
-			final String name, final String login, final String password,
-			final long phone, final String career, final Date creation,
-			final Date updated, final boolean enabled,
-			final Set<Invoice> invoices) {
+	public User(final Company company, final long identification, final String name, final long phone,
+			final String career, final Date creation, final Date updated, final boolean enabled) {
+		this(identification, name, phone, creation, updated, enabled);
 		this.company = company;
-		this.identification = identification;
-		this.name = name;
+		this.career = career;
+	}
+
+	public User(final Company company, final long identification, final String name, final String login,
+			final String password, final long phone, final String career, final Date creation, final Date updated,
+			final boolean enabled) {
+		this(company, identification, name, phone, career, creation, updated, enabled);
 		this.login = login;
 		this.password = password;
-		this.phone = phone;
-		this.career = career;
-		this.creation = creation;
-		this.updated = updated;
-		this.enabled = enabled;
-		this.invoices = invoices;
 	}
 }

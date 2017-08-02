@@ -1,5 +1,6 @@
 package co.com.soinsoftware.hotelero.bll;
 
+import java.io.IOException;
 import java.util.Set;
 
 import co.com.soinsoftware.hotelero.dao.CompanyDAO;
@@ -16,7 +17,7 @@ public class CompanyBLL {
 
 	private final CompanyDAO dao;
 
-	public static CompanyBLL getInstance() {
+	public static CompanyBLL getInstance() throws IOException {
 		if (instance == null) {
 			instance = new CompanyBLL();
 		}
@@ -35,7 +36,7 @@ public class CompanyBLL {
 		this.dao.save(company);
 	}
 
-	private CompanyBLL() {
+	private CompanyBLL() throws IOException {
 		super();
 		this.dao = new CompanyDAO();
 	}

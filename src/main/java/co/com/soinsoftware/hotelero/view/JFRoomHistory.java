@@ -2,6 +2,7 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -14,7 +15,7 @@ import co.com.soinsoftware.hotelero.controller.CompanyController;
 import co.com.soinsoftware.hotelero.controller.InvoiceController;
 import co.com.soinsoftware.hotelero.entity.Company;
 import co.com.soinsoftware.hotelero.entity.Invoice;
-import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.InvoiceStatus;
 import co.com.soinsoftware.hotelero.util.InvoiceTableModel;
 
 /*
@@ -32,17 +33,24 @@ public class JFRoomHistory extends JDialog {
 
 	private static final long serialVersionUID = 3967944685330855230L;
 
-	private final CompanyController companyController;
+	private CompanyController companyController;
 
-	private final InvoiceController invoiceController;
+	private InvoiceController invoiceController;
 
 	private List<Company> companyList;
 
-	private List<Invoicestatus> invoiceStatusList;
+	private List<InvoiceStatus> invoiceStatusList;
 
 	public JFRoomHistory() {
-		this.companyController = new CompanyController();
-		this.invoiceController = new InvoiceController();
+		try {
+			this.companyController = new CompanyController();
+			this.invoiceController = new InvoiceController();
+		} catch (final IOException e) {
+			e.printStackTrace();
+			ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+			System.exit(0);
+		}
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
@@ -76,16 +84,16 @@ public class JFRoomHistory extends JDialog {
 	}
 
 	private void setInvoiceStatusModel() {
-		final Invoicestatus statusBillToCompany = this.invoiceController
+		final InvoiceStatus statusBillToCompany = this.invoiceController
 				.selectInvoiceStatusBillToCompany();
-		final Invoicestatus statusPaid = this.invoiceController
+		final InvoiceStatus statusPaid = this.invoiceController
 				.selectInvoiceStatusPaid();
 		this.invoiceStatusList = new ArrayList<>();
 		this.invoiceStatusList.add(statusPaid);
 		this.invoiceStatusList.add(statusBillToCompany);
 		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		model.addElement("Todos");
-		for (final Invoicestatus invoiceStatus : this.invoiceStatusList) {
+		for (final InvoiceStatus invoiceStatus : this.invoiceStatusList) {
 			model.addElement(invoiceStatus.getName());
 		}
 		this.jcbAccountState.setModel(model);
@@ -101,8 +109,8 @@ public class JFRoomHistory extends JDialog {
 		this.jcbCompany.setModel(model);
 	}
 
-	private Invoicestatus getInvoiceStatusSelected() {
-		Invoicestatus invoiceStatus = null;
+	private InvoiceStatus getInvoiceStatusSelected() {
+		InvoiceStatus invoiceStatus = null;
 		if (this.jcbAccountState.getSelectedIndex() > 0) {
 			final int index = this.jcbAccountState.getSelectedIndex() - 1;
 			invoiceStatus = this.invoiceStatusList.get(index);
@@ -134,7 +142,7 @@ public class JFRoomHistory extends JDialog {
 	private void refreshTableData() {
 		final int year = this.getYear();
 		final int month = this.jlsMonth.getSelectedIndex() + 1;
-		final Invoicestatus invoiceStatus = this.getInvoiceStatusSelected();
+		final InvoiceStatus invoiceStatus = this.getInvoiceStatusSelected();
 		final Company company = this.getCompanySelected();
 		final List<Invoice> invoiceList = this.invoiceController.selectByDate(
 				year, month, invoiceStatus, company);
@@ -572,7 +580,7 @@ public class JFRoomHistory extends JDialog {
 	}// </editor-fold>//GEN-END:initComponents
 
 	private void jcbAccountStateActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbAccountStateActionPerformed
-		final Invoicestatus invoiceStatus = this.getInvoiceStatusSelected();
+		final InvoiceStatus invoiceStatus = this.getInvoiceStatusSelected();
 		if (invoiceStatus != null
 				&& invoiceStatus.getName().equals("Facturado a empresa")) {
 			this.jcbCompany.setEnabled(true);

@@ -85,7 +85,7 @@ public class ServiceTableModel extends AbstractTableModel {
 			int index = 0;
 			for (final Service service : this.serviceList) {
 				service.setNewValue(service.getValue());
-				data[index][0] = service.getServicetype().getName();
+				data[index][0] = service.getServiceType().getName();
 				data[index][1] = service.getName();
 				data[index][2] = service.getValue();
 				data[index][3] = new Boolean(false);

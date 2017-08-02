@@ -1,9 +1,10 @@
 package co.com.soinsoftware.hotelero.bll;
 
+import java.io.IOException;
 import java.util.Set;
 
 import co.com.soinsoftware.hotelero.dao.RoomStatusDAO;
-import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.RoomStatus;
 
 /**
  * @author Carlos Rodriguez
@@ -22,38 +23,38 @@ public class RoomStatusBLL {
 
 	private final RoomStatusDAO dao;
 
-	public static RoomStatusBLL getInstance() {
+	public static RoomStatusBLL getInstance() throws IOException {
 		if (instance == null) {
 			instance = new RoomStatusBLL();
 		}
 		return instance;
 	}
 
-	public Set<Roomstatus> select() {
+	public Set<RoomStatus> select() {
 		return this.dao.select();
 	}
 
-	public Roomstatus select(final String name) {
+	public RoomStatus select(final String name) {
 		return this.dao.select(name);
 	}
 
-	public Roomstatus selectRoomStatusEnabled() {
+	public RoomStatus selectRoomStatusEnabled() {
 		return this.select(ROOM_STATUS_ENABLED);
 	}
 
-	public Roomstatus selectRoomStatusDisabled() {
+	public RoomStatus selectRoomStatusDisabled() {
 		return this.select(ROOM_STATUS_DISABLED);
 	}
 
-	public Roomstatus selectRoomStatusBooked() {
+	public RoomStatus selectRoomStatusBooked() {
 		return this.select(ROOM_STATUS_BOOKED);
 	}
 
-	public void save(final Roomstatus roomStatus) {
+	public void save(final RoomStatus roomStatus) {
 		this.dao.save(roomStatus);
 	}
 
-	private RoomStatusBLL() {
+	private RoomStatusBLL() throws IOException {
 		super();
 		this.dao = new RoomStatusDAO();
 	}

@@ -1,5 +1,6 @@
 package co.com.soinsoftware.hotelero.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -18,7 +19,7 @@ public class CompanyController {
 
 	private final CompanyBLL companyBLL;
 
-	public CompanyController() {
+	public CompanyController() throws IOException {
 		super();
 		this.companyBLL = CompanyBLL.getInstance();
 	}

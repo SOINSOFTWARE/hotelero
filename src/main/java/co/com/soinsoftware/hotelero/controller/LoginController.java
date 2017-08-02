@@ -1,5 +1,7 @@
 package co.com.soinsoftware.hotelero.controller;
 
+import java.io.IOException;
+
 import co.com.soinsoftware.hotelero.bll.UserBLL;
 import co.com.soinsoftware.hotelero.entity.User;
 
@@ -12,7 +14,7 @@ public class LoginController {
 	
 	private final UserBLL userBLL;
 	
-	public LoginController() {
+	public LoginController() throws IOException {
 		super();
 		this.userBLL = UserBLL.getInstance();
 	}

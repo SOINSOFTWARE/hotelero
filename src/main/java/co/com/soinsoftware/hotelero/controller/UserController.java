@@ -1,5 +1,6 @@
 package co.com.soinsoftware.hotelero.controller;
 
+import java.io.IOException;
 import java.util.Date;
 
 import co.com.soinsoftware.hotelero.bll.UserBLL;
@@ -15,7 +16,7 @@ public class UserController {
 
 	private final UserBLL userBLL;
 
-	public UserController() {
+	public UserController() throws IOException {
 		super();
 		this.userBLL = UserBLL.getInstance();
 	}
@@ -28,13 +29,12 @@ public class UserController {
 		return this.userBLL.select(identification);
 	}
 
-	public User saveUser(final Company company, final long identification,
-			final String name, final long phone, final String career) {
+	public User saveUser(final Company company, final long identification, final String name, final long phone,
+			final String career) {
 		User user = this.selectUser(identification);
 		final Date currentDate = new Date();
 		if (user == null) {
-			user = new User(company, identification, name, null, null, phone,
-					career, currentDate, currentDate, true, null);
+			user = new User(company, identification, name, phone, career, currentDate, currentDate, true);
 		} else {
 			user.setUpdated(currentDate);
 		}

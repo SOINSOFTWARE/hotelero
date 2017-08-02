@@ -1,50 +1,34 @@
 package co.com.soinsoftware.hotelero.dao;
 
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.Session;
 
-import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.RoomStatus;
 
 /**
  * @author Carlos Rodriguez
  * @since 27/07/2016
  * @version 1.0
  */
-public class RoomStatusDAO extends AbstractDAO {
+public class RoomStatusDAO extends AbstractDAO<RoomStatus> {
+
+	public RoomStatusDAO() throws IOException {
+		super();
+	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Roomstatus> select() {
-		Set<Roomstatus> roomStatusSet = null;
-		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementEnabled());
-			roomStatusSet = (query.list().isEmpty()) ? null
-					: new HashSet<Roomstatus>(query.list());
-		} catch (HibernateException ex) {
-			System.out.println(ex);
-		}
-		return roomStatusSet;
+	public Set<RoomStatus> select() {
+		final List<RoomStatus> roomStatusList = manager.createQuery(this.getSelectStatementEnabled()).getResultList();
+		return (roomStatusList != null) ? new HashSet<>(roomStatusList) : new HashSet<>();
 	}
 
-	public Roomstatus select(final String name) {
-		Roomstatus roomStatus = null;
-		try {
-			final Query query = this.createQuery(this.getSelectStatementName());
-			query.setParameter(COLUMN_NAME, name);
-			roomStatus = (query.list().isEmpty()) ? null : (Roomstatus) query
-					.list().get(0);
-		} catch (HibernateException ex) {
-			System.out.println(ex);
-		}
-		return roomStatus;
-	}
-
-	public void save(final Roomstatus roomStatus) {
-		boolean isNew = (roomStatus.getId() == null) ? true : false;
-		this.save(roomStatus, isNew);
+	public RoomStatus select(final String name) {
+		final Session session = (Session) manager.getDelegate();
+		return session.bySimpleNaturalId(RoomStatus.class).load(name);
 	}
 
 	@Override

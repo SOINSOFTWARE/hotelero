@@ -2,6 +2,7 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,9 +23,9 @@ import org.apache.commons.lang3.time.DateUtils;
 import co.com.soinsoftware.hotelero.controller.InvoiceController;
 import co.com.soinsoftware.hotelero.entity.Invoice;
 import co.com.soinsoftware.hotelero.entity.Invoiceitem;
-import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.InvoiceStatus;
 import co.com.soinsoftware.hotelero.entity.Room;
-import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.RoomStatus;
 import co.com.soinsoftware.hotelero.entity.User;
 import co.com.soinsoftware.hotelero.util.InvoiceItemNotEditableTableModel;
 
@@ -47,21 +48,28 @@ public class JFRoomPayment extends JDialog {
 
 	private static final String MSG_ROOM_REQUIRED = "Seleccione una habitación";
 
-	private final Roomstatus roomStatusEnabled;
+	private final RoomStatus roomStatusEnabled;
 
-	private final InvoiceController invoiceController;
-
-	private final Invoicestatus statusBillToCompany;
+	private final InvoiceStatus statusBillToCompany;
 
 	private final JFRoom jfRoom;
+	
+	private InvoiceController invoiceController;
 
 	private List<Invoice> invoiceList;
 
-	private List<Invoicestatus> invoiceStatusList;
+	private List<InvoiceStatus> invoiceStatusList;
 
 	public JFRoomPayment(final JFRoom jfRoom) {
 		this.jfRoom = jfRoom;
-		this.invoiceController = new InvoiceController();
+		try {
+			this.invoiceController = new InvoiceController();
+		} catch (final IOException e) {
+			e.printStackTrace();
+			ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+			System.exit(0);
+		}
 		this.roomStatusEnabled = this.invoiceController
 				.selectRoomStatusEnabled();
 		this.statusBillToCompany = this.invoiceController
@@ -113,15 +121,15 @@ public class JFRoomPayment extends JDialog {
 	}
 
 	private void setInvoiceStatusModel() {
-		final Invoicestatus statusNoPaid = this.invoiceController
+		final InvoiceStatus statusNoPaid = this.invoiceController
 				.selectInvoiceStatusNoPaid();
-		final Invoicestatus statusPaid = this.invoiceController
+		final InvoiceStatus statusPaid = this.invoiceController
 				.selectInvoiceStatusPaid();
 		this.invoiceStatusList = new ArrayList<>();
 		this.invoiceStatusList.add(statusNoPaid);
 		this.invoiceStatusList.add(statusPaid);
 		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		for (final Invoicestatus invoiceStatus : this.invoiceStatusList) {
+		for (final InvoiceStatus invoiceStatus : this.invoiceStatusList) {
 			model.addElement(invoiceStatus.getName());
 		}
 		this.jcbAccountState.setModel(model);
@@ -147,7 +155,7 @@ public class JFRoomPayment extends JDialog {
 			}
 		}
 		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		for (final Invoicestatus invoiceStatus : this.invoiceStatusList) {
+		for (final InvoiceStatus invoiceStatus : this.invoiceStatusList) {
 			model.addElement(invoiceStatus.getName());
 		}
 		this.jcbAccountState.setModel(model);
@@ -156,7 +164,7 @@ public class JFRoomPayment extends JDialog {
 	private void calculateTotalValue(final Invoice invoice) {
 		final Room room = invoice.getRoom();
 		final long numDays = this.calculateDaysToBeBilled(invoice
-				.getInitialdate());
+				.getInitialDate());
 		final long total = invoice.getValue() + room.getValue() * numDays;
 		this.jtfTotal.setText(String.valueOf(total));
 	}
@@ -179,7 +187,7 @@ public class JFRoomPayment extends JDialog {
 		return Date.from(zdt.toInstant());
 	}
 
-	private Invoicestatus getInvoiceStatusSelected() {
+	private InvoiceStatus getInvoiceStatusSelected() {
 		final int index = this.jcbAccountState.getSelectedIndex();
 		return this.invoiceStatusList.get(index);
 	}
@@ -187,7 +195,7 @@ public class JFRoomPayment extends JDialog {
 	private boolean validateDataForSave() {
 		boolean valid = true;
 		final Invoice invoice = this.getInvoiceSelected();
-		final Invoicestatus status = this.getInvoiceStatusSelected();
+		final InvoiceStatus status = this.getInvoiceStatusSelected();
 		if (invoice == null) {
 			valid = false;
 			ViewUtils.showMessage(this, MSG_ROOM_REQUIRED,
@@ -721,7 +729,7 @@ public class JFRoomPayment extends JDialog {
 			this.jtfIdentification.setText(String.valueOf(user
 					.getIdentification()));
 			this.jtfName.setText(user.getName());
-			final Date initialDate = invoice.getInitialdate();
+			final Date initialDate = invoice.getInitialDate();
 			this.jdcInitialDate.setDate(initialDate);
 			this.jdcFinalDate.setDate(this.getFinalDate(initialDate, 12));
 			this.calculateTotalValue(invoice);
@@ -743,14 +751,14 @@ public class JFRoomPayment extends JDialog {
 					ViewUtils.MSG_SAVE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
 				final Invoice invoice = this.getInvoiceSelected();
-				final Invoicestatus invoiceStatus = this
+				final InvoiceStatus invoiceStatus = this
 						.getInvoiceStatusSelected();
 				final Date finalDate = this.jdcFinalDate.getDate();
 				final long total = this.getTotalValue();
 				invoice.setUpdated(new Date());
-				invoice.setRoomstatus(roomStatusEnabled);
-				invoice.setInvoicestatus(invoiceStatus);
-				invoice.setFinaldate(finalDate);
+				invoice.setRoomStatus(roomStatusEnabled);
+				invoice.setInvoiceStatus(invoiceStatus);
+				invoice.setFinalDate(finalDate);
 				invoice.setValue(total);
 				this.invoiceController.saveInvoice(invoice);
 				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED,

@@ -1,9 +1,11 @@
 package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Color;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,9 +28,9 @@ import co.com.soinsoftware.hotelero.controller.MenuController;
 import co.com.soinsoftware.hotelero.controller.UserController;
 import co.com.soinsoftware.hotelero.entity.Company;
 import co.com.soinsoftware.hotelero.entity.Invoice;
-import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.InvoiceStatus;
 import co.com.soinsoftware.hotelero.entity.Room;
-import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.RoomStatus;
 import co.com.soinsoftware.hotelero.entity.User;
 import co.com.soinsoftware.hotelero.util.InvoiceBookedTableModel;
 
@@ -66,14 +68,14 @@ public class JFRoom extends JFrame {
 	private static final String MSG_INITIAL_DATE_TO_CHECKIN = "La fecha de llegada debe ser igual a la fecha actual para efectuar el check-in";
 
 	private static final String MSG_ROOM_REQUIRED = "Seleccione una habitación";
-
-	private final CompanyController companyController;
-
-	private final InvoiceController invoiceController;
-
-	private final UserController userController;
-
+	
 	private final JFRoomDetail roomDetail;
+
+	private CompanyController companyController;
+
+	private InvoiceController invoiceController;
+
+	private UserController userController;
 
 	private List<Company> companyList;
 
@@ -84,15 +86,23 @@ public class JFRoom extends JFrame {
 	private User user;
 
 	public JFRoom() {
-		this.companyController = new CompanyController();
-		this.invoiceController = new InvoiceController();
-		this.userController = new UserController();
+		try {
+			this.companyController = new CompanyController();
+			this.invoiceController = new InvoiceController();
+			this.userController = new UserController();
+		} catch (final IOException e) {
+			e.printStackTrace();
+			ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+			System.exit(0);
+		}
 		this.roomDetail = new JFRoomDetail(this, this.invoiceController);
 		this.initComponents();
 		this.disableJTextFieldDateEditor();
 		this.setTextFieldLimits();
 		this.refresh();
 		this.watchPropertyChangeForJDateChooserControls();
+		this.setMaximized();
 	}
 
 	public void addController(final MenuController controller) {
@@ -248,12 +258,12 @@ public class JFRoom extends JFrame {
 
 	private void setBackgroudForNotEnabledRooms() {
 		this.releaseAllRooms();
-		final Roomstatus statusCheckIn = this.invoiceController
+		final RoomStatus statusCheckIn = this.invoiceController
 				.selectRoomStatusDisabled();
 		if (this.notEnabledSet != null) {
 			for (final Invoice invoice : this.notEnabledSet) {
 				final String roomName = invoice.getRoom().getName();
-				final Roomstatus roomStatus = invoice.getRoomstatus();
+				final RoomStatus roomStatus = invoice.getRoomStatus();
 				final Color color = (roomStatus.equals(statusCheckIn)) ? Color.RED
 						: Color.YELLOW;
 				this.setBackgroudForNotEnabledRooms(roomName, color);
@@ -461,6 +471,13 @@ public class JFRoom extends JFrame {
 		}
 		return hasElements;
 	}
+	
+	private void setMaximized() {
+		final GraphicsEnvironment env = GraphicsEnvironment
+				.getLocalGraphicsEnvironment();
+		this.setMaximizedBounds(env.getMaximumWindowBounds());
+		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+	}
 
 	/**
 	 * This method is called from within the constructor to initialize the form.
@@ -534,9 +551,8 @@ public class JFRoom extends JFrame {
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		setTitle("Hotelero");
-		setExtendedState(6);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource("/images/melvic.png")));
+				getClass().getResource("/images/h-square.png")));
 		setMinimumSize(new java.awt.Dimension(1320, 690));
 
 		jpClient.setBorder(javax.swing.BorderFactory.createTitledBorder(null,
@@ -1597,16 +1613,16 @@ public class JFRoom extends JFrame {
 			final int confirmation = ViewUtils.showConfirmDialog(this,
 					ViewUtils.MSG_DELETE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
-				final Roomstatus roomStatusEnabled = this.invoiceController
+				final RoomStatus roomStatusEnabled = this.invoiceController
 						.selectRoomStatusEnabled();
-				final Invoicestatus invoiceStatusDeleted = this.invoiceController
+				final InvoiceStatus invoiceStatusDeleted = this.invoiceController
 						.selectInvoiceStatusDeleted();
 				for (final Invoice invoice : invoiceList) {
 					if (invoice.isDelete()) {
 						invoice.setEnabled(false);
 						invoice.setUpdated(new Date());
-						invoice.setRoomstatus(roomStatusEnabled);
-						invoice.setInvoicestatus(invoiceStatusDeleted);
+						invoice.setRoomStatus(roomStatusEnabled);
+						invoice.setInvoiceStatus(invoiceStatusDeleted);
 						this.invoiceController.saveInvoice(invoice);
 					}
 				}

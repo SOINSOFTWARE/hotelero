@@ -1,10 +1,11 @@
 package co.com.soinsoftware.hotelero.dao;
 
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.Session;
 
 import co.com.soinsoftware.hotelero.entity.Company;
 
@@ -13,38 +14,21 @@ import co.com.soinsoftware.hotelero.entity.Company;
  * @since 19/07/2016
  * @version 1.0
  */
-public class CompanyDAO extends AbstractDAO {
+public class CompanyDAO extends AbstractDAO<Company> {
+	
+	public CompanyDAO() throws IOException {
+		super();
+	}
 
 	@SuppressWarnings("unchecked")
 	public Set<Company> select() {
-		Set<Company> companySet = null;
-		try {
-			final Query query = this.createQuery(this
-					.getSelectStatementNoFirst());
-			companySet = (query.list().isEmpty()) ? null
-					: new HashSet<Company>(query.list());
-		} catch (HibernateException ex) {
-			System.out.println(ex);
-		}
-		return companySet;
+		final List<Company> companyList = manager.createQuery(this.getSelectStatementNoFirst()).getResultList();
+		return (companyList != null) ? new HashSet<>(companyList) : new HashSet<>();
 	}
 
 	public Company select(final String name) {
-		Company company = null;
-		try {
-			final Query query = this.createQuery(this.getSelectStatementName());
-			query.setParameter(COLUMN_NAME, name);
-			company = (query.list().isEmpty()) ? null : (Company) query.list()
-					.get(0);
-		} catch (HibernateException ex) {
-			System.out.println(ex);
-		}
-		return company;
-	}
-
-	public void save(final Company company) {
-		boolean isNew = (company.getId() == null) ? true : false;
-		this.save(company, isNew);
+		final Session session = (Session) manager.getDelegate();
+		return session.bySimpleNaturalId(Company.class).load(name);
 	}
 
 	@Override

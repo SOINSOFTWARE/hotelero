@@ -1,9 +1,10 @@
 package co.com.soinsoftware.hotelero.bll;
 
+import java.io.IOException;
 import java.util.Set;
 
 import co.com.soinsoftware.hotelero.dao.ServiceTypeDAO;
-import co.com.soinsoftware.hotelero.entity.Servicetype;
+import co.com.soinsoftware.hotelero.entity.ServiceType;
 
 /**
  * @author Carlos Rodriguez
@@ -16,22 +17,22 @@ public class ServiceTypeBLL {
 
 	private final ServiceTypeDAO dao;
 
-	public static ServiceTypeBLL getInstance() {
+	public static ServiceTypeBLL getInstance() throws IOException {
 		if (instance == null) {
 			instance = new ServiceTypeBLL();
 		}
 		return instance;
 	}
 
-	public Set<Servicetype> select() {
+	public Set<ServiceType> select() {
 		return this.dao.select();
 	}
 	
-	public void save(final Servicetype serviceType) {
+	public void save(final ServiceType serviceType) {
 		this.dao.save(serviceType);
 	}
 
-	private ServiceTypeBLL() {
+	private ServiceTypeBLL() throws IOException {
 		super();
 		this.dao = new ServiceTypeDAO();
 	}

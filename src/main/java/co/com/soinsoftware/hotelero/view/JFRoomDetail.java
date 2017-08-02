@@ -19,9 +19,9 @@ import org.apache.commons.lang3.time.DateUtils;
 import co.com.soinsoftware.hotelero.controller.InvoiceController;
 import co.com.soinsoftware.hotelero.entity.Company;
 import co.com.soinsoftware.hotelero.entity.Invoice;
-import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.InvoiceStatus;
 import co.com.soinsoftware.hotelero.entity.Room;
-import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.RoomStatus;
 import co.com.soinsoftware.hotelero.entity.User;
 
 /**
@@ -37,7 +37,7 @@ public class JFRoomDetail extends JDialog {
 
 	private final InvoiceController invoiceController;
 
-	private final Roomstatus roomStatusBooked;
+	private final RoomStatus roomStatusBooked;
 
 	private Invoice invoice;
 
@@ -59,7 +59,7 @@ public class JFRoomDetail extends JDialog {
 		this.setCompanyModel(companyList);
 		this.fillUserData(invoice.getUser());
 		this.fillInvoiceData(invoice);
-		this.showButtonsByRoomStatus(invoice.getRoom(), invoice.getRoomstatus());
+		this.showButtonsByRoomStatus(invoice.getRoom(), invoice.getRoomStatus());
 		final String roomName = "Habitación " + invoice.getRoom().getName();
 		this.setTitle(roomName);
 		this.jlbTitle.setText(roomName);
@@ -79,18 +79,18 @@ public class JFRoomDetail extends JDialog {
 	}
 
 	private void fillInvoiceData(final Invoice invoice) {
-		this.jdcInitialDate.setDate(invoice.getInitialdate());
-		this.jdcFinalDate.setDate(invoice.getFinaldate());
-		if (invoice.getSitefrom() != null) {
-			this.jtfSiteFrom.setText(invoice.getSitefrom());
+		this.jdcInitialDate.setDate(invoice.getInitialDate());
+		this.jdcFinalDate.setDate(invoice.getFinalDate());
+		if (invoice.getSiteFrom() != null) {
+			this.jtfSiteFrom.setText(invoice.getSiteFrom());
 		}
-		if (invoice.getSiteto() != null) {
-			this.jtfSiteTo.setText(invoice.getSiteto());
+		if (invoice.getSiteTo() != null) {
+			this.jtfSiteTo.setText(invoice.getSiteTo());
 		}
 	}
 
 	private void showButtonsByRoomStatus(final Room room,
-			final Roomstatus roomStatus) {
+			final RoomStatus roomStatus) {
 		if (roomStatus.equals(this.roomStatusBooked)) {
 			final Date currentDate = new Date();
 			if (DateUtils.isSameDay(currentDate, this.jdcInitialDate.getDate())
@@ -623,10 +623,10 @@ public class JFRoomDetail extends JDialog {
 			final int confirmation = ViewUtils.showConfirmDialog(this,
 					ViewUtils.MSG_SAVE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
-				final Roomstatus roomStatusCheckIn = this.invoiceController
+				final RoomStatus roomStatusCheckIn = this.invoiceController
 						.selectRoomStatusDisabled();
 				this.invoice.setUpdated(new Date());
-				this.invoice.setRoomstatus(roomStatusCheckIn);
+				this.invoice.setRoomStatus(roomStatusCheckIn);
 				this.invoiceController.saveInvoice(invoice);
 				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED,
 						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
@@ -641,14 +641,14 @@ public class JFRoomDetail extends JDialog {
 			final int confirmation = ViewUtils.showConfirmDialog(this,
 					ViewUtils.MSG_DELETE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
-				final Roomstatus roomStatusEnabled = this.invoiceController
+				final RoomStatus roomStatusEnabled = this.invoiceController
 						.selectRoomStatusEnabled();
-				final Invoicestatus invoiceStatusDeleted = this.invoiceController
+				final InvoiceStatus invoiceStatusDeleted = this.invoiceController
 						.selectInvoiceStatusDeleted();
 				this.invoice.setEnabled(false);
 				this.invoice.setUpdated(new Date());
-				this.invoice.setRoomstatus(roomStatusEnabled);
-				this.invoice.setInvoicestatus(invoiceStatusDeleted);
+				this.invoice.setRoomStatus(roomStatusEnabled);
+				this.invoice.setInvoiceStatus(invoiceStatusDeleted);
 				this.invoiceController.saveInvoice(invoice);
 				ViewUtils.showMessage(this, ViewUtils.MSG_DELETED,
 						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);

@@ -61,9 +61,9 @@ public class InvoiceTableModel extends AbstractTableModel {
 			for (final Invoice invoice : invoiceList) {
 				data[index][0] = invoice.getRoom().getName();
 				data[index][1] = invoice.getUser().getName();
-				data[index][2] = format.format(invoice.getInitialdate());
-				data[index][3] = format.format(invoice.getFinaldate());
-				data[index][4] = invoice.getInvoicestatus().getName();
+				data[index][2] = format.format(invoice.getInitialDate());
+				data[index][3] = format.format(invoice.getFinalDate());
+				data[index][4] = invoice.getInvoiceStatus().getName();
 				data[index][5] = String.valueOf(invoice.getValue());
 				index++;
 			}

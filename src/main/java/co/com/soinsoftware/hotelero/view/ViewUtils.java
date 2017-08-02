@@ -29,9 +29,13 @@ import javax.swing.text.NumberFormatter;
  */
 public class ViewUtils {
 	
+	protected static final String TITLE_DATABASE_ERROR = "Error en el software Hotelero!";
+	
 	protected static final String TITLE_REQUIRED_FIELDS = "Campos requeridos";
 	
 	protected static final String TITLE_SAVED = "Guardar";
+	
+	protected static final String MSG_DATABASE_CONNECTION_ERROR = "Error conectando con la base de datos, contacte a soporte técnico";
 	
 	protected static final String MSG_DELETE_QUESTION = "¿Está seguro que desea eliminar los datos seleccionados?";
 	

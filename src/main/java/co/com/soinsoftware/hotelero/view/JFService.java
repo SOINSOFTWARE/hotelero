@@ -2,6 +2,7 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import javax.swing.table.TableModel;
 
 import co.com.soinsoftware.hotelero.controller.ServiceController;
 import co.com.soinsoftware.hotelero.entity.Service;
-import co.com.soinsoftware.hotelero.entity.Servicetype;
+import co.com.soinsoftware.hotelero.entity.ServiceType;
 import co.com.soinsoftware.hotelero.util.ServiceTableModel;
 
 /*
@@ -34,12 +35,19 @@ public class JFService extends JDialog {
 
 	private static final String MSG_SERVICE_TYPE_REQUIRED = "Seleccione el tipo de consumo";
 
-	private final ServiceController serviceController;
+	private ServiceController serviceController;
 
-	private List<Servicetype> serviceTypeList;
+	private List<ServiceType> serviceTypeList;
 
 	public JFService() {
-		this.serviceController = new ServiceController();
+		try {
+			this.serviceController = new ServiceController();
+		} catch (final IOException e) {
+			e.printStackTrace();
+			ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+			System.exit(0);
+		}
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
@@ -64,7 +72,7 @@ public class JFService extends JDialog {
 		this.serviceTypeList = this.serviceController.selectServiceTypes();
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		model.addElement("Seleccione uno...");
-		for (final Servicetype serviceType : serviceTypeList) {
+		for (final ServiceType serviceType : serviceTypeList) {
 			model.addElement(serviceType.getName());
 		}
 		this.jcbServiceCategory.setModel(model);
@@ -600,7 +608,7 @@ public class JFService extends JDialog {
 					ViewUtils.MSG_SAVE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
 				final int index = this.jcbServiceCategory.getSelectedIndex() - 1;
-				final Servicetype serviceType = this.serviceTypeList.get(index);
+				final ServiceType serviceType = this.serviceTypeList.get(index);
 				final String name = this.jtfServiceName.getText();
 				final long value = this.getServiceValue();
 				this.serviceController.saveService(serviceType, name, value);

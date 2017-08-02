@@ -83,8 +83,8 @@ public class InvoiceBookedTableModel extends AbstractTableModel {
 						.getIdentification());
 				data[index][1] = invoice.getUser().getName();
 				data[index][2] = invoice.getRoom().getName();
-				data[index][3] = format.format(invoice.getInitialdate());
-				data[index][4] = format.format(invoice.getFinaldate());
+				data[index][3] = format.format(invoice.getInitialDate());
+				data[index][4] = format.format(invoice.getFinalDate());
 				data[index][5] = new Boolean(false);
 				index++;
 			}

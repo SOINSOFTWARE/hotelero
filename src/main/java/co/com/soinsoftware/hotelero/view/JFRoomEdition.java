@@ -7,6 +7,7 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -27,10 +28,17 @@ public class JFRoomEdition extends JDialog {
 
 	private static final long serialVersionUID = -723888148256449103L;
 
-	private final InvoiceController invoiceController;
+	private InvoiceController invoiceController;
 
 	public JFRoomEdition() {
-		this.invoiceController = new InvoiceController();
+		try {
+			this.invoiceController = new InvoiceController();
+		} catch (final IOException e) {
+			e.printStackTrace();
+			ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+			System.exit(0);
+		}
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();

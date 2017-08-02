@@ -1,13 +1,14 @@
 package co.com.soinsoftware.hotelero.bll;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 
 import co.com.soinsoftware.hotelero.dao.InvoiceDAO;
 import co.com.soinsoftware.hotelero.entity.Company;
 import co.com.soinsoftware.hotelero.entity.Invoice;
-import co.com.soinsoftware.hotelero.entity.Invoicestatus;
-import co.com.soinsoftware.hotelero.entity.Roomstatus;
+import co.com.soinsoftware.hotelero.entity.InvoiceStatus;
+import co.com.soinsoftware.hotelero.entity.RoomStatus;
 
 /**
  * @author Carlos Rodriguez
@@ -20,7 +21,7 @@ public class InvoiceBLL {
 
 	private final InvoiceDAO dao;
 
-	public static InvoiceBLL getInstance() {
+	public static InvoiceBLL getInstance() throws IOException {
 		if (instance == null) {
 			instance = new InvoiceBLL();
 		}
@@ -31,23 +32,23 @@ public class InvoiceBLL {
 		return this.dao.select();
 	}
 
-	public Set<Invoice> select(final Roomstatus roomStatusBooked,
+	public Set<Invoice> select(final RoomStatus roomStatusBooked,
 			final Date initialDate) {
 		return this.dao.selectBooked(roomStatusBooked, initialDate);
 	}
 
-	public Set<Invoice> select(final Roomstatus roomStatus,
+	public Set<Invoice> select(final RoomStatus roomStatus,
 			final Date initialDate, final Date finalDate) {
 		return this.dao.selectNotEnabled(roomStatus, initialDate, finalDate);
 	}
 
-	public Set<Invoice> select(final Roomstatus roomStatus) {
+	public Set<Invoice> select(final RoomStatus roomStatus) {
 		return this.dao.selectByStatus(roomStatus);
 	}
 
 	public Set<Invoice> select(final int year, final int month,
-			final Roomstatus roomStatusEnabled,
-			final Invoicestatus invoiceStatus, final Company company) {
+			final RoomStatus roomStatusEnabled,
+			final InvoiceStatus invoiceStatus, final Company company) {
 		Set<Invoice> invoiceSet = null;
 		if (invoiceStatus == null) {
 			invoiceSet = this.dao.select(year, month, roomStatusEnabled);
@@ -68,7 +69,7 @@ public class InvoiceBLL {
 		this.dao.save(invoice);
 	}
 
-	private InvoiceBLL() {
+	private InvoiceBLL() throws IOException {
 		super();
 		this.dao = new InvoiceDAO();
 	}

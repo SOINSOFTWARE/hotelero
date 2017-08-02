@@ -3,6 +3,7 @@
  */
 package co.com.soinsoftware.hotelero.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -12,7 +13,7 @@ import java.util.Set;
 import co.com.soinsoftware.hotelero.bll.ServiceBLL;
 import co.com.soinsoftware.hotelero.bll.ServiceTypeBLL;
 import co.com.soinsoftware.hotelero.entity.Service;
-import co.com.soinsoftware.hotelero.entity.Servicetype;
+import co.com.soinsoftware.hotelero.entity.ServiceType;
 
 /**
  * @author Carlos Rodriguez
@@ -25,15 +26,15 @@ public class ServiceController {
 
 	private final ServiceBLL serviceBLL;
 
-	public ServiceController() {
+	public ServiceController() throws IOException {
 		super();
 		this.serviceTypeBLL = ServiceTypeBLL.getInstance();
 		this.serviceBLL = ServiceBLL.getInstance();
 	}
 
-	public List<Servicetype> selectServiceTypes() {
-		List<Servicetype> serviceTypeList = new ArrayList<>();
-		final Set<Servicetype> serviceTypeSet = this.serviceTypeBLL.select();
+	public List<ServiceType> selectServiceTypes() {
+		List<ServiceType> serviceTypeList = new ArrayList<>();
+		final Set<ServiceType> serviceTypeSet = this.serviceTypeBLL.select();
 		if (serviceTypeSet != null) {
 			serviceTypeList = new ArrayList<>(serviceTypeSet);
 			Collections.sort(serviceTypeList);
@@ -43,12 +44,12 @@ public class ServiceController {
 
 	public void saveServiceType(final String name) {
 		final Date currentDate = new Date();
-		final Servicetype serviceType = new Servicetype(name, currentDate,
+		final ServiceType serviceType = new ServiceType(name, currentDate,
 				currentDate, true);
 		this.saveServiceType(serviceType);
 	}
 
-	public void saveServiceType(final Servicetype serviceType) {
+	public void saveServiceType(final ServiceType serviceType) {
 		this.serviceTypeBLL.save(serviceType);
 	}
 
@@ -62,7 +63,7 @@ public class ServiceController {
 		return serviceList;
 	}
 
-	public List<Service> selectServices(final Servicetype serviceType) {
+	public List<Service> selectServices(final ServiceType serviceType) {
 		List<Service> serviceList = new ArrayList<>();
 		final Set<Service> serviceSet = this.serviceBLL.select(serviceType);
 		if (serviceSet != null) {
@@ -72,7 +73,7 @@ public class ServiceController {
 		return serviceList;
 	}
 
-	public void saveService(final Servicetype serviceType, final String name,
+	public void saveService(final ServiceType serviceType, final String name,
 			final long value) {
 		final Date currentDate = new Date();
 		final Service service = new Service(serviceType, name, value,

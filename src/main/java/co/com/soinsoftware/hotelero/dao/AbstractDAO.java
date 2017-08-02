@@ -1,30 +1,32 @@
 package co.com.soinsoftware.hotelero.dao;
 
-import java.io.Serializable;
+import java.io.IOException;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
+import co.com.soinsoftware.hotelero.dao.manager.HoteleroManagerFactory;
 
 /**
  * @author Carlos Rodriguez
  * @since 26/05/2016
  * @version 1.0
  */
-public abstract class AbstractDAO {
+public abstract class AbstractDAO<T> {
 
 	protected static final String COLUMN_ENABLED = "enabled";
 	protected static final String COLUMN_ID = "id";
 	protected static final String COLUMN_NAME = "name";
 
-	protected static final String TABLE_COMPANY = "Company";
-	protected static final String TABLE_INVOICE = "Invoice";
-	protected static final String TABLE_INVOICE_ITEM = "Invoiceitem";
-	protected static final String TABLE_INVOICE_STATUS = "Invoicestatus";
-	protected static final String TABLE_ROOM = "Room";
-	protected static final String TABLE_ROOM_STATUS = "Roomstatus";
-	protected static final String TABLE_SERVICE = "Service";
-	protected static final String TABLE_SERVICE_TYPE = "Servicetype";
-	protected static final String TABLE_USER = "User";
+	protected static final String TABLE_COMPANY = "company";
+	protected static final String TABLE_INVOICE = "invoice";
+	protected static final String TABLE_INVOICE_ITEM = "invoiceitem";
+	protected static final String TABLE_INVOICE_STATUS = "invoicestatus";
+	protected static final String TABLE_ROOM = "room";
+	protected static final String TABLE_ROOM_STATUS = "roomstatus";
+	protected static final String TABLE_SERVICE = "service";
+	protected static final String TABLE_SERVICE_TYPE = "servicetype";
+	protected static final String TABLE_USER = "user";
 
 	protected static final String SQL_AND = " and ";
 	protected static final String SQL_BETWEEN = " between ";
@@ -38,20 +40,41 @@ public abstract class AbstractDAO {
 	protected static final String SQL_SELECT = " select ";
 	protected static final String SQL_WHERE = " where ";
 	protected static final String SQL_YEAR_FUNC = " year ";
+	
+	protected EntityManager manager;
 
-	public Query createQuery(final String queryStatement) {
-		final SessionController controller = SessionController.getInstance();
-		final Session session = controller.openSession();
-		return session.createQuery(queryStatement);
+	/**
+	 * Default constructor that must be used for all DAO implementations.
+	 * 
+	 * @throws IOException 
+	 */
+	public AbstractDAO() throws IOException {
+		super();
+		createEntityManager();
 	}
 
-	public void save(final Serializable object, final boolean isNew) {
-		final SessionController controller = SessionController.getInstance();
-		final Session session = controller.openSession();
-		if (isNew) {
-			session.save(object);
+	public void save(T record) {
+		manager.persist(record);
+	}
+
+	/**
+	 * When using transaction to store data, use this method to roll back
+	 * transaction if anything goes wrong before finish it
+	 * 
+	 * @param transaction
+	 *            {@link EntityTransaction} used.
+	 */
+	public void rollbackTransaction(final EntityTransaction transaction) {
+		if (transaction != null) {
+			transaction.rollback();
 		}
-		session.getTransaction().commit();
+	}
+
+	/**
+	 * Close an application-managed entity manager.
+	 */
+	public void close() {
+		manager.close();
 	}
 
 	protected abstract String getSelectStatement();
@@ -72,5 +95,10 @@ public abstract class AbstractDAO {
 		query.append(SQL_EQUALS_WITH_PARAM);
 		query.append(COLUMN_NAME);
 		return query.toString();
+	}
+	
+	protected void createEntityManager() throws IOException {
+		final HoteleroManagerFactory emf = HoteleroManagerFactory.getInstance();
+		this.manager = emf.createEntityManager();
 	}
 }

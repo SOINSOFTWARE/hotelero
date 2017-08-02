@@ -5,10 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import net.sf.jasperreports.engine.DefaultJasperReportsContext;
-import co.com.soinsoftware.hotelero.dao.SessionController;
 import co.com.soinsoftware.hotelero.view.JFLogin;
 import co.com.soinsoftware.hotelero.view.JFLogo;
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 
 /**
  * @author Carlos Rodriguez
@@ -26,19 +25,19 @@ public class HoteleroApp {
 		EventQueue
 				.invokeLater(() -> {
 					try {
-						SessionController.getInstance();
 						System.out
 								.println("Initializing jasper report context");
 						DefaultJasperReportsContext.getInstance();
 						System.out
 								.println("Finalizing initialization of jasper report context");
 						UIManager.setLookAndFeel(LOOK_AND_FEEL);
-						logo.setVisible(false);
 						login.setVisible(true);
+						logo.setVisible(false);
 					} catch (ClassNotFoundException | InstantiationException
 							| IllegalAccessException
 							| UnsupportedLookAndFeelException ex) {
 						ex.printStackTrace();
+						System.exit(0);
 					}
 				});
 	}

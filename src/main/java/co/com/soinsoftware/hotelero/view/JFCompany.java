@@ -2,6 +2,7 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -32,12 +33,19 @@ public class JFCompany extends JDialog {
 
 	private static final String MSG_NIT_REQUIRED = "Complete el campo NIT de la empresa";
 
-	private final CompanyController companyController;
-
 	private final JFRoom jfRoom;
+	
+	private CompanyController companyController;
 
 	public JFCompany(final JFRoom jfRoom) {
-		this.companyController = new CompanyController();
+		try {
+			this.companyController = new CompanyController();
+		} catch (final IOException e) {
+			e.printStackTrace();
+			ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+			System.exit(0);
+		}
 		this.jfRoom = jfRoom;
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()

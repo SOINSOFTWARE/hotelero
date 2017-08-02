@@ -1,9 +1,10 @@
 package co.com.soinsoftware.hotelero.bll;
 
+import java.io.IOException;
 import java.util.Set;
 
 import co.com.soinsoftware.hotelero.dao.InvoiceStatusDAO;
-import co.com.soinsoftware.hotelero.entity.Invoicestatus;
+import co.com.soinsoftware.hotelero.entity.InvoiceStatus;
 
 /**
  * @author Carlos Rodriguez
@@ -24,42 +25,42 @@ public class InvoiceStatusBLL {
 
 	private final InvoiceStatusDAO dao;
 
-	public static InvoiceStatusBLL getInstance() {
+	public static InvoiceStatusBLL getInstance() throws IOException {
 		if (instance == null) {
 			instance = new InvoiceStatusBLL();
 		}
 		return instance;
 	}
 
-	public Set<Invoicestatus> select() {
+	public Set<InvoiceStatus> select() {
 		return this.dao.select();
 	}
 
-	public Invoicestatus select(final String name) {
+	public InvoiceStatus select(final String name) {
 		return this.dao.select(name);
 	}
 
-	public Invoicestatus selectInvoiceStatusNoPaid() {
+	public InvoiceStatus selectInvoiceStatusNoPaid() {
 		return this.select(INVOICE_STATUS_NO_PAID);
 	}
 
-	public Invoicestatus selectInvoiceStatusPaid() {
+	public InvoiceStatus selectInvoiceStatusPaid() {
 		return this.select(INVOICE_STATUS_PAID);
 	}
 
-	public Invoicestatus selectInvoiceStatusBillToCompany() {
+	public InvoiceStatus selectInvoiceStatusBillToCompany() {
 		return this.select(INVOICE_STATUS_BILL_TO_COMPANY);
 	}
 
-	public Invoicestatus selectInvoiceStatusDeleted() {
+	public InvoiceStatus selectInvoiceStatusDeleted() {
 		return this.select(INVOICE_STATUS_DELETED);
 	}
 
-	public void save(final Invoicestatus invoiceStatus) {
+	public void save(final InvoiceStatus invoiceStatus) {
 		this.dao.save(invoiceStatus);
 	}
 
-	private InvoiceStatusBLL() {
+	private InvoiceStatusBLL() throws IOException {
 		super();
 		this.dao = new InvoiceStatusDAO();
 	}

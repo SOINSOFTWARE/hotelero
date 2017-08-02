@@ -1,5 +1,7 @@
 package co.com.soinsoftware.hotelero.bll;
 
+import java.io.IOException;
+
 import co.com.soinsoftware.hotelero.dao.UserDAO;
 import co.com.soinsoftware.hotelero.entity.User;
 
@@ -14,7 +16,7 @@ public class UserBLL {
 	
 	private final UserDAO dao;
 	
-	public static UserBLL getInstance() {
+	public static UserBLL getInstance() throws IOException {
 		if (instance == null) {
 			instance = new UserBLL();
 		}
@@ -33,7 +35,7 @@ public class UserBLL {
 		this.dao.save(user);
 	}
 	
-	private UserBLL() {
+	private UserBLL() throws IOException {
 		super();
 		this.dao = new UserDAO();
 	}

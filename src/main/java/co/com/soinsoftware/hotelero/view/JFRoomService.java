@@ -2,6 +2,7 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,7 @@ import co.com.soinsoftware.hotelero.entity.Invoice;
 import co.com.soinsoftware.hotelero.entity.Invoiceitem;
 import co.com.soinsoftware.hotelero.entity.Room;
 import co.com.soinsoftware.hotelero.entity.Service;
-import co.com.soinsoftware.hotelero.entity.Servicetype;
+import co.com.soinsoftware.hotelero.entity.ServiceType;
 import co.com.soinsoftware.hotelero.entity.User;
 import co.com.soinsoftware.hotelero.util.InvoiceItemTableModel;
 
@@ -50,19 +51,26 @@ public class JFRoomService extends JDialog {
 
 	private static final String MSG_VALUE_EQUALS_TO_ZERO_REQUIRED = "El campo precio debe ser mayor a 0";
 
-	private final InvoiceController invoiceController;
+	private InvoiceController invoiceController;
 
-	private final ServiceController serviceController;
+	private ServiceController serviceController;
 
 	private List<Invoice> invoiceList;
 
-	private List<Servicetype> serviceTypeList;
+	private List<ServiceType> serviceTypeList;
 
 	private List<Service> serviceList;
 
 	public JFRoomService() {
-		this.invoiceController = new InvoiceController();
-		this.serviceController = new ServiceController();
+		try {
+			this.invoiceController = new InvoiceController();
+			this.serviceController = new ServiceController();
+		} catch (final IOException e) {
+			e.printStackTrace();
+			ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+			System.exit(0);
+		}
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit()
 				.getScreenSize();
@@ -112,13 +120,13 @@ public class JFRoomService extends JDialog {
 		this.serviceTypeList = this.serviceController.selectServiceTypes();
 		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		model.addElement("Seleccione uno...");
-		for (final Servicetype serviceType : this.serviceTypeList) {
+		for (final ServiceType serviceType : this.serviceTypeList) {
 			model.addElement(serviceType.getName());
 		}
 		this.jcbServiceCategory.setModel(model);
 	}
 
-	private void setServiceModel(final Servicetype serviceType) {
+	private void setServiceModel(final ServiceType serviceType) {
 		this.serviceList = this.serviceController.selectServices(serviceType);
 		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		model.addElement("Seleccione uno...");
@@ -139,8 +147,8 @@ public class JFRoomService extends JDialog {
 		return invoice;
 	}
 
-	private Servicetype getServiceTypeSelected() {
-		Servicetype serviceType = null;
+	private ServiceType getServiceTypeSelected() {
+		ServiceType serviceType = null;
 		if (this.jcbServiceCategory.getSelectedIndex() > 0) {
 			final int index = this.jcbServiceCategory.getSelectedIndex() - 1;
 			serviceType = this.serviceTypeList.get(index);
@@ -185,7 +193,7 @@ public class JFRoomService extends JDialog {
 		boolean valid = true;
 		final Invoice invoice = this.getInvoiceSelected();
 		final Date invoiceItemDate = this.jdcInitialDate.getDate();
-		final Servicetype serviceType = this.getServiceTypeSelected();
+		final ServiceType serviceType = this.getServiceTypeSelected();
 		final Service service = this.getServiceSelected();
 		final int quantity = this.getServiceQuantity();
 		final long value = this.getServiceValue();
@@ -863,15 +871,15 @@ public class JFRoomService extends JDialog {
 			this.jtfIdentification.setText(String.valueOf(user
 					.getIdentification()));
 			this.jtfName.setText(user.getName());
-			this.jdcInitialDate.setMinSelectableDate(invoice.getInitialdate());
-			final Date finalDate = invoice.getFinaldate();
+			this.jdcInitialDate.setMinSelectableDate(invoice.getInitialDate());
+			final Date finalDate = invoice.getFinalDate();
 			final Date currentDate = new Date();
 			if (!DateUtils.isSameDay(currentDate, finalDate)
 					&& currentDate.after(finalDate)) {
 				this.jdcInitialDate.setMaxSelectableDate(currentDate);
 			} else {
 				this.jdcInitialDate
-						.setMaxSelectableDate(invoice.getFinaldate());
+						.setMaxSelectableDate(invoice.getFinalDate());
 			}
 		} else {
 			this.setEnabledNewServiceFields(false);
@@ -882,7 +890,7 @@ public class JFRoomService extends JDialog {
 
 	private void jcbServiceCategoryActionPerformed(
 			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbServiceCategoryActionPerformed
-		final Servicetype serviceType = this.getServiceTypeSelected();
+		final ServiceType serviceType = this.getServiceTypeSelected();
 		this.setServiceModel(serviceType);
 		this.jtfServiceValue.setText("");
 		this.jtfServiceQuantity.setText("");
