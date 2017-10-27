@@ -29,6 +29,5 @@ public class RoomType extends CommonData {
 	@NaturalId
 	private String code;
 
-	@NaturalId
 	private String name;
 }

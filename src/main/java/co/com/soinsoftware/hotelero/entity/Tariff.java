@@ -30,7 +30,6 @@ public class Tariff extends CommonData {
 	@NaturalId
 	private String code;
 
-	@NaturalId
 	private String name;
 	
 	@Column(name = "mintariff")

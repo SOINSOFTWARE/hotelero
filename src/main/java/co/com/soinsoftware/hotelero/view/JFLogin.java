@@ -48,7 +48,8 @@ public class JFLogin extends JFrame {
 		} catch (final IOException e) {
 			e.printStackTrace();
 			ViewUtils.showConfirmDialog(this,
-					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+					ViewUtils.MSG_DATABASE_CONNECTION_ERROR,
+					ViewUtils.TITLE_DATABASE_ERROR);
 			System.exit(0);
 		}
 		this.setTitle(TITLE);
@@ -96,9 +97,11 @@ public class JFLogin extends JFrame {
 		final JFCompany companyFrame = new JFCompany(roomFrame);
 		final JFService serviceFrame = new JFService();
 		final JFRoomEdition roomPriceFrame = new JFRoomEdition();
+		final JFFloor floorFrame = new JFFloor();
 		final MenuController menuController = new MenuController(
 				roomServiceFrame, roomPaymentFrame, roomHistoryFrame,
-				serviceTypeFrame, serviceFrame, companyFrame, roomPriceFrame);
+				serviceTypeFrame, serviceFrame, companyFrame, roomPriceFrame,
+				floorFrame);
 		roomFrame.addController(menuController);
 		roomFrame.setVisible(true);
 		this.createMidnightTask(roomFrame);

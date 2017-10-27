@@ -19,7 +19,8 @@ public class HoteleroManagerFactory extends AbstractManagerFactory {
 
 	private static final String PERSISTENCE_UNIT_NAME = "Hotelero";
 
-	private static final String PROPERTY_FILE = "/connection.properties";
+	private static final String PROPERTY_FILE = System.getProperty("user.dir")
+			+ "/connection.properties";
 
 	private HoteleroManagerFactory() throws IOException {
 		super(PACKAGE_INFO, PERSISTENCE_UNIT_NAME, PROPERTY_FILE);

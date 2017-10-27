@@ -1,6 +1,5 @@
 package co.com.soinsoftware.hotelero.dao.manager;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -8,14 +7,14 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import lombok.extern.log4j.Log4j;
+
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
-import lombok.extern.log4j.Log4j;
 
 /**
  * This class builds the {@link EntityManagerFactory} object using the provided
@@ -112,10 +111,8 @@ public abstract class AbstractManagerFactory implements IEntityManagerFactory {
 	 *             its defined attributes.
 	 */
 	private Properties loadPropertyFile(final String propFile) throws IOException {
-		final File jarPath = new File(AbstractManagerFactory.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        final String propertiesPath = jarPath.getParentFile().getAbsolutePath();
-        final Properties properties = new Properties();
-		properties.load(new FileInputStream(propertiesPath + propFile));
+		final Properties properties = new Properties();
+		properties.load(new FileInputStream(propFile));
 		log.info("Property file loaded successfuly");
 		return properties;
 	}

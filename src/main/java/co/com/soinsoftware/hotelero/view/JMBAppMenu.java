@@ -32,6 +32,8 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 
 	private static final String MENU_CONFIGURATION_COMPANY = "Empresa";
 
+	private static final String MENU_CONFIGURATION_FLOOR = "Pisos";
+
 	private static final String MENU_CONFIGURATION_ROOM_PRICE = "Precios habitaciones";
 
 	private static final String MENU_CONFIGURATION_SERVICE_TYPE = "Tipo de consumo";
@@ -72,6 +74,9 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 		case MENU_CONFIGURATION_ROOM_PRICE:
 			this.showRoomPriceFrame();
 			break;
+		case MENU_CONFIGURATION_FLOOR:
+			this.showFloorFrame();
+			break;
 		}
 	}
 
@@ -111,13 +116,18 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 		final JMenuItem miRoomPrice = ViewUtils.createJMenuItem(
 				MENU_CONFIGURATION_ROOM_PRICE, KeyEvent.VK_P,
 				KeyStroke.getKeyStroke(KeyEvent.VK_7, ActionEvent.ALT_MASK));
+		final JMenuItem miFloor = ViewUtils.createJMenuItem(
+				MENU_CONFIGURATION_FLOOR, KeyEvent.VK_F,
+				KeyStroke.getKeyStroke(KeyEvent.VK_8, ActionEvent.ALT_MASK));
 		miService.addActionListener(this);
 		miServiceType.addActionListener(this);
 		miCompany.addActionListener(this);
 		miRoomPrice.addActionListener(this);
+		miFloor.addActionListener(this);
 		menu.add(miServiceType);
 		menu.add(miService);
 		menu.add(miCompany);
+		menu.add(miFloor);
 		menu.add(miRoomPrice);
 		this.add(menu);
 	}
@@ -130,6 +140,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getFloorFrame().setVisible(false);
 			this.controller.getRoomServiceFrame().refresh();
 			this.controller.getRoomServiceFrame().setVisible(true);
 		}
@@ -143,6 +154,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getFloorFrame().setVisible(false);
 			this.controller.getRoomPaymentFrame().refresh();
 			this.controller.getRoomPaymentFrame().setVisible(true);
 		}
@@ -156,6 +168,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getFloorFrame().setVisible(false);
 			this.controller.getRoomHistoryFrame().refresh();
 			this.controller.getRoomHistoryFrame().setVisible(true);
 		}
@@ -169,6 +182,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getFloorFrame().setVisible(false);
 			this.controller.getServiceFrame().refresh();
 			this.controller.getServiceFrame().setVisible(true);
 		}
@@ -182,6 +196,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getFloorFrame().setVisible(false);
 			this.controller.getServiceTypeFrame().refresh();
 			this.controller.getServiceTypeFrame().setVisible(true);
 		}
@@ -195,6 +210,7 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceFrame().setVisible(false);
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getFloorFrame().setVisible(false);
 			this.controller.getCompanyFrame().refresh();
 			this.controller.getCompanyFrame().setVisible(true);
 		}
@@ -208,8 +224,23 @@ public class JMBAppMenu extends JMenuBar implements ActionListener {
 			this.controller.getServiceFrame().setVisible(false);
 			this.controller.getServiceTypeFrame().setVisible(false);
 			this.controller.getCompanyFrame().setVisible(false);
+			this.controller.getFloorFrame().setVisible(false);
 			this.controller.getRoomPriceFrame().refresh();
 			this.controller.getRoomPriceFrame().setVisible(true);
+		}
+	}
+
+	private void showFloorFrame() {
+		if (!this.controller.getRoomPriceFrame().isVisible()) {
+			this.controller.getRoomServiceFrame().setVisible(false);
+			this.controller.getRoomPaymentFrame().setVisible(false);
+			this.controller.getRoomHistoryFrame().setVisible(false);
+			this.controller.getServiceFrame().setVisible(false);
+			this.controller.getServiceTypeFrame().setVisible(false);
+			this.controller.getCompanyFrame().setVisible(false);
+			this.controller.getRoomPriceFrame().setVisible(false);
+			this.controller.getFloorFrame().refresh();
+			this.controller.getFloorFrame().setVisible(true);
 		}
 	}
 }

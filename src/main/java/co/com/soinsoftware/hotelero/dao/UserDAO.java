@@ -2,6 +2,7 @@ package co.com.soinsoftware.hotelero.dao;
 
 import java.io.IOException;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.hibernate.HibernateException;
@@ -28,10 +29,14 @@ public class UserDAO extends AbstractDAO<User> {
 	public User select(final String login, final String password) {
 		User user = null;
 		try {
-			final Query query = manager.createQuery(this.getSelectStatementLogin());
+			final Query query = manager.createQuery(this
+					.getSelectStatementLogin());
 			query.setParameter(PARAM_LOGIN, login);
 			query.setParameter(PARAM_PASS, password);
 			user = (User) query.getSingleResult();
+		} catch (final NoResultException ex) {
+			System.out
+					.println("Login and password does not return an existing user");
 		} catch (HibernateException ex) {
 			System.out.println(ex);
 		}
