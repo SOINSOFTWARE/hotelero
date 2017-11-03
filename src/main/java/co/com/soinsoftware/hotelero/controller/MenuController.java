@@ -6,6 +6,7 @@ import co.com.soinsoftware.hotelero.view.JFRoomEdition;
 import co.com.soinsoftware.hotelero.view.JFRoomHistory;
 import co.com.soinsoftware.hotelero.view.JFRoomPayment;
 import co.com.soinsoftware.hotelero.view.JFRoomService;
+import co.com.soinsoftware.hotelero.view.JFRoomType;
 import co.com.soinsoftware.hotelero.view.JFService;
 import co.com.soinsoftware.hotelero.view.JFServiceType;
 
@@ -31,13 +32,15 @@ public class MenuController {
 	private final JFRoomEdition roomPriceFrame;
 
 	private final JFFloor floorFrame;
+	
+	private final JFRoomType roomTypeFrame;
 
 	public MenuController(final JFRoomService roomServiceFrame,
 			final JFRoomPayment roomPaymentFrame,
 			final JFRoomHistory viewUserFrame,
 			final JFServiceType serviceTypeFrame, final JFService serviceFrame,
 			final JFCompany companyFrame, final JFRoomEdition roomPriceFrame,
-			final JFFloor floorFrame) {
+			final JFFloor floorFrame, final JFRoomType roomTypeFrame) {
 		super();
 		this.roomServiceFrame = roomServiceFrame;
 		this.roomPaymentFrame = roomPaymentFrame;
@@ -47,6 +50,7 @@ public class MenuController {
 		this.companyFrame = companyFrame;
 		this.roomPriceFrame = roomPriceFrame;
 		this.floorFrame = floorFrame;
+		this.roomTypeFrame = roomTypeFrame;
 	}
 
 	public JFRoomService getRoomServiceFrame() {
@@ -79,5 +83,9 @@ public class MenuController {
 
 	public JFFloor getFloorFrame() {
 		return floorFrame;
+	}
+	
+	public JFRoomType getRoomTypeFrame() {
+		return roomTypeFrame;
 	}
 }

@@ -21,7 +21,7 @@ import co.com.soinsoftware.hotelero.util.MidnightTimerTask;
 /**
  * @author Carlos Rodriguez
  * @since 18/07/2016
- * @version 1.0
+ * @version 1.0.1
  */
 public class JFLogin extends JFrame {
 
@@ -98,10 +98,11 @@ public class JFLogin extends JFrame {
 		final JFService serviceFrame = new JFService();
 		final JFRoomEdition roomPriceFrame = new JFRoomEdition();
 		final JFFloor floorFrame = new JFFloor();
+		final JFRoomType roomTypeFrame = new JFRoomType();
 		final MenuController menuController = new MenuController(
 				roomServiceFrame, roomPaymentFrame, roomHistoryFrame,
 				serviceTypeFrame, serviceFrame, companyFrame, roomPriceFrame,
-				floorFrame);
+				floorFrame, roomTypeFrame);
 		roomFrame.addController(menuController);
 		roomFrame.setVisible(true);
 		this.createMidnightTask(roomFrame);

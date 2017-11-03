@@ -1,9 +1,8 @@
 package co.com.soinsoftware.hotelero.dao;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Session;
 
@@ -21,11 +20,10 @@ public class RoomTypeDAO extends AbstractDAO<RoomType> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<RoomType> select() {
+	public List<RoomType> select() {
 		final List<RoomType> roomTypeList = manager.createQuery(
 				this.getSelectStatementEnabled()).getResultList();
-		return (roomTypeList != null) ? new HashSet<>(roomTypeList)
-				: new HashSet<>();
+		return (roomTypeList != null) ? roomTypeList : new ArrayList<>();
 	}
 
 	public RoomType select(final String code) {
