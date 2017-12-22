@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import co.com.soinsoftware.hotelero.entity.Invoiceitem;
-import co.com.soinsoftware.hotelero.entity.Service;
+import com.soinsoftware.hotelero.persistence.entity.InvoiceItem;
+import com.soinsoftware.hotelero.persistence.entity.Service;
 
 /**
  * @author Carlos Rodriguez
@@ -17,13 +17,11 @@ public class InvoiceItemNotEditableTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 8408209589620109955L;
 
-	private static final String[] COLUMN_NAMES = { "Fecha", "Servicio",
-			"Cantidad", "Precio", "Total" };
+	private static final String[] COLUMN_NAMES = { "Fecha", "Servicio", "Cantidad", "Precio", "Total" };
 
 	private Object[][] data;
 
-	public InvoiceItemNotEditableTableModel(
-			final List<Invoiceitem> invoiceItemList) {
+	public InvoiceItemNotEditableTableModel(final List<InvoiceItem> invoiceItemList) {
 		super();
 		this.buildData(invoiceItemList);
 	}
@@ -54,16 +52,15 @@ public class InvoiceItemNotEditableTableModel extends AbstractTableModel {
 		return getValueAt(0, col).getClass();
 	}
 
-	private void buildData(final List<Invoiceitem> invoiceItemList) {
+	private void buildData(final List<InvoiceItem> invoiceItemList) {
 		final SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
 		final int rowSize = this.getRowSizeToBuild(invoiceItemList);
 		data = new Object[rowSize][5];
 		if (invoiceItemList != null) {
 			int index = 0;
-			for (final Invoiceitem invoiceItem : invoiceItemList) {
+			for (final InvoiceItem invoiceItem : invoiceItemList) {
 				final Service service = invoiceItem.getService();
-				data[index][0] = format
-						.format(invoiceItem.getInvoiceitemdate());
+				data[index][0] = format.format(invoiceItem.getInvoiceitemdate());
 				data[index][1] = service.getName();
 				data[index][2] = String.valueOf(invoiceItem.getQuantity());
 				data[index][3] = String.valueOf(invoiceItem.getUnitvalue());
@@ -73,7 +70,7 @@ public class InvoiceItemNotEditableTableModel extends AbstractTableModel {
 		}
 	}
 
-	private int getRowSizeToBuild(final List<Invoiceitem> invoiceItemList) {
+	private int getRowSizeToBuild(final List<InvoiceItem> invoiceItemList) {
 		int rowSize = 0;
 		if (invoiceItemList != null) {
 			rowSize = invoiceItemList.size();

@@ -26,12 +26,6 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    
-    <dependency>
-		<groupId>mysql</groupId>
-		<artifactId>mysql-connector-java</artifactId>
-		<version>5.1.36</version>
-	</dependency>
 	
 	<dependency>
 		<groupId>org.springframework</groupId>
@@ -43,36 +37,6 @@
 		<groupId>org.springframework</groupId>
 		<artifactId>spring-context</artifactId>
 		<version>4.3.8.RELEASE</version>
-	</dependency>	
-  	
-  	<dependency>
-    	<groupId>org.hibernate</groupId>
-    	<artifactId>hibernate-core</artifactId>
-    	<version>${hibernate.version}</version>
-	</dependency>
-	
-	<dependency>
-		<groupId>org.hibernate</groupId>
-		<artifactId>hibernate-entitymanager</artifactId>
-		<version>${hibernate.version}</version>
-	</dependency>
-	
-	<dependency>
-   		<groupId>org.hibernate</groupId>
-   		<artifactId>hibernate-search-orm</artifactId>
-   		<version>5.7.1.Final</version>
-	</dependency>	
-	
-	<dependency>
-    	<groupId>org.hibernate</groupId>
-    	<artifactId>hibernate-hikaricp</artifactId>
-    	<version>${hibernate.version}</version>
-	</dependency>
-	
-	<dependency>
-    	<groupId>com.zaxxer</groupId>
-    	<artifactId>HikariCP-java7</artifactId>
-    	<version>2.4.12</version>
 	</dependency>
 	
 	<dependency>
@@ -98,20 +62,18 @@
 	    <artifactId>jcalendar</artifactId>
 	    <version>1.4</version>
 	</dependency>
-    
-    <dependency>
-   		<groupId>org.projectlombok</groupId>
-   		<artifactId>lombok-maven-plugin</artifactId>
-   		<version>1.16.16.0</version>
-  	</dependency>
   	
-  	<!-- https://mvnrepository.com/artifact/log4j/log4j -->
-	<dependency>
+  	<dependency>
 	    <groupId>log4j</groupId>
 	    <artifactId>log4j</artifactId>
 	    <version>1.2.17</version>
 	</dependency>
-	  	
+	
+	<dependency>
+		<groupId>com.lowagie</groupId>
+		<artifactId>itext</artifactId>
+		<version>2.1.7</version>
+	</dependency>	  	
   	
   </dependencies>
   <build>

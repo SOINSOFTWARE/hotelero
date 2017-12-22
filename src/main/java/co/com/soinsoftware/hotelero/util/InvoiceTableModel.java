@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import co.com.soinsoftware.hotelero.entity.Invoice;
+import com.soinsoftware.hotelero.persistence.entity.Invoice;
 
 /**
  * @author Carlos Rodriguez
@@ -16,8 +16,7 @@ public class InvoiceTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 8408209589620109955L;
 
-	private static final String[] COLUMN_NAMES = { "Habitación", "Nombre",
-			"Llegada", "Salida", "Estado", "Total" };
+	private static final String[] COLUMN_NAMES = { "Habitación", "Nombre", "Llegada", "Salida", "Estado", "Total" };
 
 	private Object[][] data;
 

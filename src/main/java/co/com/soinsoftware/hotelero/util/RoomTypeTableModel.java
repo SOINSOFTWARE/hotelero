@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import co.com.soinsoftware.hotelero.entity.RoomType;
+import com.soinsoftware.hotelero.persistence.entity.RoomType;
 
 /**
  * @author Carlos Rodriguez
@@ -15,8 +15,7 @@ public class RoomTypeTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 8408209589620109955L;
 
-	private static final String[] COLUMN_NAMES = { "Código", "Nombre",
-			"Eliminar" };
+	private static final String[] COLUMN_NAMES = { "Código", "Nombre", "Eliminar" };
 
 	private final List<RoomType> roomTypeList;
 

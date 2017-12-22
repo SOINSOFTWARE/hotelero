@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import co.com.soinsoftware.hotelero.entity.Room;
+import com.soinsoftware.hotelero.persistence.entity.Room;
 
 /**
  * @author Carlos Rodriguez

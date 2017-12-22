@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import co.com.soinsoftware.hotelero.entity.Invoice;
+import com.soinsoftware.hotelero.persistence.entity.Invoice;
 
 /**
  * @author Carlos Rodriguez
@@ -16,8 +16,7 @@ public class InvoiceBookedTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 8408209589620109955L;
 
-	private static final String[] COLUMN_NAMES = { "Cedula", "Nombre",
-			"Habitación", "Llegada", "Salida", "Eliminar" };
+	private static final String[] COLUMN_NAMES = { "Cedula", "Nombre", "Habitación", "Llegada", "Salida", "Eliminar" };
 
 	private final List<Invoice> invoiceList;
 
@@ -79,8 +78,7 @@ public class InvoiceBookedTableModel extends AbstractTableModel {
 		if (this.invoiceList != null) {
 			int index = 0;
 			for (final Invoice invoice : this.invoiceList) {
-				data[index][0] = String.valueOf(invoice.getUser()
-						.getIdentification());
+				data[index][0] = String.valueOf(invoice.getUser().getIdentification());
 				data[index][1] = invoice.getUser().getName();
 				data[index][2] = invoice.getRoom().getName();
 				data[index][3] = format.format(invoice.getInitialDate());

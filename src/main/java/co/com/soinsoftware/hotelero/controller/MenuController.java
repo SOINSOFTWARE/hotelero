@@ -12,8 +12,7 @@ import co.com.soinsoftware.hotelero.view.JFServiceType;
 
 /**
  * @author Carlos Rodriguez
- * @since 17/07/2016
- * @version 1.0
+ * @since 1.0.0
  */
 public class MenuController {
 

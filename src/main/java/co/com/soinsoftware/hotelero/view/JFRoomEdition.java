@@ -15,8 +15,9 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
-import co.com.soinsoftware.hotelero.controller.InvoiceController;
-import co.com.soinsoftware.hotelero.entity.Room;
+import com.soinsoftware.hotelero.core.controller.RoomController;
+import com.soinsoftware.hotelero.persistence.entity.Room;
+
 import co.com.soinsoftware.hotelero.util.RoomTableModel;
 
 /**
@@ -28,22 +29,19 @@ public class JFRoomEdition extends JDialog {
 
 	private static final long serialVersionUID = -723888148256449103L;
 
-	private InvoiceController invoiceController;
+	private RoomController controller;
 
 	public JFRoomEdition() {
 		try {
-			this.invoiceController = new InvoiceController();
+			controller = new RoomController();
 		} catch (final IOException e) {
 			e.printStackTrace();
-			ViewUtils.showConfirmDialog(this,
-					ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
+			ViewUtils.showConfirmDialog(this, ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
 			System.exit(0);
 		}
 		this.initComponents();
-		final Dimension screenSize = Toolkit.getDefaultToolkit()
-				.getScreenSize();
-		this.setLocation((int) (screenSize.getWidth() / 2 - 350),
-				(int) (screenSize.getHeight() / 2 - 350));
+		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation((int) (screenSize.getWidth() / 2 - 350), (int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
 	}
 
@@ -52,7 +50,7 @@ public class JFRoomEdition extends JDialog {
 	}
 
 	private void refreshTableData() {
-		final List<Room> roomList = this.invoiceController.selectRooms();
+		final List<Room> roomList = controller.select();
 		final TableModel model = new RoomTableModel(roomList);
 		this.jtbRoomList.setModel(model);
 		this.jtbRoomList.setFillsViewportHeight(true);
@@ -66,10 +64,10 @@ public class JFRoomEdition extends JDialog {
 	private boolean hasRoomToBeUpdated(final List<Room> roomList) {
 		boolean hasElements = false;
 		for (final Room room : roomList) {
-			/**if (room.getNewValue() != room.getValue()) {
-				hasElements = true;
-				break;
-			}**/
+			/**
+			 * if (room.getNewValue() != room.getValue()) { hasElements = true;
+			 * break; }
+			 **/
 		}
 		return hasElements;
 	}
@@ -97,42 +95,29 @@ public class JFRoomEdition extends JDialog {
 		jtbRoomList = new javax.swing.JTable();
 
 		setTitle("Hotelero");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				getClass().getResource("/images/melvic.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/melvic.png")));
 
 		jpTitle.setBackground(new java.awt.Color(255, 255, 255));
 
 		jlbTitle.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
 		jlbTitle.setText("Precios habitación");
 
-		javax.swing.GroupLayout jpTitleLayout = new javax.swing.GroupLayout(
-				jpTitle);
+		javax.swing.GroupLayout jpTitleLayout = new javax.swing.GroupLayout(jpTitle);
 		jpTitle.setLayout(jpTitleLayout);
-		jpTitleLayout.setHorizontalGroup(jpTitleLayout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-				jpTitleLayout
-						.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(jlbTitle)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
-								Short.MAX_VALUE)));
-		jpTitleLayout.setVerticalGroup(jpTitleLayout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-				jpTitleLayout.createSequentialGroup().addGap(32, 32, 32)
-						.addComponent(jlbTitle)
+		jpTitleLayout.setHorizontalGroup(jpTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jpTitleLayout.createSequentialGroup().addContainerGap().addComponent(jlbTitle)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		jpTitleLayout.setVerticalGroup(jpTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jpTitleLayout.createSequentialGroup().addGap(32, 32, 32).addComponent(jlbTitle)
 						.addContainerGap(34, Short.MAX_VALUE)));
 
-		lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource(
-				"/images/soin.png"))); // NOI18N
+		lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/soin.png"))); // NOI18N
 
-		jpRoomList.setBorder(javax.swing.BorderFactory.createTitledBorder(null,
-				"Habitaciones",
-				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
-				javax.swing.border.TitledBorder.DEFAULT_POSITION,
+		jpRoomList.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Habitaciones",
+				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
 				new java.awt.Font("Verdana", 1, 12))); // NOI18N
 
-		jpActionButtons.setBorder(javax.swing.BorderFactory
-				.createTitledBorder(""));
+		jpActionButtons.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
 		jbtUpdate.setBackground(new java.awt.Color(16, 135, 221));
 		jbtUpdate.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -156,155 +141,72 @@ public class JFRoomEdition extends JDialog {
 			}
 		});
 
-		javax.swing.GroupLayout jpActionButtonsLayout = new javax.swing.GroupLayout(
-				jpActionButtons);
+		javax.swing.GroupLayout jpActionButtonsLayout = new javax.swing.GroupLayout(jpActionButtons);
 		jpActionButtons.setLayout(jpActionButtonsLayout);
+		jpActionButtonsLayout.setHorizontalGroup(jpActionButtonsLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jpActionButtonsLayout.createSequentialGroup().addContainerGap()
+						.addGroup(jpActionButtonsLayout
+								.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+								.addComponent(jbtUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+								.addComponent(jbtClose, javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		jpActionButtonsLayout
-				.setHorizontalGroup(jpActionButtonsLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								jpActionButtonsLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.addGroup(
-												jpActionButtonsLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.LEADING,
-																false)
-														.addComponent(
-																jbtUpdate,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																100,
-																Short.MAX_VALUE)
-														.addComponent(
-																jbtClose,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																Short.MAX_VALUE))
-										.addContainerGap(
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												Short.MAX_VALUE)));
-		jpActionButtonsLayout
-				.setVerticalGroup(jpActionButtonsLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								jpActionButtonsLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.addComponent(
-												jbtUpdate,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-										.addComponent(
-												jbtClose,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addContainerGap(120, Short.MAX_VALUE)));
+				.setVerticalGroup(jpActionButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(jpActionButtonsLayout.createSequentialGroup().addContainerGap()
+								.addComponent(jbtUpdate, javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+								.addComponent(jbtClose, javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addContainerGap(120, Short.MAX_VALUE)));
 
 		jspRoomList.setViewportView(jtbRoomList);
 
-		javax.swing.GroupLayout jpRoomListLayout = new javax.swing.GroupLayout(
-				jpRoomList);
+		javax.swing.GroupLayout jpRoomListLayout = new javax.swing.GroupLayout(jpRoomList);
 		jpRoomList.setLayout(jpRoomListLayout);
 		jpRoomListLayout
-				.setHorizontalGroup(jpRoomListLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								jpRoomListLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.addComponent(
-												jspRoomList,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												320,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												Short.MAX_VALUE)
-										.addComponent(
-												jpActionButtons,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)));
-		jpRoomListLayout
-				.setVerticalGroup(jpRoomListLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								jpRoomListLayout
-										.createSequentialGroup()
-										.addGroup(
-												jpRoomListLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.TRAILING,
-																false)
-														.addComponent(
-																jpActionButtons,
-																javax.swing.GroupLayout.Alignment.LEADING,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																Short.MAX_VALUE)
-														.addComponent(
-																jspRoomList,
-																javax.swing.GroupLayout.Alignment.LEADING,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																0,
-																Short.MAX_VALUE))
-										.addContainerGap(
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												Short.MAX_VALUE)));
+				.setHorizontalGroup(jpRoomListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(jpRoomListLayout.createSequentialGroup().addContainerGap()
+								.addComponent(jspRoomList, javax.swing.GroupLayout.PREFERRED_SIZE, 320,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(jpActionButtons, javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)));
+		jpRoomListLayout.setVerticalGroup(jpRoomListLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jpRoomListLayout.createSequentialGroup().addGroup(jpRoomListLayout
+						.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+						.addComponent(jpActionButtons, javax.swing.GroupLayout.Alignment.LEADING,
+								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)
+						.addComponent(jspRoomList, javax.swing.GroupLayout.Alignment.LEADING,
+								javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(jpTitle, javax.swing.GroupLayout.DEFAULT_SIZE,
-						javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addGap(0, 0, Short.MAX_VALUE)
-								.addComponent(lbImage,
-										javax.swing.GroupLayout.PREFERRED_SIZE,
-										388,
-										javax.swing.GroupLayout.PREFERRED_SIZE))
-				.addGroup(
-						layout.createSequentialGroup()
-								.addContainerGap()
-								.addComponent(jpRoomList,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										Short.MAX_VALUE).addContainerGap()));
-		layout.setVerticalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(
-						layout.createSequentialGroup()
-								.addComponent(jpTitle,
-										javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(
-										javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-								.addComponent(jpRoomList,
-										javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(
-										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										Short.MAX_VALUE)
-								.addComponent(lbImage,
-										javax.swing.GroupLayout.PREFERRED_SIZE,
-										35,
-										javax.swing.GroupLayout.PREFERRED_SIZE)));
+		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addComponent(jpTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+						Short.MAX_VALUE)
+				.addGroup(layout.createSequentialGroup().addGap(0, 0, Short.MAX_VALUE).addComponent(lbImage,
+						javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))
+				.addGroup(layout.createSequentialGroup().addContainerGap().addComponent(jpRoomList,
+						javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addContainerGap()));
+		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+						.addComponent(jpTitle, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+						.addComponent(jpRoomList, javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(lbImage, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+								javax.swing.GroupLayout.PREFERRED_SIZE)));
 
 		pack();
 	}// </editor-fold>//GEN-END:initComponents
@@ -316,23 +218,23 @@ public class JFRoomEdition extends JDialog {
 	private void jbtUpdateActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtUpdateActionPerformed
 		final List<Room> roomList = this.getRoomListFromTable();
 		if (roomList != null && this.hasRoomToBeUpdated(roomList)) {
-			final int confirmation = ViewUtils.showConfirmDialog(this,
-					ViewUtils.MSG_UPDATE_QUESTION, ViewUtils.TITLE_SAVED);
+			final int confirmation = ViewUtils.showConfirmDialog(this, ViewUtils.MSG_UPDATE_QUESTION,
+					ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
 				for (final Room room : roomList) {
-					/**if (room.getNewValue() != room.getValue()) {
-						room.setUpdated(new Date());
-						room.setValue(room.getNewValue());
-						this.invoiceController.saveRoom(room);
-					}**/
+					//if (room.getNewValue() != room.getValue()) {
+						//room.setUpdated(new Date());
+						//room.setValue(room.getNewValue());
+						//controller.save(room);
+					//}
+
 				}
-				ViewUtils.showMessage(this, ViewUtils.MSG_UPDATED,
-						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+				ViewUtils.showMessage(this, ViewUtils.MSG_UPDATED, ViewUtils.TITLE_SAVED,
+						JOptionPane.INFORMATION_MESSAGE);
 				this.refresh();
 			}
 		} else {
-			ViewUtils.showMessage(this, ViewUtils.MSG_UNEDITED,
-					ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+			ViewUtils.showMessage(this, ViewUtils.MSG_UNEDITED, ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 		}
 	}// GEN-LAST:event_jbtUpdateActionPerformed
 

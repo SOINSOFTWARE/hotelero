@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import co.com.soinsoftware.hotelero.entity.Service;
+import com.soinsoftware.hotelero.persistence.entity.Service;
 
 /**
  * @author Carlos Rodriguez
@@ -15,8 +15,7 @@ public class ServiceTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 8408209589620109955L;
 
-	private static final String[] COLUMN_NAMES = { "Tipo de consumo",
-			"Servicio", "Valor", "Eliminar" };
+	private static final String[] COLUMN_NAMES = { "Tipo de consumo", "Servicio", "Valor", "Eliminar" };
 
 	private final List<Service> serviceList;
 
@@ -59,9 +58,8 @@ public class ServiceTableModel extends AbstractTableModel {
 		if (col == 1) {
 			service.setNewName((String) value);
 		} else if (col == 2) {
-			service.setNewValue((Long)value);
-		}
-		else if (col == 3) {
+			service.setNewValue((Long) value);
+		} else if (col == 3) {
 			service.setDelete((Boolean) value);
 		}
 		data[row][col] = value;

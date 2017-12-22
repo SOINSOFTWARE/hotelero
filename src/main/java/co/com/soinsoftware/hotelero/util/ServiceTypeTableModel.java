@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import co.com.soinsoftware.hotelero.entity.ServiceType;
+import com.soinsoftware.hotelero.persistence.entity.ServiceType;
 
 /**
  * @author Carlos Rodriguez
@@ -15,8 +15,7 @@ public class ServiceTypeTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 8408209589620109955L;
 
-	private static final String[] COLUMN_NAMES = { "Tipo de consumo",
-			"Eliminar" };
+	private static final String[] COLUMN_NAMES = { "Tipo de consumo", "Eliminar" };
 
 	private final List<ServiceType> serviceTypeList;
 

@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import co.com.soinsoftware.hotelero.entity.Invoiceitem;
-import co.com.soinsoftware.hotelero.entity.Service;
+import com.soinsoftware.hotelero.persistence.entity.InvoiceItem;
+import com.soinsoftware.hotelero.persistence.entity.Service;
 
 /**
  * @author Carlos Rodriguez
@@ -17,14 +17,13 @@ public class InvoiceItemTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 8408209589620109955L;
 
-	private static final String[] COLUMN_NAMES = { "Fecha", "Servicio",
-			"Cantidad", "Precio", "Total", "Eliminar" };
+	private static final String[] COLUMN_NAMES = { "Fecha", "Servicio", "Cantidad", "Precio", "Total", "Eliminar" };
 
-	private final List<Invoiceitem> invoiceItemList;
+	private final List<InvoiceItem> invoiceItemList;
 
 	private Object[][] data;
 
-	public InvoiceItemTableModel(final List<Invoiceitem> invoiceItemList) {
+	public InvoiceItemTableModel(final List<InvoiceItem> invoiceItemList) {
 		super();
 		this.invoiceItemList = invoiceItemList;
 		this.buildData();
@@ -57,7 +56,7 @@ public class InvoiceItemTableModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(final Object value, final int row, final int col) {
-		final Invoiceitem invoiceItem = this.invoiceItemList.get(row);
+		final InvoiceItem invoiceItem = this.invoiceItemList.get(row);
 		invoiceItem.setDelete((Boolean) value);
 		data[row][col] = value;
 		fireTableCellUpdated(row, col);
@@ -69,7 +68,7 @@ public class InvoiceItemTableModel extends AbstractTableModel {
 		return getValueAt(0, col).getClass();
 	}
 
-	public List<Invoiceitem> getInvoiceItemList() {
+	public List<InvoiceItem> getInvoiceItemList() {
 		return this.invoiceItemList;
 	}
 
@@ -79,10 +78,9 @@ public class InvoiceItemTableModel extends AbstractTableModel {
 		data = new Object[rowSize][6];
 		if (this.invoiceItemList != null) {
 			int index = 0;
-			for (final Invoiceitem invoiceItem : this.invoiceItemList) {
+			for (final InvoiceItem invoiceItem : this.invoiceItemList) {
 				final Service service = invoiceItem.getService();
-				data[index][0] = format
-						.format(invoiceItem.getInvoiceitemdate());
+				data[index][0] = format.format(invoiceItem.getInvoiceitemdate());
 				data[index][1] = service.getName();
 				data[index][2] = String.valueOf(invoiceItem.getQuantity());
 				data[index][3] = String.valueOf(invoiceItem.getUnitvalue());
