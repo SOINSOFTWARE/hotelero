@@ -2,7 +2,6 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -10,10 +9,10 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
+import co.com.soinsoftware.hotelero.util.ServiceTypeTableModel;
+
 import com.soinsoftware.hotelero.core.controller.ServiceTypeController;
 import com.soinsoftware.hotelero.persistence.entity.ServiceType;
-
-import co.com.soinsoftware.hotelero.util.ServiceTypeTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -35,16 +34,12 @@ public class JFServiceType extends JDialog {
 	private ServiceTypeController controller;
 
 	public JFServiceType() {
-		try {
-			this.controller = new ServiceTypeController();
-		} catch (final IOException e) {
-			e.printStackTrace();
-			ViewUtils.showConfirmDialog(this, ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
-			System.exit(0);
-		}
+		this.controller = new ServiceTypeController();
 		this.initComponents();
-		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation((int) (screenSize.getWidth() / 2 - 350), (int) (screenSize.getHeight() / 2 - 350));
+		final Dimension screenSize = Toolkit.getDefaultToolkit()
+				.getScreenSize();
+		this.setLocation((int) (screenSize.getWidth() / 2 - 350),
+				(int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
 		this.setTextFieldLimits();
 	}
@@ -70,8 +65,8 @@ public class JFServiceType extends JDialog {
 		final String serTypeName = this.jtfServiceType.getText();
 		if (serTypeName.trim().equals("")) {
 			valid = false;
-			ViewUtils.showMessage(this, MSG_SERVICE_TYPE_REQUIRED, ViewUtils.TITLE_REQUIRED_FIELDS,
-					JOptionPane.ERROR_MESSAGE);
+			ViewUtils.showMessage(this, MSG_SERVICE_TYPE_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
 		}
 		return valid;
 	}
@@ -81,10 +76,12 @@ public class JFServiceType extends JDialog {
 		return ((ServiceTypeTableModel) model).getServiceTypeList();
 	}
 
-	private boolean hasServiceTypeToBeUpdated(final List<ServiceType> serviceTypeList) {
+	private boolean hasServiceTypeToBeUpdated(
+			final List<ServiceType> serviceTypeList) {
 		boolean hasElements = false;
 		for (final ServiceType serviceType : serviceTypeList) {
-			if (serviceType.getNewName() != null && !serviceType.getNewName().equals("")
+			if (serviceType.getNewName() != null
+					&& !serviceType.getNewName().equals("")
 					&& !serviceType.getNewName().equals(serviceType.getName())) {
 				hasElements = true;
 				break;
@@ -93,7 +90,8 @@ public class JFServiceType extends JDialog {
 		return hasElements;
 	}
 
-	private boolean hasServiceTypeToBeDeleted(final List<ServiceType> serviceTypeList) {
+	private boolean hasServiceTypeToBeDeleted(
+			final List<ServiceType> serviceTypeList) {
 		boolean hasElements = false;
 		for (final ServiceType serviceType : serviceTypeList) {
 			if (serviceType.isDelete()) {
@@ -132,7 +130,8 @@ public class JFServiceType extends JDialog {
 		jbtClose = new javax.swing.JButton();
 
 		setTitle("Hotelero");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/melvic.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/images/melvic.png")));
 		setResizable(false);
 
 		jpTitle.setBackground(new java.awt.Color(255, 255, 255));
@@ -140,19 +139,30 @@ public class JFServiceType extends JDialog {
 		jlbTitle.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
 		jlbTitle.setText("Tipos de consumo");
 
-		javax.swing.GroupLayout jpTitleLayout = new javax.swing.GroupLayout(jpTitle);
+		javax.swing.GroupLayout jpTitleLayout = new javax.swing.GroupLayout(
+				jpTitle);
 		jpTitle.setLayout(jpTitleLayout);
-		jpTitleLayout.setHorizontalGroup(jpTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpTitleLayout.createSequentialGroup().addContainerGap().addComponent(jlbTitle)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		jpTitleLayout.setVerticalGroup(jpTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpTitleLayout.createSequentialGroup().addGap(32, 32, 32).addComponent(jlbTitle)
+		jpTitleLayout.setHorizontalGroup(jpTitleLayout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+				jpTitleLayout
+						.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(jlbTitle)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)));
+		jpTitleLayout.setVerticalGroup(jpTitleLayout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+				jpTitleLayout.createSequentialGroup().addGap(32, 32, 32)
+						.addComponent(jlbTitle)
 						.addContainerGap(34, Short.MAX_VALUE)));
 
-		lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/soin.png"))); // NOI18N
+		lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/images/soin.png"))); // NOI18N
 
-		jpNewService.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Nuevo tipo de consumo",
-				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
+		jpNewService.setBorder(javax.swing.BorderFactory.createTitledBorder(
+				null, "Nuevo tipo de consumo",
+				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+				javax.swing.border.TitledBorder.DEFAULT_POSITION,
 				new java.awt.Font("Verdana", 1, 12))); // NOI18N
 
 		jlbName.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -171,38 +181,77 @@ public class JFServiceType extends JDialog {
 			}
 		});
 
-		javax.swing.GroupLayout jpNewServiceLayout = new javax.swing.GroupLayout(jpNewService);
+		javax.swing.GroupLayout jpNewServiceLayout = new javax.swing.GroupLayout(
+				jpNewService);
 		jpNewService.setLayout(jpNewServiceLayout);
-		jpNewServiceLayout.setHorizontalGroup(jpNewServiceLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpNewServiceLayout.createSequentialGroup().addContainerGap()
-						.addGroup(jpNewServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jlbName).addComponent(jtfServiceType,
-										javax.swing.GroupLayout.PREFERRED_SIZE, 180,
-										javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-						jpNewServiceLayout.createSequentialGroup()
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jbtSave, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap()));
 		jpNewServiceLayout
-				.setVerticalGroup(jpNewServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jpNewServiceLayout.createSequentialGroup().addContainerGap().addComponent(jlbName)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jtfServiceType, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGap(18, 18, 18)
-								.addComponent(jbtSave, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+				.setHorizontalGroup(jpNewServiceLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								jpNewServiceLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												jpNewServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addComponent(jlbName)
+														.addComponent(
+																jtfServiceType,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																180,
+																javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addContainerGap(
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE))
+						.addGroup(
+								javax.swing.GroupLayout.Alignment.TRAILING,
+								jpNewServiceLayout
+										.createSequentialGroup()
+										.addContainerGap(
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.addComponent(
+												jbtSave,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addContainerGap()));
+		jpNewServiceLayout
+				.setVerticalGroup(jpNewServiceLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								jpNewServiceLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addComponent(jlbName)
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(
+												jtfServiceType,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addGap(18, 18, 18)
+										.addComponent(
+												jbtSave,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addContainerGap(
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)));
 
-		jpServiceTypeList.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Listado de tipos de consumo",
-				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
-				new java.awt.Font("Verdana", 1, 12))); // NOI18N
+		jpServiceTypeList.setBorder(javax.swing.BorderFactory
+				.createTitledBorder(null, "Listado de tipos de consumo",
+						javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+						javax.swing.border.TitledBorder.DEFAULT_POSITION,
+						new java.awt.Font("Verdana", 1, 12))); // NOI18N
 
-		jpActionButtons.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+		jpActionButtons.setBorder(javax.swing.BorderFactory
+				.createTitledBorder(""));
 
 		jbtUpdate.setBackground(new java.awt.Color(16, 135, 221));
 		jbtUpdate.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -226,53 +275,103 @@ public class JFServiceType extends JDialog {
 			}
 		});
 
-		javax.swing.GroupLayout jpActionButtonsLayout = new javax.swing.GroupLayout(jpActionButtons);
+		javax.swing.GroupLayout jpActionButtonsLayout = new javax.swing.GroupLayout(
+				jpActionButtons);
 		jpActionButtons.setLayout(jpActionButtonsLayout);
-		jpActionButtonsLayout.setHorizontalGroup(jpActionButtonsLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpActionButtonsLayout.createSequentialGroup().addContainerGap()
-						.addGroup(jpActionButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jbtUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(jbtDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
-										javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		jpActionButtonsLayout
-				.setVerticalGroup(jpActionButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jpActionButtonsLayout.createSequentialGroup().addContainerGap()
-								.addComponent(jbtUpdate, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-								.addComponent(jbtDelete, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addContainerGap(81, Short.MAX_VALUE)));
+				.setHorizontalGroup(jpActionButtonsLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								jpActionButtonsLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												jpActionButtonsLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addComponent(
+																jbtUpdate,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																100,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																jbtDelete,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																100,
+																javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addContainerGap(
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)));
+		jpActionButtonsLayout
+				.setVerticalGroup(jpActionButtonsLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								jpActionButtonsLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addComponent(
+												jbtUpdate,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+										.addComponent(
+												jbtDelete,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addContainerGap(81, Short.MAX_VALUE)));
 
 		jspServiceTypeList.setViewportView(jtbServiceTypeList);
 		if (jtbServiceTypeList.getColumnModel().getColumnCount() > 0) {
-			jtbServiceTypeList.getColumnModel().getColumn(0).setResizable(false);
-			jtbServiceTypeList.getColumnModel().getColumn(1).setResizable(false);
-			jtbServiceTypeList.getColumnModel().getColumn(2).setResizable(false);
+			jtbServiceTypeList.getColumnModel().getColumn(0)
+					.setResizable(false);
+			jtbServiceTypeList.getColumnModel().getColumn(1)
+					.setResizable(false);
+			jtbServiceTypeList.getColumnModel().getColumn(2)
+					.setResizable(false);
 		}
 
-		javax.swing.GroupLayout jpServiceTypeListLayout = new javax.swing.GroupLayout(jpServiceTypeList);
+		javax.swing.GroupLayout jpServiceTypeListLayout = new javax.swing.GroupLayout(
+				jpServiceTypeList);
 		jpServiceTypeList.setLayout(jpServiceTypeListLayout);
-		jpServiceTypeListLayout.setHorizontalGroup(
-				jpServiceTypeListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jpServiceTypeListLayout.createSequentialGroup().addContainerGap()
-								.addComponent(jspServiceTypeList, javax.swing.GroupLayout.PREFERRED_SIZE, 320,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jpActionButtons, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)));
 		jpServiceTypeListLayout
-				.setVerticalGroup(jpServiceTypeListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addComponent(jpActionButtons, javax.swing.GroupLayout.DEFAULT_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(jspServiceTypeList, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE));
+				.setHorizontalGroup(jpServiceTypeListLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								jpServiceTypeListLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addComponent(
+												jspServiceTypeList,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												320,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.addComponent(
+												jpActionButtons,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)));
+		jpServiceTypeListLayout.setVerticalGroup(jpServiceTypeListLayout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addComponent(jpActionButtons,
+						javax.swing.GroupLayout.DEFAULT_SIZE,
+						javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addComponent(jspServiceTypeList,
+						javax.swing.GroupLayout.PREFERRED_SIZE, 0,
+						Short.MAX_VALUE));
 
-		jpAction.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "",
-				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
+		jpAction.setBorder(javax.swing.BorderFactory.createTitledBorder(null,
+				"", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+				javax.swing.border.TitledBorder.DEFAULT_POSITION,
 				new java.awt.Font("Verdana", 0, 11))); // NOI18N
 
 		jbtClose.setBackground(new java.awt.Color(16, 135, 221));
@@ -286,58 +385,114 @@ public class JFServiceType extends JDialog {
 			}
 		});
 
-		javax.swing.GroupLayout jpActionLayout = new javax.swing.GroupLayout(jpAction);
+		javax.swing.GroupLayout jpActionLayout = new javax.swing.GroupLayout(
+				jpAction);
 		jpAction.setLayout(jpActionLayout);
-		jpActionLayout
-				.setHorizontalGroup(jpActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpActionLayout.createSequentialGroup()
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jbtClose, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGap(22, 22, 22)));
-		jpActionLayout.setVerticalGroup(jpActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpActionLayout.createSequentialGroup().addGap(23, 23, 23)
-						.addComponent(jbtClose, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		jpActionLayout.setHorizontalGroup(jpActionLayout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+				javax.swing.GroupLayout.Alignment.TRAILING,
+				jpActionLayout
+						.createSequentialGroup()
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)
+						.addComponent(jbtClose,
+								javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(22, 22, 22)));
+		jpActionLayout.setVerticalGroup(jpActionLayout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+				jpActionLayout
+						.createSequentialGroup()
+						.addGap(23, 23, 23)
+						.addComponent(jbtClose,
+								javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)));
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
+				getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(jpTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
-						Short.MAX_VALUE)
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-						layout.createSequentialGroup().addGap(0, 0, Short.MAX_VALUE).addComponent(lbImage,
-								javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))
-				.addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout
-						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addComponent(jpAction, javax.swing.GroupLayout.DEFAULT_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(layout.createSequentialGroup()
-								.addComponent(jpNewService, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(jpServiceTypeList, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGap(0, 0, Short.MAX_VALUE)))
-						.addContainerGap()));
-		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-						.addComponent(jpTitle, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addGap(11, 11, 11)
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jpServiceTypeList, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(jpNewService, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(jpAction, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(lbImage, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
-								javax.swing.GroupLayout.PREFERRED_SIZE)));
+		layout.setHorizontalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addComponent(jpTitle, javax.swing.GroupLayout.DEFAULT_SIZE,
+						javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addGroup(
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						layout.createSequentialGroup()
+								.addGap(0, 0, Short.MAX_VALUE)
+								.addComponent(lbImage,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										388,
+										javax.swing.GroupLayout.PREFERRED_SIZE))
+				.addGroup(
+						layout.createSequentialGroup()
+								.addContainerGap()
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.LEADING)
+												.addComponent(
+														jpAction,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														Short.MAX_VALUE)
+												.addGroup(
+														layout.createSequentialGroup()
+																.addComponent(
+																		jpNewService,
+																		javax.swing.GroupLayout.PREFERRED_SIZE,
+																		javax.swing.GroupLayout.DEFAULT_SIZE,
+																		javax.swing.GroupLayout.PREFERRED_SIZE)
+																.addPreferredGap(
+																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																.addComponent(
+																		jpServiceTypeList,
+																		javax.swing.GroupLayout.PREFERRED_SIZE,
+																		javax.swing.GroupLayout.DEFAULT_SIZE,
+																		javax.swing.GroupLayout.PREFERRED_SIZE)
+																.addGap(0,
+																		0,
+																		Short.MAX_VALUE)))
+								.addContainerGap()));
+		layout.setVerticalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						layout.createSequentialGroup()
+								.addComponent(jpTitle,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addGap(11, 11, 11)
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.LEADING)
+												.addComponent(
+														jpServiceTypeList,
+														javax.swing.GroupLayout.PREFERRED_SIZE,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														javax.swing.GroupLayout.PREFERRED_SIZE)
+												.addComponent(
+														jpNewService,
+														javax.swing.GroupLayout.PREFERRED_SIZE,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														javax.swing.GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(jpAction,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										Short.MAX_VALUE)
+								.addComponent(lbImage,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										35,
+										javax.swing.GroupLayout.PREFERRED_SIZE)));
 
 		pack();
 	}// </editor-fold>//GEN-END:initComponents
@@ -348,46 +503,53 @@ public class JFServiceType extends JDialog {
 
 	private void jbtSaveActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtSaveActionPerformed
 		if (this.validateDataForSave()) {
-			final int confirmation = ViewUtils.showConfirmDialog(this, ViewUtils.MSG_SAVE_QUESTION,
-					ViewUtils.TITLE_SAVED);
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_SAVE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
 				final String serTypeName = this.jtfServiceType.getText();
 				this.controller.save(serTypeName);
-				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED, ViewUtils.TITLE_SAVED,
-						JOptionPane.INFORMATION_MESSAGE);
+				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 				this.refresh();
 			}
 		}
 	}// GEN-LAST:event_jbtSaveActionPerformed
 
 	private void jbtUpdateActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtUpdateActionPerformed
-		final List<ServiceType> serviceTypeList = this.getServiceTypeListFromTable();
-		if (serviceTypeList != null && this.hasServiceTypeToBeUpdated(serviceTypeList)) {
-			final int confirmation = ViewUtils.showConfirmDialog(this, ViewUtils.MSG_UPDATE_QUESTION,
-					ViewUtils.TITLE_SAVED);
+		final List<ServiceType> serviceTypeList = this
+				.getServiceTypeListFromTable();
+		if (serviceTypeList != null
+				&& this.hasServiceTypeToBeUpdated(serviceTypeList)) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_UPDATE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
 				for (final ServiceType serviceType : serviceTypeList) {
-					if (serviceType.getNewName() != null && !serviceType.getNewName().equals("")
-							&& !serviceType.getNewName().equals(serviceType.getName())) {
+					if (serviceType.getNewName() != null
+							&& !serviceType.getNewName().equals("")
+							&& !serviceType.getNewName().equals(
+									serviceType.getName())) {
 						serviceType.setName(serviceType.getNewName());
 						serviceType.setUpdated(new Date());
 						this.controller.save(serviceType);
 					}
 				}
-				ViewUtils.showMessage(this, ViewUtils.MSG_UPDATED, ViewUtils.TITLE_SAVED,
-						JOptionPane.INFORMATION_MESSAGE);
+				ViewUtils.showMessage(this, ViewUtils.MSG_UPDATED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 				this.refresh();
 			}
 		} else {
-			ViewUtils.showMessage(this, ViewUtils.MSG_UNEDITED, ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
+			ViewUtils.showMessage(this, ViewUtils.MSG_UNEDITED,
+					ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 		}
 	}// GEN-LAST:event_jbtUpdateActionPerformed
 
 	private void jbtDeleteActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtDeleteActionPerformed
-		final List<ServiceType> serviceTypeList = this.getServiceTypeListFromTable();
-		if (serviceTypeList != null && this.hasServiceTypeToBeDeleted(serviceTypeList)) {
-			final int confirmation = ViewUtils.showConfirmDialog(this, ViewUtils.MSG_DELETE_QUESTION,
-					ViewUtils.TITLE_SAVED);
+		final List<ServiceType> serviceTypeList = this
+				.getServiceTypeListFromTable();
+		if (serviceTypeList != null
+				&& this.hasServiceTypeToBeDeleted(serviceTypeList)) {
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_DELETE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
 				for (final ServiceType serviceType : serviceTypeList) {
 					if (serviceType.isDelete()) {
@@ -396,13 +558,13 @@ public class JFServiceType extends JDialog {
 						this.controller.save(serviceType);
 					}
 				}
-				ViewUtils.showMessage(this, ViewUtils.MSG_DELETED, ViewUtils.TITLE_SAVED,
-						JOptionPane.INFORMATION_MESSAGE);
+				ViewUtils.showMessage(this, ViewUtils.MSG_DELETED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 				this.refresh();
 			}
 		} else {
-			ViewUtils.showMessage(this, ViewUtils.MSG_UNSELECTED, ViewUtils.TITLE_SAVED,
-					JOptionPane.INFORMATION_MESSAGE);
+			ViewUtils.showMessage(this, ViewUtils.MSG_UNSELECTED,
+					ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 		}
 	}// GEN-LAST:event_jbtDeleteActionPerformed
 

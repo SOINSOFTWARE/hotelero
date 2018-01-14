@@ -2,7 +2,6 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +13,8 @@ import javax.swing.table.TableModel;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import co.com.soinsoftware.hotelero.util.InvoiceItemTableModel;
+
 import com.soinsoftware.hotelero.core.controller.InvoiceController;
 import com.soinsoftware.hotelero.core.controller.InvoiceItemController;
 import com.soinsoftware.hotelero.core.controller.ServiceController;
@@ -24,8 +25,6 @@ import com.soinsoftware.hotelero.persistence.entity.Room;
 import com.soinsoftware.hotelero.persistence.entity.Service;
 import com.soinsoftware.hotelero.persistence.entity.ServiceType;
 import com.soinsoftware.hotelero.persistence.entity.User;
-
-import co.com.soinsoftware.hotelero.util.InvoiceItemTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -69,19 +68,15 @@ public class JFRoomService extends JDialog {
 	private List<Service> serviceList;
 
 	public JFRoomService() {
-		try {
-			this.invoiceController = new InvoiceController();
-			this.serviceController = new ServiceController();
-			invoiceItemController = new InvoiceItemController();
-			serviceTypeController = new ServiceTypeController();
-		} catch (final IOException e) {
-			e.printStackTrace();
-			ViewUtils.showConfirmDialog(this, ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
-			System.exit(0);
-		}
+		this.invoiceController = new InvoiceController();
+		this.serviceController = new ServiceController();
+		invoiceItemController = new InvoiceItemController();
+		serviceTypeController = new ServiceTypeController();
 		this.initComponents();
-		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation((int) (screenSize.getWidth() / 2 - 350), (int) (screenSize.getHeight() / 2 - 350));
+		final Dimension screenSize = Toolkit.getDefaultToolkit()
+				.getScreenSize();
+		this.setLocation((int) (screenSize.getWidth() / 2 - 350),
+				(int) (screenSize.getHeight() / 2 - 350));
 		this.setModal(true);
 	}
 
@@ -104,8 +99,8 @@ public class JFRoomService extends JDialog {
 
 	private void refreshTableData() {
 		final Invoice invoice = this.getInvoiceSelected();
-		final List<InvoiceItem> invoiceItemList = (invoice != null) ? invoiceItemController.selectByInvoice(invoice)
-				: new ArrayList<>();
+		final List<InvoiceItem> invoiceItemList = (invoice != null) ? invoiceItemController
+				.selectByInvoice(invoice) : new ArrayList<>();
 		final TableModel model = new InvoiceItemTableModel(invoiceItemList);
 		this.jtbService.setModel(model);
 		this.jtbService.setFillsViewportHeight(true);
@@ -133,7 +128,8 @@ public class JFRoomService extends JDialog {
 	}
 
 	private void setServiceModel(final ServiceType serviceType) {
-		this.serviceList = this.serviceController.selectByServiceType(serviceType);
+		this.serviceList = this.serviceController
+				.selectByServiceType(serviceType);
 		final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 		model.addElement("Seleccione uno...");
 		for (final Service service : this.serviceList) {
@@ -205,26 +201,28 @@ public class JFRoomService extends JDialog {
 		final long value = this.getServiceValue();
 		if (invoice == null) {
 			valid = false;
-			ViewUtils.showMessage(this, MSG_ROOM_REQUIRED, ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+			ViewUtils.showMessage(this, MSG_ROOM_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
 		} else if (invoiceItemDate == null) {
 			valid = false;
-			ViewUtils.showMessage(this, MSG_DATE_REQUIRED, ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+			ViewUtils.showMessage(this, MSG_DATE_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
 		} else if (serviceType == null) {
 			valid = false;
-			ViewUtils.showMessage(this, MSG_SERVICE_CATEGORY_REQUIRED, ViewUtils.TITLE_REQUIRED_FIELDS,
-					JOptionPane.ERROR_MESSAGE);
+			ViewUtils.showMessage(this, MSG_SERVICE_CATEGORY_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
 		} else if (service == null) {
 			valid = false;
-			ViewUtils.showMessage(this, MSG_SERVICE_REQUIRED, ViewUtils.TITLE_REQUIRED_FIELDS,
-					JOptionPane.ERROR_MESSAGE);
+			ViewUtils.showMessage(this, MSG_SERVICE_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
 		} else if (quantity == 0) {
 			valid = false;
-			ViewUtils.showMessage(this, MSG_QUANTITY_EQUALS_TO_ZERO, ViewUtils.TITLE_REQUIRED_FIELDS,
-					JOptionPane.ERROR_MESSAGE);
+			ViewUtils.showMessage(this, MSG_QUANTITY_EQUALS_TO_ZERO,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
 		} else if (value == 0) {
 			valid = false;
-			ViewUtils.showMessage(this, MSG_VALUE_EQUALS_TO_ZERO_REQUIRED, ViewUtils.TITLE_REQUIRED_FIELDS,
-					JOptionPane.ERROR_MESSAGE);
+			ViewUtils.showMessage(this, MSG_VALUE_EQUALS_TO_ZERO_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
 		}
 		return valid;
 	}
@@ -234,7 +232,8 @@ public class JFRoomService extends JDialog {
 		return ((InvoiceItemTableModel) model).getInvoiceItemList();
 	}
 
-	private boolean hasServiceToBeDeleted(final List<InvoiceItem> invoiceItemList) {
+	private boolean hasServiceToBeDeleted(
+			final List<InvoiceItem> invoiceItemList) {
 		boolean hasElements = false;
 		for (final InvoiceItem invoiceItem : invoiceItemList) {
 			if (invoiceItem.isDelete()) {
@@ -287,7 +286,8 @@ public class JFRoomService extends JDialog {
 		lbImage = new javax.swing.JLabel();
 
 		setTitle("Hotelero");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/melvic.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				getClass().getResource("/images/melvic.png")));
 		setName("jfRoomService"); // NOI18N
 		setResizable(false);
 
@@ -296,17 +296,27 @@ public class JFRoomService extends JDialog {
 		jlbTitle.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
 		jlbTitle.setText("Servicio a la habitación");
 
-		javax.swing.GroupLayout jpTitleLayout = new javax.swing.GroupLayout(jpTitle);
+		javax.swing.GroupLayout jpTitleLayout = new javax.swing.GroupLayout(
+				jpTitle);
 		jpTitle.setLayout(jpTitleLayout);
-		jpTitleLayout.setHorizontalGroup(jpTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpTitleLayout.createSequentialGroup().addContainerGap().addComponent(jlbTitle)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		jpTitleLayout.setVerticalGroup(jpTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpTitleLayout.createSequentialGroup().addGap(32, 32, 32).addComponent(jlbTitle)
+		jpTitleLayout.setHorizontalGroup(jpTitleLayout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+				jpTitleLayout
+						.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(jlbTitle)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)));
+		jpTitleLayout.setVerticalGroup(jpTitleLayout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+				jpTitleLayout.createSequentialGroup().addGap(32, 32, 32)
+						.addComponent(jlbTitle)
 						.addContainerGap(34, Short.MAX_VALUE)));
 
-		jpService.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Servicio",
-				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
+		jpService.setBorder(javax.swing.BorderFactory.createTitledBorder(null,
+				"Servicio",
+				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+				javax.swing.border.TitledBorder.DEFAULT_POSITION,
 				new java.awt.Font("Verdana", 1, 12))); // NOI18N
 
 		jlbRoom.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -324,8 +334,10 @@ public class JFRoomService extends JDialog {
 
 		jtfIdentification.setEditable(false);
 		jtfIdentification.setBackground(new java.awt.Color(255, 255, 255));
-		jtfIdentification.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
-				new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0"))));
+		jtfIdentification
+				.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
+						new javax.swing.text.NumberFormatter(
+								new java.text.DecimalFormat("#,##0"))));
 		jtfIdentification.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
 
 		jlbName.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -344,7 +356,8 @@ public class JFRoomService extends JDialog {
 			jtbService.getColumnModel().getColumn(3).setResizable(false);
 		}
 
-		jpCreateService.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+		jpCreateService.setBorder(javax.swing.BorderFactory
+				.createTitledBorder(""));
 
 		jbtAddService.setBackground(new java.awt.Color(16, 135, 221));
 		jbtAddService.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -366,19 +379,22 @@ public class JFRoomService extends JDialog {
 		jlbServiceCategory.setText("Tipo de Consumo:");
 
 		jcbServiceCategory.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-		jcbServiceCategory.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jcbServiceCategoryActionPerformed(evt);
-			}
-		});
+		jcbServiceCategory
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent evt) {
+						jcbServiceCategoryActionPerformed(evt);
+					}
+				});
 
 		jlbServiceValue.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
 		jlbServiceValue.setText("Precio:");
 
 		jtfServiceValue.setEditable(false);
 		jtfServiceValue.setBackground(new java.awt.Color(255, 255, 255));
-		jtfServiceValue.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
-				new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0"))));
+		jtfServiceValue
+				.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
+						new javax.swing.text.NumberFormatter(
+								new java.text.DecimalFormat("#,##0"))));
 		jtfServiceValue.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
 
 		jcbService.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
@@ -394,87 +410,190 @@ public class JFRoomService extends JDialog {
 		jlbServiceQuantity.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
 		jlbServiceQuantity.setText("Cantidad:");
 
-		jtfServiceQuantity.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
-				new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0"))));
+		jtfServiceQuantity
+				.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(
+						new javax.swing.text.NumberFormatter(
+								new java.text.DecimalFormat("#,##0"))));
 		jtfServiceQuantity.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
 
-		javax.swing.GroupLayout jpCreateServiceLayout = new javax.swing.GroupLayout(jpCreateService);
+		javax.swing.GroupLayout jpCreateServiceLayout = new javax.swing.GroupLayout(
+				jpCreateService);
 		jpCreateService.setLayout(jpCreateServiceLayout);
-		jpCreateServiceLayout.setHorizontalGroup(jpCreateServiceLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpCreateServiceLayout.createSequentialGroup().addContainerGap()
-						.addGroup(jpCreateServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jdcInitialDate, javax.swing.GroupLayout.PREFERRED_SIZE, 130,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(jlbServicelDate))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-						.addGroup(jpCreateServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jcbServiceCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 130,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(jlbServiceCategory).addComponent(jlbService).addComponent(jcbService,
-										javax.swing.GroupLayout.PREFERRED_SIZE, 130,
-										javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addGap(18, 18, 18)
-						.addGroup(jpCreateServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(jpCreateServiceLayout.createSequentialGroup()
-										.addGroup(jpCreateServiceLayout
-												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(jlbServiceValue).addComponent(jtfServiceValue,
-														javax.swing.GroupLayout.PREFERRED_SIZE, 120,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94,
-												Short.MAX_VALUE)
-										.addComponent(jbtAddService, javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addGroup(jpCreateServiceLayout.createSequentialGroup()
-										.addGroup(jpCreateServiceLayout
-												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(jlbServiceQuantity).addComponent(jtfServiceQuantity,
-														javax.swing.GroupLayout.PREFERRED_SIZE, 120,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addGap(0, 0, Short.MAX_VALUE)))
-						.addContainerGap()));
-		jpCreateServiceLayout.setVerticalGroup(jpCreateServiceLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpCreateServiceLayout.createSequentialGroup().addContainerGap()
-						.addGroup(jpCreateServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(jlbServicelDate).addComponent(jlbServiceCategory)
-								.addComponent(jlbServiceQuantity))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jpCreateServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jdcInitialDate, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGroup(jpCreateServiceLayout
-										.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(jcbServiceCategory, javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(jtfServiceQuantity, javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)))
-						.addGroup(jpCreateServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(jpCreateServiceLayout.createSequentialGroup()
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24,
-												Short.MAX_VALUE)
-										.addGroup(jpCreateServiceLayout
-												.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-												.addComponent(jbtAddService, javax.swing.GroupLayout.PREFERRED_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.PREFERRED_SIZE)
-												.addComponent(jcbService, javax.swing.GroupLayout.PREFERRED_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.PREFERRED_SIZE)
-												.addComponent(jtfServiceValue, javax.swing.GroupLayout.PREFERRED_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addContainerGap())
-								.addGroup(jpCreateServiceLayout.createSequentialGroup()
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-										.addGroup(jpCreateServiceLayout
-												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(jlbServiceValue).addComponent(jlbService))
-										.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))));
+		jpCreateServiceLayout
+				.setHorizontalGroup(jpCreateServiceLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								jpCreateServiceLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												jpCreateServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addComponent(
+																jdcInitialDate,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																130,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																jlbServicelDate))
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+										.addGroup(
+												jpCreateServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addComponent(
+																jcbServiceCategory,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																130,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																jlbServiceCategory)
+														.addComponent(
+																jlbService)
+														.addComponent(
+																jcbService,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																130,
+																javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addGap(18, 18, 18)
+										.addGroup(
+												jpCreateServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addGroup(
+																jpCreateServiceLayout
+																		.createSequentialGroup()
+																		.addGroup(
+																				jpCreateServiceLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.LEADING)
+																						.addComponent(
+																								jlbServiceValue)
+																						.addComponent(
+																								jtfServiceValue,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								120,
+																								javax.swing.GroupLayout.PREFERRED_SIZE))
+																		.addPreferredGap(
+																				javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+																				94,
+																				Short.MAX_VALUE)
+																		.addComponent(
+																				jbtAddService,
+																				javax.swing.GroupLayout.PREFERRED_SIZE,
+																				javax.swing.GroupLayout.DEFAULT_SIZE,
+																				javax.swing.GroupLayout.PREFERRED_SIZE))
+														.addGroup(
+																jpCreateServiceLayout
+																		.createSequentialGroup()
+																		.addGroup(
+																				jpCreateServiceLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.LEADING)
+																						.addComponent(
+																								jlbServiceQuantity)
+																						.addComponent(
+																								jtfServiceQuantity,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								120,
+																								javax.swing.GroupLayout.PREFERRED_SIZE))
+																		.addGap(0,
+																				0,
+																				Short.MAX_VALUE)))
+										.addContainerGap()));
+		jpCreateServiceLayout
+				.setVerticalGroup(jpCreateServiceLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								jpCreateServiceLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												jpCreateServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.BASELINE)
+														.addComponent(
+																jlbServicelDate)
+														.addComponent(
+																jlbServiceCategory)
+														.addComponent(
+																jlbServiceQuantity))
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addGroup(
+												jpCreateServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addComponent(
+																jdcInitialDate,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addGroup(
+																jpCreateServiceLayout
+																		.createParallelGroup(
+																				javax.swing.GroupLayout.Alignment.BASELINE)
+																		.addComponent(
+																				jcbServiceCategory,
+																				javax.swing.GroupLayout.PREFERRED_SIZE,
+																				javax.swing.GroupLayout.DEFAULT_SIZE,
+																				javax.swing.GroupLayout.PREFERRED_SIZE)
+																		.addComponent(
+																				jtfServiceQuantity,
+																				javax.swing.GroupLayout.PREFERRED_SIZE,
+																				javax.swing.GroupLayout.DEFAULT_SIZE,
+																				javax.swing.GroupLayout.PREFERRED_SIZE)))
+										.addGroup(
+												jpCreateServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addGroup(
+																jpCreateServiceLayout
+																		.createSequentialGroup()
+																		.addPreferredGap(
+																				javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+																				24,
+																				Short.MAX_VALUE)
+																		.addGroup(
+																				jpCreateServiceLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.BASELINE)
+																						.addComponent(
+																								jbtAddService,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								javax.swing.GroupLayout.DEFAULT_SIZE,
+																								javax.swing.GroupLayout.PREFERRED_SIZE)
+																						.addComponent(
+																								jcbService,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								javax.swing.GroupLayout.DEFAULT_SIZE,
+																								javax.swing.GroupLayout.PREFERRED_SIZE)
+																						.addComponent(
+																								jtfServiceValue,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								javax.swing.GroupLayout.DEFAULT_SIZE,
+																								javax.swing.GroupLayout.PREFERRED_SIZE))
+																		.addContainerGap())
+														.addGroup(
+																jpCreateServiceLayout
+																		.createSequentialGroup()
+																		.addPreferredGap(
+																				javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+																		.addGroup(
+																				jpCreateServiceLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.LEADING)
+																						.addComponent(
+																								jlbServiceValue)
+																						.addComponent(
+																								jlbService))
+																		.addContainerGap(
+																				javax.swing.GroupLayout.DEFAULT_SIZE,
+																				Short.MAX_VALUE)))));
 
 		jbtDeleteService.setBackground(new java.awt.Color(16, 135, 221));
 		jbtDeleteService.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -487,65 +606,156 @@ public class JFRoomService extends JDialog {
 			}
 		});
 
-		javax.swing.GroupLayout jpServiceLayout = new javax.swing.GroupLayout(jpService);
+		javax.swing.GroupLayout jpServiceLayout = new javax.swing.GroupLayout(
+				jpService);
 		jpService.setLayout(jpServiceLayout);
-		jpServiceLayout.setHorizontalGroup(jpServiceLayout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(jpServiceLayout
-						.createSequentialGroup().addContainerGap().addGroup(jpServiceLayout
-								.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING,
-										false)
-								.addGroup(jpServiceLayout.createSequentialGroup().addGroup(jpServiceLayout
-										.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addGroup(jpServiceLayout.createSequentialGroup()
-												.addComponent(jcbRoom, javax.swing.GroupLayout.PREFERRED_SIZE, 120,
-														javax.swing.GroupLayout.PREFERRED_SIZE)
-												.addGap(27, 27, 27).addComponent(jtfIdentification,
-														javax.swing.GroupLayout.PREFERRED_SIZE, 200,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addGroup(jpServiceLayout.createSequentialGroup().addComponent(jlbRoom)
-												.addGap(83, 83, 83).addComponent(jlbIdentification)))
+		jpServiceLayout
+				.setHorizontalGroup(jpServiceLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								jpServiceLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												jpServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING,
+																false)
+														.addGroup(
+																jpServiceLayout
+																		.createSequentialGroup()
+																		.addGroup(
+																				jpServiceLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.LEADING)
+																						.addGroup(
+																								jpServiceLayout
+																										.createSequentialGroup()
+																										.addComponent(
+																												jcbRoom,
+																												javax.swing.GroupLayout.PREFERRED_SIZE,
+																												120,
+																												javax.swing.GroupLayout.PREFERRED_SIZE)
+																										.addGap(27,
+																												27,
+																												27)
+																										.addComponent(
+																												jtfIdentification,
+																												javax.swing.GroupLayout.PREFERRED_SIZE,
+																												200,
+																												javax.swing.GroupLayout.PREFERRED_SIZE))
+																						.addGroup(
+																								jpServiceLayout
+																										.createSequentialGroup()
+																										.addComponent(
+																												jlbRoom)
+																										.addGap(83,
+																												83,
+																												83)
+																										.addComponent(
+																												jlbIdentification)))
+																		.addGap(18,
+																				18,
+																				18)
+																		.addGroup(
+																				jpServiceLayout
+																						.createParallelGroup(
+																								javax.swing.GroupLayout.Alignment.LEADING)
+																						.addComponent(
+																								jlbName)
+																						.addComponent(
+																								jtfName,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								220,
+																								javax.swing.GroupLayout.PREFERRED_SIZE)))
+														.addComponent(
+																jpCreateService,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																Short.MAX_VALUE)
+														.addComponent(
+																jspService))
+										.addContainerGap(
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE))
+						.addGroup(
+								javax.swing.GroupLayout.Alignment.TRAILING,
+								jpServiceLayout
+										.createSequentialGroup()
+										.addContainerGap(
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.addComponent(
+												jbtDeleteService,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addGap(20, 20, 20)));
+		jpServiceLayout
+				.setVerticalGroup(jpServiceLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								jpServiceLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												jpServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.BASELINE)
+														.addComponent(jlbRoom)
+														.addComponent(
+																jlbIdentification)
+														.addComponent(jlbName))
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addGroup(
+												jpServiceLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.BASELINE)
+														.addComponent(
+																jcbRoom,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																jtfIdentification,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																jtfName,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																javax.swing.GroupLayout.PREFERRED_SIZE))
 										.addGap(18, 18, 18)
-										.addGroup(jpServiceLayout
-												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(jlbName).addComponent(jtfName,
-														javax.swing.GroupLayout.PREFERRED_SIZE, 220,
-														javax.swing.GroupLayout.PREFERRED_SIZE)))
-								.addComponent(jpCreateService, javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jspService))
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-						jpServiceLayout.createSequentialGroup()
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jbtDeleteService, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGap(20, 20, 20)));
-		jpServiceLayout.setVerticalGroup(jpServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpServiceLayout.createSequentialGroup().addContainerGap()
-						.addGroup(jpServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(jlbRoom).addComponent(jlbIdentification).addComponent(jlbName))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jpServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(jcbRoom,
-										javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(jtfIdentification, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(jtfName, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addGap(18, 18, 18)
-						.addComponent(jpCreateService, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-						.addComponent(jspService, javax.swing.GroupLayout.PREFERRED_SIZE, 114,
-								javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-						.addComponent(jbtDeleteService, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+										.addComponent(
+												jpCreateService,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+										.addComponent(
+												jspService,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												114,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+										.addComponent(
+												jbtDeleteService,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addContainerGap(
+												javax.swing.GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)));
 
-		jpAction.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "",
-				javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION,
+		jpAction.setBorder(javax.swing.BorderFactory.createTitledBorder(null,
+				"", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+				javax.swing.border.TitledBorder.DEFAULT_POSITION,
 				new java.awt.Font("Verdana", 0, 11))); // NOI18N
 
 		jbtClose.setBackground(new java.awt.Color(16, 135, 221));
@@ -559,52 +769,96 @@ public class JFRoomService extends JDialog {
 			}
 		});
 
-		javax.swing.GroupLayout jpActionLayout = new javax.swing.GroupLayout(jpAction);
+		javax.swing.GroupLayout jpActionLayout = new javax.swing.GroupLayout(
+				jpAction);
 		jpAction.setLayout(jpActionLayout);
-		jpActionLayout
-				.setHorizontalGroup(jpActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpActionLayout.createSequentialGroup()
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jbtClose, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGap(22, 22, 22)));
-		jpActionLayout.setVerticalGroup(jpActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jpActionLayout.createSequentialGroup().addGap(23, 23, 23)
-						.addComponent(jbtClose, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		jpActionLayout.setHorizontalGroup(jpActionLayout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+				javax.swing.GroupLayout.Alignment.TRAILING,
+				jpActionLayout
+						.createSequentialGroup()
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)
+						.addComponent(jbtClose,
+								javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(22, 22, 22)));
+		jpActionLayout.setVerticalGroup(jpActionLayout.createParallelGroup(
+				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+				jpActionLayout
+						.createSequentialGroup()
+						.addGap(23, 23, 23)
+						.addComponent(jbtClose,
+								javax.swing.GroupLayout.PREFERRED_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
+								Short.MAX_VALUE)));
 
-		lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/soin.png"))); // NOI18N
+		lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/images/soin.png"))); // NOI18N
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
+				getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(jpTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
-						Short.MAX_VALUE)
-				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-						layout.createSequentialGroup().addGap(0, 0, Short.MAX_VALUE).addComponent(lbImage,
-								javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))
-				.addGroup(layout.createSequentialGroup().addContainerGap()
-						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jpService, javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jpAction, javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addContainerGap()));
-		layout.setVerticalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-								.addComponent(jpTitle, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-								.addComponent(jpService, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-								.addComponent(jpAction, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(lbImage, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+		layout.setHorizontalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addComponent(jpTitle, javax.swing.GroupLayout.DEFAULT_SIZE,
+						javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addGroup(
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						layout.createSequentialGroup()
+								.addGap(0, 0, Short.MAX_VALUE)
+								.addComponent(lbImage,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										388,
+										javax.swing.GroupLayout.PREFERRED_SIZE))
+				.addGroup(
+						layout.createSequentialGroup()
+								.addContainerGap()
+								.addGroup(
+										layout.createParallelGroup(
+												javax.swing.GroupLayout.Alignment.LEADING)
+												.addComponent(
+														jpService,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														Short.MAX_VALUE)
+												.addComponent(
+														jpAction,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														javax.swing.GroupLayout.DEFAULT_SIZE,
+														Short.MAX_VALUE))
+								.addContainerGap()));
+		layout.setVerticalGroup(layout
+				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						layout.createSequentialGroup()
+								.addComponent(jpTitle,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+								.addComponent(jpService,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+								.addComponent(jpAction,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										javax.swing.GroupLayout.DEFAULT_SIZE,
+										Short.MAX_VALUE)
+								.addComponent(lbImage,
+										javax.swing.GroupLayout.PREFERRED_SIZE,
+										35,
 										javax.swing.GroupLayout.PREFERRED_SIZE)));
 
 		pack();
@@ -616,15 +870,18 @@ public class JFRoomService extends JDialog {
 		if (invoice != null) {
 			this.setEnabledNewServiceFields(true);
 			final User user = invoice.getUser();
-			this.jtfIdentification.setText(String.valueOf(user.getIdentification()));
+			this.jtfIdentification.setText(String.valueOf(user
+					.getIdentification()));
 			this.jtfName.setText(user.getName());
 			this.jdcInitialDate.setMinSelectableDate(invoice.getInitialDate());
 			final Date finalDate = invoice.getFinalDate();
 			final Date currentDate = new Date();
-			if (!DateUtils.isSameDay(currentDate, finalDate) && currentDate.after(finalDate)) {
+			if (!DateUtils.isSameDay(currentDate, finalDate)
+					&& currentDate.after(finalDate)) {
 				this.jdcInitialDate.setMaxSelectableDate(currentDate);
 			} else {
-				this.jdcInitialDate.setMaxSelectableDate(invoice.getFinalDate());
+				this.jdcInitialDate
+						.setMaxSelectableDate(invoice.getFinalDate());
 			}
 		} else {
 			this.setEnabledNewServiceFields(false);
@@ -633,7 +890,8 @@ public class JFRoomService extends JDialog {
 		}
 	}// GEN-LAST:event_jcbRoomActionPerformed
 
-	private void jcbServiceCategoryActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbServiceCategoryActionPerformed
+	private void jcbServiceCategoryActionPerformed(
+			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jcbServiceCategoryActionPerformed
 		final ServiceType serviceType = this.getServiceTypeSelected();
 		this.setServiceModel(serviceType);
 		this.jtfServiceValue.setText("");
@@ -660,8 +918,8 @@ public class JFRoomService extends JDialog {
 
 	private void jbtAddServiceActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtAddServiceActionPerformed
 		if (this.validateDataForSave()) {
-			final int confirmation = ViewUtils.showConfirmDialog(this, ViewUtils.MSG_SAVE_QUESTION,
-					ViewUtils.TITLE_SAVED);
+			final int confirmation = ViewUtils.showConfirmDialog(this,
+					ViewUtils.MSG_SAVE_QUESTION, ViewUtils.TITLE_SAVED);
 			if (confirmation == JOptionPane.OK_OPTION) {
 				final Invoice invoice = this.getInvoiceSelected();
 				final Date invoiceItemDate = this.jdcInitialDate.getDate();
@@ -669,13 +927,14 @@ public class JFRoomService extends JDialog {
 				final int quantity = this.getServiceQuantity();
 				final long unitValue = this.getServiceValue();
 				final long value = quantity * unitValue;
-				invoiceItemController.save(invoice, service, quantity, unitValue, value, invoiceItemDate);
+				invoiceItemController.save(invoice, service, quantity,
+						unitValue, value, invoiceItemDate);
 				final long invoiceValue = value + invoice.getValue();
 				invoice.setValue(invoiceValue);
 				invoice.setUpdated(new Date());
 				this.invoiceController.save(invoice);
-				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED, ViewUtils.TITLE_SAVED,
-						JOptionPane.INFORMATION_MESSAGE);
+				ViewUtils.showMessage(this, ViewUtils.MSG_SAVED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 				this.refreshService();
 			}
 		}
@@ -684,12 +943,15 @@ public class JFRoomService extends JDialog {
 	private void jbtDeleteServiceActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jbtDeleteServiceActionPerformed
 		final Invoice invoice = this.getInvoiceSelected();
 		if (invoice == null) {
-			ViewUtils.showMessage(this, MSG_ROOM_REQUIRED, ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
+			ViewUtils.showMessage(this, MSG_ROOM_REQUIRED,
+					ViewUtils.TITLE_REQUIRED_FIELDS, JOptionPane.ERROR_MESSAGE);
 		} else {
-			final List<InvoiceItem> invoiceItemList = this.getInvoiceItemListFromTable();
-			if (invoiceItemList != null && this.hasServiceToBeDeleted(invoiceItemList)) {
-				final int confirmation = ViewUtils.showConfirmDialog(this, ViewUtils.MSG_DELETE_QUESTION,
-						ViewUtils.TITLE_SAVED);
+			final List<InvoiceItem> invoiceItemList = this
+					.getInvoiceItemListFromTable();
+			if (invoiceItemList != null
+					&& this.hasServiceToBeDeleted(invoiceItemList)) {
+				final int confirmation = ViewUtils.showConfirmDialog(this,
+						ViewUtils.MSG_DELETE_QUESTION, ViewUtils.TITLE_SAVED);
 				if (confirmation == JOptionPane.OK_OPTION) {
 					long value = 0;
 					for (final InvoiceItem invoiceItem : invoiceItemList) {
@@ -704,13 +966,14 @@ public class JFRoomService extends JDialog {
 					invoice.setValue(invoiceValue);
 					invoice.setUpdated(new Date());
 					this.invoiceController.save(invoice);
-					ViewUtils.showMessage(this, ViewUtils.MSG_DELETED, ViewUtils.TITLE_SAVED,
+					ViewUtils.showMessage(this, ViewUtils.MSG_DELETED,
+							ViewUtils.TITLE_SAVED,
 							JOptionPane.INFORMATION_MESSAGE);
 					this.refreshService();
 				}
 			} else {
-				ViewUtils.showMessage(this, ViewUtils.MSG_UNSELECTED, ViewUtils.TITLE_SAVED,
-						JOptionPane.INFORMATION_MESSAGE);
+				ViewUtils.showMessage(this, ViewUtils.MSG_UNSELECTED,
+						ViewUtils.TITLE_SAVED, JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 	}// GEN-LAST:event_jbtDeleteServiceActionPerformed

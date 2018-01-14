@@ -2,7 +2,6 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -10,10 +9,10 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
+import co.com.soinsoftware.hotelero.util.FloorTableModel;
+
 import com.soinsoftware.hotelero.core.controller.FloorController;
 import com.soinsoftware.hotelero.persistence.entity.Floor;
-
-import co.com.soinsoftware.hotelero.util.FloorTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -37,13 +36,7 @@ public class JFFloor extends JDialog {
 	private FloorController floorController;
 
 	public JFFloor() {
-		try {
-			this.floorController = new FloorController();
-		} catch (final IOException e) {
-			e.printStackTrace();
-			ViewUtils.showConfirmDialog(this, ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
-			System.exit(0);
-		}
+		this.floorController = new FloorController();
 		this.initComponents();
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation((int) (screenSize.getWidth() / 2 - 350), (int) (screenSize.getHeight() / 2 - 350));

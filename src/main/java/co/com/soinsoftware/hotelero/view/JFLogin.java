@@ -7,17 +7,16 @@ package co.com.soinsoftware.hotelero.view;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
-import java.io.IOException;
 import java.util.Timer;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import com.soinsoftware.hotelero.core.controller.UserController;
-import com.soinsoftware.hotelero.persistence.entity.User;
-
 import co.com.soinsoftware.hotelero.controller.MenuController;
 import co.com.soinsoftware.hotelero.util.MidnightTimerTask;
+
+import com.soinsoftware.hotelero.core.controller.UserController;
+import com.soinsoftware.hotelero.persistence.entity.User;
 
 /**
  * @author Carlos Rodriguez
@@ -44,13 +43,7 @@ public class JFLogin extends JFrame {
 	public JFLogin() {
 		super();
 		this.initComponents();
-		try {
-			this.controller = new UserController();
-		} catch (final IOException e) {
-			e.printStackTrace();
-			ViewUtils.showConfirmDialog(this, ViewUtils.MSG_DATABASE_CONNECTION_ERROR, ViewUtils.TITLE_DATABASE_ERROR);
-			System.exit(0);
-		}
+		this.controller = new UserController();
 		this.setTitle(TITLE);
 		this.setMaximized();
 		this.setTextFieldLimits();
